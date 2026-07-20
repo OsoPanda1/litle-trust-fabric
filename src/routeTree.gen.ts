@@ -16,7 +16,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as StandardIndexRouteImport } from './routes/standard/index'
 import { Route as VerifyLitleIdRouteImport } from './routes/verify.$litleId'
 import { Route as StandardRfcsRouteImport } from './routes/standard/rfcs'
+import { Route as StandardArchiveRouteImport } from './routes/standard/archive'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as StandardRfcsIndexRouteImport } from './routes/standard/rfcs.index'
+import { Route as StandardRfcsSlugRouteImport } from './routes/standard/rfcs.$slug'
 import { Route as AuthenticatedBooksBookIdRouteImport } from './routes/_authenticated/books.$bookId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -53,10 +56,25 @@ const StandardRfcsRoute = StandardRfcsRouteImport.update({
   path: '/standard/rfcs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StandardArchiveRoute = StandardArchiveRouteImport.update({
+  id: '/standard/archive',
+  path: '/standard/archive',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const StandardRfcsIndexRoute = StandardRfcsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StandardRfcsRoute,
+} as any)
+const StandardRfcsSlugRoute = StandardRfcsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => StandardRfcsRoute,
 } as any)
 const AuthenticatedBooksBookIdRoute =
   AuthenticatedBooksBookIdRouteImport.update({
@@ -70,20 +88,25 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/standard/rfcs': typeof StandardRfcsRoute
+  '/standard/archive': typeof StandardArchiveRoute
+  '/standard/rfcs': typeof StandardRfcsRouteWithChildren
   '/verify/$litleId': typeof VerifyLitleIdRoute
   '/standard/': typeof StandardIndexRoute
   '/books/$bookId': typeof AuthenticatedBooksBookIdRoute
+  '/standard/rfcs/$slug': typeof StandardRfcsSlugRoute
+  '/standard/rfcs/': typeof StandardRfcsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/standard/rfcs': typeof StandardRfcsRoute
+  '/standard/archive': typeof StandardArchiveRoute
   '/verify/$litleId': typeof VerifyLitleIdRoute
   '/standard': typeof StandardIndexRoute
   '/books/$bookId': typeof AuthenticatedBooksBookIdRoute
+  '/standard/rfcs/$slug': typeof StandardRfcsSlugRoute
+  '/standard/rfcs': typeof StandardRfcsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -92,10 +115,13 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/standard/rfcs': typeof StandardRfcsRoute
+  '/standard/archive': typeof StandardArchiveRoute
+  '/standard/rfcs': typeof StandardRfcsRouteWithChildren
   '/verify/$litleId': typeof VerifyLitleIdRoute
   '/standard/': typeof StandardIndexRoute
   '/_authenticated/books/$bookId': typeof AuthenticatedBooksBookIdRoute
+  '/standard/rfcs/$slug': typeof StandardRfcsSlugRoute
+  '/standard/rfcs/': typeof StandardRfcsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -104,20 +130,25 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/dashboard'
+    | '/standard/archive'
     | '/standard/rfcs'
     | '/verify/$litleId'
     | '/standard/'
     | '/books/$bookId'
+    | '/standard/rfcs/$slug'
+    | '/standard/rfcs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/sitemap.xml'
     | '/dashboard'
-    | '/standard/rfcs'
+    | '/standard/archive'
     | '/verify/$litleId'
     | '/standard'
     | '/books/$bookId'
+    | '/standard/rfcs/$slug'
+    | '/standard/rfcs'
   id:
     | '__root__'
     | '/'
@@ -125,10 +156,13 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/_authenticated/dashboard'
+    | '/standard/archive'
     | '/standard/rfcs'
     | '/verify/$litleId'
     | '/standard/'
     | '/_authenticated/books/$bookId'
+    | '/standard/rfcs/$slug'
+    | '/standard/rfcs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -136,7 +170,8 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  StandardRfcsRoute: typeof StandardRfcsRoute
+  StandardArchiveRoute: typeof StandardArchiveRoute
+  StandardRfcsRoute: typeof StandardRfcsRouteWithChildren
   VerifyLitleIdRoute: typeof VerifyLitleIdRoute
   StandardIndexRoute: typeof StandardIndexRoute
 }
@@ -192,12 +227,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StandardRfcsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/standard/archive': {
+      id: '/standard/archive'
+      path: '/standard/archive'
+      fullPath: '/standard/archive'
+      preLoaderRoute: typeof StandardArchiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/standard/rfcs/': {
+      id: '/standard/rfcs/'
+      path: '/'
+      fullPath: '/standard/rfcs/'
+      preLoaderRoute: typeof StandardRfcsIndexRouteImport
+      parentRoute: typeof StandardRfcsRoute
+    }
+    '/standard/rfcs/$slug': {
+      id: '/standard/rfcs/$slug'
+      path: '/$slug'
+      fullPath: '/standard/rfcs/$slug'
+      preLoaderRoute: typeof StandardRfcsSlugRouteImport
+      parentRoute: typeof StandardRfcsRoute
     }
     '/_authenticated/books/$bookId': {
       id: '/_authenticated/books/$bookId'
@@ -222,12 +278,27 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface StandardRfcsRouteChildren {
+  StandardRfcsSlugRoute: typeof StandardRfcsSlugRoute
+  StandardRfcsIndexRoute: typeof StandardRfcsIndexRoute
+}
+
+const StandardRfcsRouteChildren: StandardRfcsRouteChildren = {
+  StandardRfcsSlugRoute: StandardRfcsSlugRoute,
+  StandardRfcsIndexRoute: StandardRfcsIndexRoute,
+}
+
+const StandardRfcsRouteWithChildren = StandardRfcsRoute._addFileChildren(
+  StandardRfcsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  StandardRfcsRoute: StandardRfcsRoute,
+  StandardArchiveRoute: StandardArchiveRoute,
+  StandardRfcsRoute: StandardRfcsRouteWithChildren,
   VerifyLitleIdRoute: VerifyLitleIdRoute,
   StandardIndexRoute: StandardIndexRoute,
 }
