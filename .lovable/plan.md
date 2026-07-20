@@ -1,91 +1,358 @@
+Aquí tienes un plan maestro actualizado para `.lovable/plan.md`, alineado con el nuevo posicionamiento de LITLE y con el stack TanStack Start + Supabase en mente. [github](https://github.com/tanstack/router/tree/main/examples/react/start-supabase-basic)
 
-## Context
+***
 
-The current project is a blank template. You've uploaded `litle-archive-main.zip`, which is the existing LITLE codebase (TanStack Start + Supabase + L-512 crypto engine, books, pipeline, landing page). The conceptual update reframes LITLE from "a 512-byte crypto container" into a full trust infrastructure with three new pillars:
+# .lovable/plan.md
 
-1. **LITLE-ID** — a durable, self-describing identifier decoupled from the L-512 binary format.
-2. **Evidence Chain** — a structured record of the research pipeline (sources, versions, AI models, prompts, seeds, checksums).
-3. **Governance / RFCs** — an explicit standards layer (10 RFCs, LIP process, Independent Archive) that separates the standard from the implementation.
+## Contexto general
 
-The new slogan becomes: **"The Standard for Preserving Knowledge. Verifying Legacy."**
+El repositorio actual está vacío como plantilla base de Lovable, pero ya dispones de `litle-archive-main.zip`, que contiene la versión previa de LITLE (TanStack Start + Supabase + motor L-512, libros, pipeline, landing). [github](https://github.com/TanStack/router/blob/main/examples/react/start-supabase-basic/src/routeTree.gen.ts)
 
-## Phase 1 — Restore the codebase
+El reposicionamiento conceptual redefine LITLE de “un contenedor criptográfico de 512 bytes” a una infraestructura completa de confianza, gobernada bajo el modelo de 7 federaciones de TAMV, con tres pilares:
 
-- Copy the archive contents into the project root, excluding `.git`, `.lovable/`, `.env`, and any file that would clobber Lovable-managed integration files. Preserve the existing template's `src/routeTree.gen.ts` (auto-generated).
-- Re-enable Lovable Cloud so Supabase auth + tables work (`_authenticated` routes, `books.functions.ts`, `pipeline.functions.ts`).
-- Verify build passes; fix any drift from template conventions.
+- **LITLE-ID** — identificador durable y autodescriptivo, desacoplado del formato binario L-512.  
+- **Evidence Chain** — registro estructurado del pipeline de investigación (fuentes, versiones, modelos IA, prompts, semillas, checksums).  
+- **Gobernanza / RFCs** — capa explícita de estándar (10 RFCs, proceso LIP, archivo independiente, modelo de 7 federaciones) que separa estándar de implementación.
 
-## Phase 2 — Rebrand to the new positioning
+Nuevo lema:
 
-- Update `src/routes/__root.tsx` head defaults and the landing page hero/meta with:
-  - Name: **LITLE**
-  - Slogan: **"The Standard for Preserving Knowledge. Verifying Legacy."**
-  - Sub-positioning copy: "Infrastructure for identity, lineage and verification of independent research."
-- Refresh the landing sections to talk about LITLE-ID, Evidence Chain, and Governance — not just the L-512 container.
+> **LITLE — The Standard for Preserving Knowledge. Verifying Legacy.**
 
-## Phase 3 — LITLE-ID (RFC-0001)
+El objetivo del plan es:
 
-- New module `src/lib/litle/id.ts` with:
-  - Types: `LitleId { namespace, year, workType, cryptoProfile, suffix }`.
-  - Work types enum: `BK` (Book), `RQ` (Research), `DS` (Dataset), `PL` (Pipeline), `AR` (Article).
-  - Parser + formatter for both forms:
-    - URI form: `litle://2026/tech/IA/8F4A29D...`
-    - Human form: `LTL-2026-RQ-8F4A-29D3`
-  - Version tag for the crypto profile (`L-512.v1`, extensible to `L-1024`).
-  - Round-trip tests via a small validator.
-- Bridge to existing `sign.ts` / `canonical.ts`: derive LITLE-ID from container digest but keep them independent (container can be re-signed with a new profile without changing the ID).
+- Restaurar el código existente dentro del entorno Lovable sin romper la integración.  
+- Rebrandear la app hacia el nuevo posicionamiento.  
+- Introducir LITLE-ID, Evidence Chain y la superficie de estándares/RFCs como ciudadanos de primera clase.  
 
-## Phase 4 — Evidence Chain (RFC-0008)
+***
 
-- New Supabase migration adding tables (all under `public`, with grants + RLS):
-  - `evidence_records` (id, litle_id, work_type, created_at, owner)
-  - `evidence_nodes` (id, record_id, node_type, parent_id, payload jsonb, hash, created_at)
-  - Node types: `Source`, `Version`, `Author`, `Signature`, `PipelineStep`, `ModelUsage`, `Prompt`, `Seed`, `Checksum`, `Config`.
-- Server functions in `src/lib/evidence.functions.ts`:
-  - `createEvidenceRecord`, `appendEvidenceNode`, `getEvidenceChain(litleId)`.
-- UI: new route `src/routes/_authenticated/evidence.$litleId.tsx` rendering the chain as a typed tree with hashes + timestamps.
-- Hook into existing `pipeline.functions.ts` so each pipeline step auto-appends an `Evidence Node`.
+## Fase 1 — Restaurar el código base
 
-## Phase 5 — Public verification + Evidence Preservation view
+**Objetivo:** Volver a tener el código de LITLE corriendo en Lovable con Supabase y TanStack Start operativos. [makerkit](https://makerkit.dev/blog/tutorials/tanstack-start-supabase-auth)
 
-- New public route `src/routes/verify.$litleId.tsx`:
-  - Resolves a LITLE-ID → shows work metadata, cryptographic profile, Evidence Chain summary, verification status.
-  - Reads via a public server function (no auth), backed by anon-safe SELECT policies limited to published records.
-- Adds "Evidence Preservation" as a distinct badge alongside "Zero-Trust Verification".
+1. **Desempaquetar el archivo base**
 
-## Phase 6 — Governance & RFC surface (RFC-0010)
+   - Extraer `litle-archive-main.zip` en una carpeta temporal local.
+   - Copiar su contenido al root del proyecto Lovable **con exclusiones**:
+     - No copiar `.git`, `.lovable/`, `.env*`, `node_modules`, `dist`, ni archivos de configuración específicos del entorno Lovable.
+     - Mantener el `src/routeTree.gen.ts` actual de Lovable (archivo auto-generado por TanStack Router) y no sobrescribirlo. [github](https://github.com/TanStack/router/blob/main/examples/react/start-supabase-basic/src/routeTree.gen.ts)
+   - Resolver conflictos de archivos config comparando:
+     - `tsconfig.json`, `vite.config`, `package.json` → fusionar dependencias/scripts, sin eliminar hooks propios de Lovable.
 
-- New route tree `src/routes/standard/` (public, indexed):
-  - `standard/index.tsx` — overview of the LITLE Standards Council, LIP process, core vs experimental.
-  - `standard/rfcs.tsx` — index of RFC-0001…RFC-0010 with status (Draft / Stable / Experimental).
-  - `standard/rfcs.$rfcId.tsx` — dynamic route rendering each RFC from MDX/markdown files in `src/content/rfcs/`.
-- Seed content: full drafts for **RFC-0001 (LITLE-ID)** and **RFC-0008 (Evidence Chain)**; stub abstracts + status for the other eight.
-- Add each RFC to `sitemap.xml.ts` entries.
+2. **Reactivar Supabase / Auth**
 
-## Phase 7 — Independent Archive placeholder (RFC-0009)
+   - Verificar `.env`/`.env.local` con:
+     - `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (o equivalents). [dev](https://dev.to/developerehsan/how-to-setup-the-supabase-authentication-with-tanstack-router-in-vite-react-1bhf)
+   - Confirmar que el cliente Supabase se crea en un módulo único (`src/lib/supabaseClient.ts`) y se inyecta a través de contexto en `__root.tsx`, siguiendo las guías TanStack Start + Supabase. [github](https://github.com/tanstack/router/tree/main/examples/react/start-supabase-basic)
+   - Revisar rutas `_authenticated` y layouts relacionados (ej. `_authenticated/route.tsx`) para asegurarse de que el guard de sesión y los `loaders` siguen las convenciones de la plantilla Lovable.
 
-- `standard/archive.tsx` page documenting where the RFCs are (or will be) mirrored — arXiv, Zenodo, Internet Archive — and the reproducibility guarantees. No live mirroring yet; the page is the promise + status.
+3. **Garantizar compatibilidad con Lovable**
 
-## Phase 8 — Wire-through & polish
+   - Verificar que:
+     - `src/routeTree.gen.ts` no se toca manualmente (solo se regenera). [github](https://github.com/TanStack/router/blob/main/examples/react/start-supabase-basic/src/routeTree.gen.ts)
+     - No se eliminan hooks que Lovable utiliza para telemetría, despliegue o preview.
+   - Ejecutar:
+     - `pnpm install` (o el gestor definido en el proyecto).
+     - `pnpm dev` → confirmar que la app arranca sin errores.
+     - `pnpm build` → corregir cualquier discrepancia de tipos o imports.
 
-- Update top nav: `Library`, `Verify`, `Standard`, `Governance`, `Submit Work`.
-- Update footer with new slogan + links to `/standard` and `/standard/rfcs`.
-- Regenerate sitemap entries for all new public routes.
-- Run typecheck; fix any breakage from the ID/Evidence integration.
+***
 
-## Technical notes
+## Fase 2 — Rebrand al nuevo posicionamiento
 
-- L-512 stays exactly as-is; it becomes `Profile L-512 v1` referenced from RFC-0003/0005/0006 but no longer the identity itself.
-- The LITLE-ID module has zero dependencies on Supabase — it's pure TS so future implementers can port it.
-- Evidence Chain nodes store `hash` (SHA-256 of canonical payload) so the chain itself is Merkle-verifiable, independent of L-512.
-- All new tables get explicit `GRANT` + RLS policies per project rules.
-- RFC content lives as plain markdown in the repo, so the "standard" is versionable via git even if the app is torn down.
+**Objetivo:** Alinear la UI con la nueva narrativa: LITLE como estándar de preservación de conocimiento, no solo cripto.  
 
-## Out of scope for this pass
+1. **Head defaults / meta**
 
-- Actual PQC (ML-DSA) swap-in — stays as the current HMAC stand-in per RFC-0005 v1.
-- Live external archive mirroring (arXiv/Zenodo push).
-- Multi-tenant governance (Standards Council remains "one-person council + manifesto" for now).
-- Quantum lab surface (kept as experimental, unchanged).
+   - En `src/routes/__root.tsx`:
+     - Establecer `<title>` por defecto: `LITLE — The Standard for Preserving Knowledge. Verifying Legacy.`
+     - Actualizar meta description a algo como:
+       > “LITLE es la infraestructura abierta para identidad, linaje y verificación de investigación independiente.”
 
-Shall I proceed with all eight phases, or would you like me to start with Phases 1–4 (restore + rebrand + LITLE-ID + Evidence Chain) and land Governance/RFC pages in a follow-up?
+2. **Landing / página principal**
+
+   - Actualizar hero:
+     - **Nombre:** LITLE  
+     - **Slogan:** “The Standard for Preserving Knowledge. Verifying Legacy.”  
+     - Subcopy: “Infrastructure for identity, lineage and verification of independent research.”
+   - Reorganizar secciones para resaltar:
+     - LITLE-ID (qué es, por qué es autodescriptivo y durable).
+     - Evidence Chain (cómo preserva pipeline, modelos IA, prompts, versiones).
+     - Governance / 7 federaciones (cómo se gobierna el estándar, no solo la app).
+   - Reducir protagonismo del “L-512 container” en el marketing:
+     - Presentarlo como “Profile L-512 v1 (cryptographic profile)” dentro de la sección de perfiles técnicos, no como el producto central.
+
+***
+
+## Fase 3 — Módulo LITLE-ID (RFC-0001)
+
+**Objetivo:** Introducir un identificador de primera clase, independiente de L-512, con parser/formatter puro TypeScript.  
+
+1. **Nuevo módulo**
+
+   - Crear `src/lib/litle/id.ts` con:
+     - Tipos:
+       ```ts
+       export type LitleWorkType = "BK" | "RQ" | "DS" | "PL" | "AR";
+
+       export interface LitleId {
+         namespace: string;        // ej. "tech/IA", "bio/genomics"
+         year: number;            // ej. 2026
+         workType: LitleWorkType; // BK, RQ, etc.
+         cryptoProfile: string;   // ej. "L-512.v1"
+         suffix: string;          // ej. "8F4A29D3"
+       }
+       ```
+     - Enumeración de work types:
+       - BK = Book
+       - RQ = Research
+       - DS = Dataset
+       - PL = Pipeline
+       - AR = Article
+
+2. **Formas de representación**
+
+   - Implementar parser y formatter para:
+     - **Forma URI**:
+       - Ejemplo: `litle://2026/tech/IA/8F4A29D...`
+       - Convención: `litle://<year>/<namespace>/<suffix>`
+     - **Forma humana**:
+       - Ejemplo: `LTL-2026-RQ-8F4A-29D3`
+       - Convención: `LTL-<year>-<workType>-<suffix-grouped>`
+   - Incluir un `cryptoProfile` tag asociado (ej. `L-512.v1`), pero mantenerlo como atributo adicional, no parte del ID textual.
+
+3. **Round-trip y validación**
+
+   - Añadir tests básicos (p.ej. con Vitest):
+     - parse(format(litleId)) → igual objeto.
+     - Validar formato de namespace, sufijo y año.
+   - Documentar en comentarios que:
+     - El módulo **no** depende de Supabase ni del motor L-512.
+     - Está pensado para ser portable a otros lenguajes.
+
+4. **Bridge con L-512**
+
+   - En el módulo de firma (`sign.ts` / `canonical.ts`):
+     - Añadir una función para derivar LITLE-ID a partir de:
+       - Digest del contenedor (ej. hash de L-512, pero como un input, no como identidad).
+       - Metadatos (año, tipo de obra, namespace).
+     - Garantizar que:
+       - El LITLE-ID persiste incluso si la obra se re-firma con otro perfil criptográfico (L-1024), siempre que el linaje de la investigación sea el mismo.
+
+***
+
+## Fase 4 — Evidence Chain (RFC-0008)
+
+**Objetivo:** Introducir un modelo de Evidence Chain persistida en Supabase, enlazado a LITLE-ID, pero independiente de L-512. [supabase](https://supabase.com/docs/guides/database/postgres/row-level-security)
+
+1. **Esquema de base de datos (Supabase)**
+
+   - Crear nueva migración con tablas:
+
+     ```sql
+     create table public.evidence_records (
+       id uuid primary key default gen_random_uuid(),
+       litle_id text not null,
+       work_type text not null,          -- BK/RQ/DS/PL/AR
+       owner uuid not null references auth.users(id),
+       created_at timestamptz not null default now()
+     );
+
+     create table public.evidence_nodes (
+       id uuid primary key default gen_random_uuid(),
+       record_id uuid not null references public.evidence_records(id) on delete cascade,
+       node_type text not null,          -- enum lógica: Source, Version, etc.
+       parent_id uuid null references public.evidence_nodes(id),
+       payload jsonb not null,           -- contenido semántico
+       hash text not null,               -- sha256(payload canonical)
+       created_at timestamptz not null default now()
+     );
+     ```
+
+   - Node types sugeridos:
+     - `Source`, `Version`, `Author`, `Signature`, `PipelineStep`, `ModelUsage`, `Prompt`, `Seed`, `Checksum`, `Config`.
+
+2. **RLS y permisos**
+
+   - Habilitar RLS en ambas tablas. [designrevision](https://designrevision.com/blog/supabase-row-level-security)
+   - Políticas:
+     - `evidence_records`:
+       - Insert: `auth.uid() is not null` (usuarios autenticados).
+       - Select: propietario (owner = auth.uid()) y, más adelante, registros publicados.
+     - `evidence_nodes`:
+       - Insert/Select restringidos a dueños del `record_id`.
+   - Dejar preparado para futura política “publicado” (para vistas públicas de Evidence Chain).
+
+3. **Funciones de servidor**
+
+   - Crear `src/lib/evidence.functions.ts` con funciones lado servidor (TanStack Start server functions):
+     - `createEvidenceRecord({ litleId, workType })`
+     - `appendEvidenceNode({ recordId, nodeType, parentId?, payload })`
+       - Calcula hash SHA-256 de la payload canonical y lo almacena.
+     - `getEvidenceChain(litleId)`:
+       - Recupera `evidence_records` + `evidence_nodes` como árbol tipado.
+
+4. **UI de Evidence Chain**
+
+   - Nueva ruta autenticada:
+     - `src/routes/_authenticated/evidence.$litleId.tsx`:
+       - Usa `getEvidenceChain(litleId)` para renderizar:
+         - Árbol de nodos: tipo, hash, timestamps, payload.
+       - Enfatiza el concepto de **Evidence Preservation** (badge o sección).
+   - Integración con pipeline:
+     - En `pipeline.functions.ts`:
+       - Cada paso del pipeline (OCR, chunking, embeddings, índice, output final) debe:
+         - Llamar a `appendEvidenceNode` con `node_type = "PipelineStep"` y payload describiendo:
+           - Nombre del paso, hash de input/output, configuración.
+
+***
+
+## Fase 5 — Verificación pública + vista de Evidence Preservation
+
+**Objetivo:** Ofrecer una ruta pública de verificación que combine perfil criptográfico + Evidence Chain, sin exigir autenticación.
+
+1. **Nueva ruta pública**
+
+   - `src/routes/verify.$litleId.tsx`:
+     - Loader: buscar `evidence_records` + una vista mínima de nodes (solo publicados / anon-safe).
+     - Mostrar:
+       - LITLE-ID.
+       - Work type, created_at, owner (si es público/anónimo).
+       - Perfil criptográfico actual (ej. `L-512.v1`).
+       - Resumen de Evidence Chain (contador de nodos, tipos principales).
+       - Estado de verificación:
+         - Integridad criptográfica (basado en VerificarteEngine + L-512).
+         - Evidence Preservation (cadena consistente, hashes válidos).
+
+2. **Políticas de lectura pública**
+
+   - Añadir un flag o columna futura (ej. `published boolean`) a `evidence_records`:
+     - RLS: allow SELECT para `published = true` a roles `anon` y `authenticated`.
+   - Por ahora:
+     - Implementar sólo lectura anónima de registros explicitamente marcados como públicos (si se añaden más adelante).
+
+3. **UI / badges**
+
+   - Para cada verificación:
+     - Mostrar badge “Zero-Trust Verification” (estado criptográfico).
+     - Mostrar badge “Evidence Preservation” (presencia y coherencia de Evidence Chain).
+
+***
+
+## Fase 6 — Superficie de Governance & RFC (RFC-0010)
+
+**Objetivo:** Exponer LITLE como estándar formal mediante una sección “Standard” con RFCs, governance y proceso de propuestas.  
+
+1. **Árbol de rutas estándar**
+
+   - Crear `src/routes/standard/`:
+
+     - `standard/index.tsx`:
+       - Overview del LITLE Standards Council / Independent Literature Standards Committee.
+       - Descripción del modelo de 7 federaciones de TAMV.
+       - Explicación del proceso LIP (LITLE Improvement Proposal):
+         - Cómo se propone una RFC.
+         - Cómo se marcan Draft / Stable / Experimental.
+
+     - `standard/rfcs.tsx`:
+       - Índice de RFCs (0001–0010):
+         - ID, título, estado, breve resumen.
+
+     - `standard/rfcs.$rfcId.tsx`:
+       - Ruta dinámica que carga contenido MDX/Markdown desde `src/content/rfcs/RFC-XXXX.md`.
+       - Renderiza encabezados, estado y contenido.
+
+2. **Contenido inicial de RFCs**
+
+   - `src/content/rfcs/`:
+
+     - RFC-0001 — **LITLE Identifier**
+       - Definición de LITLE-ID, forma URI y humana, campos, semántica.
+     - RFC-0008 — **Evidence Chain**
+       - Modelo lógico de Evidence Chain, tipos de nodo, hash de payload, invariantes.
+     - Otras RFCs (abstracts / stub):
+       - RFC-0002 Canonical Serialization.
+       - RFC-0003 Book Container.
+       - RFC-0004 Merkle AST.
+       - RFC-0005 Cryptographic Signature.
+       - RFC-0006 Verification Protocol.
+       - RFC-0007 Publication Metadata.
+       - RFC-0009 Independent Archive.
+       - RFC-0010 Governance.
+
+3. **Sitemap**
+
+   - Actualizar `sitemap.xml.ts` para incluir:
+     - `/standard`, `/standard/rfcs`, `/standard/rfcs/<id>` y `/standard/archive` como rutas indexables.
+
+***
+
+## Fase 7 — Independent Archive placeholder (RFC-0009)
+
+**Objetivo:** Declarar explícitamente el compromiso de archivo independiente, incluso si aún no hay integración técnica con arXiv/Zenodo.  
+
+1. **Página de archivo**
+
+   - Crear `src/routes/standard/archive.tsx`:
+     - Describir:
+       - Dónde estarán (o están) los RFC replicados:
+         - arXiv, Zenodo, Internet Archive, repos institucionales.
+       - Qué garantías de reproducibilidad se buscan:
+         - Que cualquier tercero pueda reimplementar verificadores y reconstruir Evidence Chains a partir de las RFC y esquemas publicados.
+     - Estado actual:
+       - Indicar que la replicación externa está en roadmap, esta página actúa como manifiesto y estado.
+
+***
+
+## Fase 8 — Integración final y pulido
+
+**Objetivo:** Conectar todas las piezas a nivel UI y garantizar consistencia técnica.  
+
+1. **Navegación principal**
+
+   - Actualizar top nav con entradas:
+     - `Library` — acceso a libros / obras.
+     - `Verify` — enlace a `/verify` (listado o form de búsqueda por LITLE-ID).
+     - `Standard` — enlace a `/standard`.
+     - `Governance` — alias o sección dentro de `/standard`.
+     - `Submit Work` — flujo autenticado para subir una nueva obra y crear su LITLE-ID + Evidence Record.
+
+2. **Footer**
+
+   - Añadir new tagline:
+     - “LITLE — The Standard for Preserving Knowledge. Verifying Legacy.”
+   - Links rápidos a:
+     - `/standard`, `/standard/rfcs`, `/standard/archive`.
+
+3. **Sitemap y SEO**
+
+   - Regenerar/actualizar entradas del sitemap para:
+     - Rutas públicas nuevas: `/verify/*`, `/standard/*`.
+
+4. **Typecheck & tests**
+
+   - Ejecutar:
+     - `pnpm typecheck` o `pnpm test` según setup.
+   - Corregir:
+     - Dependencias circulares entre `id.ts`, `sign.ts`, `verificarte.ts`.
+     - Tipos Supabase para nuevas tablas (`Database` types si se generan).
+
+***
+
+## Notas técnicas clave
+
+- **Perfil L-512**: se mantiene intacto como `Profile L-512 v1`, pero ahora es solo un perfil criptográfico referenciado desde RFC-0003/0005/0006, no la identidad final.  
+- **LITLE-ID**: módulo completamente puro (sin Supabase), para que implementadores puedan adoptarlo de manera independiente.  
+- **Evidence Chain**: sus nodos almacenan `hash` (ej. SHA-256 de payload canonical) para que la cadena sea Merkle-verificable, independiente de L-512.  
+- **RLS**: todas las tablas nuevas deben tener RLS activado y políticas claras por rol (anon/authenticated), siguiendo buenas prácticas de Supabase. [dev](https://dev.to/thebenforce/lock-down-your-data-implement-row-level-security-policies-in-supabase-sql-4p82)
+- **RFCs en repo**: el contenido de las RFC vive como Markdown en `src/content/rfcs`, de modo que el estándar es versionable en git, incluso si la aplicación deja de existir.  
+
+***
+
+## Fuera de alcance en esta iteración
+
+- Sustituir el stand-in HMAC por una firma PQC real (ML-DSA / Dilithium); se mantiene el perfil actual como RFC-0005 v1.  
+- Automatizar mirroring en arXiv/Zenodo/Internet Archive (solo se deja documentado en `standard/archive.tsx`).  
+- Escalar la gobernanza multi-tenant más allá del modelo conceptual de 7 federaciones (queda como guideline en la sección Standard).  
+
+Este plan deja a LITLE listo para evolucionar desde un motor criptográfico sólido hacia una infraestructura completa de confianza académica, en la que Lovable actúa como entorno de desarrollo y despliegue, pero el estándar vive en las RFCs y los identificadores, no en la implementación concreta.
