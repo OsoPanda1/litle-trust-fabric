@@ -29,6 +29,7 @@ function Landing() {
     <main className="min-h-screen">
       <TopBar />
       <Hero />
+      <PillarsSection />
       <ProblemBand />
       <EngineSection />
       <CertifiesSection />
