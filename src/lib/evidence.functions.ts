@@ -1,5 +1,7 @@
 // Evidence Chain server functions (RFC-0008).
-// Public read endpoints for /verify/$litleId; owner-scoped mutations live behind auth.
+// Public read endpoint for /verify/$litleId. Uses a publishable-key client so
+// it works during SSR without a bearer token, gated by the narrow
+// `is_published = true` policy on evidence_records / evidence_nodes.
 
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
@@ -12,8 +14,8 @@ export interface PublicEvidenceSummary {
   litleId: string;
   found: boolean;
   rootHash: string | null;
-  workTitle: string | null;
   workType: string | null;
+  namespace: string | null;
   cryptoProfile: string | null;
   createdAt: string | null;
   nodeCounts: Record<EvidenceNodeKind, number>;
@@ -21,7 +23,7 @@ export interface PublicEvidenceSummary {
     id: string;
     kind: EvidenceNodeKind;
     label: string;
-    contentHash: string;
+    hash: string;
     createdAt: string;
   }>;
 }
@@ -34,12 +36,6 @@ const EMPTY_COUNTS: Record<EvidenceNodeKind, number> = {
   QUOTE: 0,
 };
 
-/**
- * Public, read-only summary of an Evidence Chain. Uses a publishable-key
- * client so it can serve during SSR/prerender without a bearer token.
- * Rows are exposed only when the record is marked public in the DB via
- * a narrow `TO anon` SELECT policy.
- */
 export const getPublicEvidence = createServerFn({ method: "GET" })
   .inputValidator((input) => IdSchema.parse(input))
   .handler(async ({ data }): Promise<PublicEvidenceSummary> => {
@@ -62,9 +58,9 @@ export const getPublicEvidence = createServerFn({ method: "GET" })
 
     const { data: record } = await supabase
       .from("evidence_records")
-      .select("litle_id, root_hash, work_title, work_type, crypto_profile, created_at, is_public")
+      .select("id, litle_id, root_hash, work_type, namespace, crypto_profile, created_at")
       .eq("litle_id", data.litleId)
-      .eq("is_public", true)
+      .eq("is_published", true)
       .maybeSingle();
 
     if (!record) {
@@ -72,8 +68,8 @@ export const getPublicEvidence = createServerFn({ method: "GET" })
         litleId: data.litleId,
         found: false,
         rootHash: null,
-        workTitle: null,
         workType: null,
+        namespace: null,
         cryptoProfile: null,
         createdAt: null,
         nodeCounts: { ...EMPTY_COUNTS },
@@ -83,20 +79,20 @@ export const getPublicEvidence = createServerFn({ method: "GET" })
 
     const { data: nodes } = await supabase
       .from("evidence_nodes")
-      .select("id, kind, label, content_hash, created_at")
-      .eq("litle_id", data.litleId)
+      .select("id, node_type, label, hash, created_at")
+      .eq("record_id", record.id)
       .order("created_at", { ascending: true })
       .limit(200);
 
     const counts = { ...EMPTY_COUNTS };
     const nodeList = (nodes ?? []).map((n) => {
-      const kind = (n.kind as EvidenceNodeKind) ?? "SOURCE";
+      const kind = (n.node_type as EvidenceNodeKind) ?? "SOURCE";
       counts[kind] = (counts[kind] ?? 0) + 1;
       return {
         id: String(n.id),
         kind,
         label: n.label ?? "",
-        contentHash: n.content_hash ?? "",
+        hash: n.hash ?? "",
         createdAt: n.created_at ?? "",
       };
     });
@@ -105,8 +101,8 @@ export const getPublicEvidence = createServerFn({ method: "GET" })
       litleId: record.litle_id,
       found: true,
       rootHash: record.root_hash ?? null,
-      workTitle: record.work_title ?? null,
       workType: record.work_type ?? null,
+      namespace: record.namespace ?? null,
       cryptoProfile: record.crypto_profile ?? null,
       createdAt: record.created_at ?? null,
       nodeCounts: counts,
