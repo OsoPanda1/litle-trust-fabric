@@ -9,38 +9,196 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StandardIndexRouteImport } from './routes/standard/index'
+import { Route as VerifyLitleIdRouteImport } from './routes/verify.$litleId'
+import { Route as StandardRfcsRouteImport } from './routes/standard/rfcs'
+import { Route as StandardArchiveRouteImport } from './routes/standard/archive'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as StandardRfcsIndexRouteImport } from './routes/standard/rfcs.index'
+import { Route as StandardRfcsSlugRouteImport } from './routes/standard/rfcs.$slug'
+import { Route as AuthenticatedBooksBookIdRouteImport } from './routes/_authenticated/books.$bookId'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StandardIndexRoute = StandardIndexRouteImport.update({
+  id: '/standard/',
+  path: '/standard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyLitleIdRoute = VerifyLitleIdRouteImport.update({
+  id: '/verify/$litleId',
+  path: '/verify/$litleId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandardRfcsRoute = StandardRfcsRouteImport.update({
+  id: '/standard/rfcs',
+  path: '/standard/rfcs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandardArchiveRoute = StandardArchiveRouteImport.update({
+  id: '/standard/archive',
+  path: '/standard/archive',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const StandardRfcsIndexRoute = StandardRfcsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StandardRfcsRoute,
+} as any)
+const StandardRfcsSlugRoute = StandardRfcsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => StandardRfcsRoute,
+} as any)
+const AuthenticatedBooksBookIdRoute =
+  AuthenticatedBooksBookIdRouteImport.update({
+    id: '/books/$bookId',
+    path: '/books/$bookId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/standard/archive': typeof StandardArchiveRoute
+  '/standard/rfcs': typeof StandardRfcsRouteWithChildren
+  '/verify/$litleId': typeof VerifyLitleIdRoute
+  '/standard/': typeof StandardIndexRoute
+  '/books/$bookId': typeof AuthenticatedBooksBookIdRoute
+  '/standard/rfcs/$slug': typeof StandardRfcsSlugRoute
+  '/standard/rfcs/': typeof StandardRfcsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/standard/archive': typeof StandardArchiveRoute
+  '/verify/$litleId': typeof VerifyLitleIdRoute
+  '/standard': typeof StandardIndexRoute
+  '/books/$bookId': typeof AuthenticatedBooksBookIdRoute
+  '/standard/rfcs/$slug': typeof StandardRfcsSlugRoute
+  '/standard/rfcs': typeof StandardRfcsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/standard/archive': typeof StandardArchiveRoute
+  '/standard/rfcs': typeof StandardRfcsRouteWithChildren
+  '/verify/$litleId': typeof VerifyLitleIdRoute
+  '/standard/': typeof StandardIndexRoute
+  '/_authenticated/books/$bookId': typeof AuthenticatedBooksBookIdRoute
+  '/standard/rfcs/$slug': typeof StandardRfcsSlugRoute
+  '/standard/rfcs/': typeof StandardRfcsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/sitemap.xml'
+    | '/dashboard'
+    | '/standard/archive'
+    | '/standard/rfcs'
+    | '/verify/$litleId'
+    | '/standard/'
+    | '/books/$bookId'
+    | '/standard/rfcs/$slug'
+    | '/standard/rfcs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/sitemap.xml'
+    | '/dashboard'
+    | '/standard/archive'
+    | '/verify/$litleId'
+    | '/standard'
+    | '/books/$bookId'
+    | '/standard/rfcs/$slug'
+    | '/standard/rfcs'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/sitemap.xml'
+    | '/_authenticated/dashboard'
+    | '/standard/archive'
+    | '/standard/rfcs'
+    | '/verify/$litleId'
+    | '/standard/'
+    | '/_authenticated/books/$bookId'
+    | '/standard/rfcs/$slug'
+    | '/standard/rfcs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StandardArchiveRoute: typeof StandardArchiveRoute
+  StandardRfcsRoute: typeof StandardRfcsRouteWithChildren
+  VerifyLitleIdRoute: typeof VerifyLitleIdRoute
+  StandardIndexRoute: typeof StandardIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +206,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/standard/': {
+      id: '/standard/'
+      path: '/standard'
+      fullPath: '/standard/'
+      preLoaderRoute: typeof StandardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify/$litleId': {
+      id: '/verify/$litleId'
+      path: '/verify/$litleId'
+      fullPath: '/verify/$litleId'
+      preLoaderRoute: typeof VerifyLitleIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standard/rfcs': {
+      id: '/standard/rfcs'
+      path: '/standard/rfcs'
+      fullPath: '/standard/rfcs'
+      preLoaderRoute: typeof StandardRfcsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standard/archive': {
+      id: '/standard/archive'
+      path: '/standard/archive'
+      fullPath: '/standard/archive'
+      preLoaderRoute: typeof StandardArchiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/standard/rfcs/': {
+      id: '/standard/rfcs/'
+      path: '/'
+      fullPath: '/standard/rfcs/'
+      preLoaderRoute: typeof StandardRfcsIndexRouteImport
+      parentRoute: typeof StandardRfcsRoute
+    }
+    '/standard/rfcs/$slug': {
+      id: '/standard/rfcs/$slug'
+      path: '/$slug'
+      fullPath: '/standard/rfcs/$slug'
+      preLoaderRoute: typeof StandardRfcsSlugRouteImport
+      parentRoute: typeof StandardRfcsRoute
+    }
+    '/_authenticated/books/$bookId': {
+      id: '/_authenticated/books/$bookId'
+      path: '/books/$bookId'
+      fullPath: '/books/$bookId'
+      preLoaderRoute: typeof AuthenticatedBooksBookIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedBooksBookIdRoute: typeof AuthenticatedBooksBookIdRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedBooksBookIdRoute: AuthenticatedBooksBookIdRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface StandardRfcsRouteChildren {
+  StandardRfcsSlugRoute: typeof StandardRfcsSlugRoute
+  StandardRfcsIndexRoute: typeof StandardRfcsIndexRoute
+}
+
+const StandardRfcsRouteChildren: StandardRfcsRouteChildren = {
+  StandardRfcsSlugRoute: StandardRfcsSlugRoute,
+  StandardRfcsIndexRoute: StandardRfcsIndexRoute,
+}
+
+const StandardRfcsRouteWithChildren = StandardRfcsRoute._addFileChildren(
+  StandardRfcsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  StandardArchiveRoute: StandardArchiveRoute,
+  StandardRfcsRoute: StandardRfcsRouteWithChildren,
+  VerifyLitleIdRoute: VerifyLitleIdRoute,
+  StandardIndexRoute: StandardIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

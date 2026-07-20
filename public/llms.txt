@@ -1,0 +1,9 @@
+# LITLE Librarian
+
+> Ingest heterogeneous research fragments, reconcile versions with a semantic
+> lineage DAG, synthesize a lossless manuscript, and seal it with a 512-byte
+> post-quantum-ready signature (LITLE-512B).
+
+## Pages
+- [Home](/): pipeline overview and LITLE-512B module explainer
+- [Sign in](/auth): access the archive
