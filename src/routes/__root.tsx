@@ -62,11 +62,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "LITLE · Infrastructure for Independent Academic Literature" },
+      { title: "LITLE — The Standard for Preserving Knowledge. Verifying Legacy." },
       {
         name: "description",
         content:
-          "LITLE preserves, organizes, authenticates and publishes independent academic work. Where independent research becomes enduring literature.",
+          "LITLE is the open standard for preserving academic knowledge, verifying its lineage, and outliving the platforms that host it.",
+      },
+      { property: "og:title", content: "LITLE — The Standard for Preserving Knowledge" },
+      {
+        property: "og:description",
+        content:
+          "Durable identifiers, evidence chains and independent preservation for academic work.",
       },
       { property: "og:site_name", content: "LITLE" },
       { property: "og:type", content: "website" },
