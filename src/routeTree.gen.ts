@@ -13,6 +13,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VerifyLitleIdRouteImport } from './routes/verify.$litleId'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedBooksBookIdRouteImport } from './routes/_authenticated/books.$bookId'
 
@@ -35,6 +36,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerifyLitleIdRoute = VerifyLitleIdRouteImport.update({
+  id: '/verify/$litleId',
+  path: '/verify/$litleId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/verify/$litleId': typeof VerifyLitleIdRoute
   '/books/$bookId': typeof AuthenticatedBooksBookIdRoute
 }
 export interface FileRoutesByTo {
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/verify/$litleId': typeof VerifyLitleIdRoute
   '/books/$bookId': typeof AuthenticatedBooksBookIdRoute
 }
 export interface FileRoutesById {
@@ -68,13 +76,26 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/verify/$litleId': typeof VerifyLitleIdRoute
   '/_authenticated/books/$bookId': typeof AuthenticatedBooksBookIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/sitemap.xml' | '/dashboard' | '/books/$bookId'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/sitemap.xml'
+    | '/dashboard'
+    | '/verify/$litleId'
+    | '/books/$bookId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/sitemap.xml' | '/dashboard' | '/books/$bookId'
+  to:
+    | '/'
+    | '/auth'
+    | '/sitemap.xml'
+    | '/dashboard'
+    | '/verify/$litleId'
+    | '/books/$bookId'
   id:
     | '__root__'
     | '/'
@@ -82,6 +103,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/_authenticated/dashboard'
+    | '/verify/$litleId'
     | '/_authenticated/books/$bookId'
   fileRoutesById: FileRoutesById
 }
@@ -90,6 +112,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  VerifyLitleIdRoute: typeof VerifyLitleIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -120,6 +143,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify/$litleId': {
+      id: '/verify/$litleId'
+      path: '/verify/$litleId'
+      fullPath: '/verify/$litleId'
+      preLoaderRoute: typeof VerifyLitleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -157,6 +187,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  VerifyLitleIdRoute: VerifyLitleIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
