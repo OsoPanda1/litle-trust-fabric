@@ -176,6 +176,71 @@ function BackgroundArchive() {
 
 /* ————————————————————— Problem ————————————————————— */
 
+function PillarsSection() {
+  const items = [
+    {
+      id: "RFC-0001",
+      title: "LITLE-ID",
+      body: "Durable, self-describing identifiers that survive rotation of the cryptographic anchor.",
+      to: "/standard/rfcs/$slug" as const,
+      params: { slug: "0001-litle-id" },
+    },
+    {
+      id: "RFC-0008",
+      title: "Evidence Chain",
+      body: "Standardized provenance: sources, prompts, model seeds, and revisions — publicly verifiable.",
+      to: "/standard/rfcs/$slug" as const,
+      params: { slug: "0008-evidence-chain" },
+    },
+    {
+      id: "RFC-0009",
+      title: "Independent Archive",
+      body: "Redundant off-platform preservation with public manifests, so works outlive the hosting.",
+      to: "/standard/rfcs/$slug" as const,
+      params: { slug: "0009-independent-archive" },
+    },
+  ];
+  return (
+    <section className="border-y border-border/60 bg-[color:oklch(0.12_0.015_60)]">
+      <div className="max-w-7xl mx-auto px-6 py-24">
+        <SectionKicker>Trust Infrastructure</SectionKicker>
+        <div className="grid md:grid-cols-[1.1fr_1fr] gap-14 items-end mb-14">
+          <h2 className="font-serif text-4xl md:text-5xl leading-tight">
+            Three specifications.
+            <br />
+            <span className="gilt-text">One standard for legacy.</span>
+          </h2>
+          <p className="text-muted-foreground leading-relaxed">
+            LITLE reframes cryptography as a means, not the product. What the
+            standard delivers is <em>editorial identity, verifiable lineage,
+            and independent preservation</em> — for research that must remain
+            citable long after its authors and platforms are gone.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-px bg-border/60 border border-border">
+          {items.map((p) => (
+            <Link
+              key={p.id}
+              to={p.to}
+              params={p.params}
+              className="bg-background p-8 group hover:bg-accent/10 transition"
+            >
+              <div className="font-mono text-xs text-gilt mb-3">{p.id}</div>
+              <h3 className="font-serif text-2xl mb-3">{p.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">{p.body}</p>
+              <span className="text-xs gilt-text font-mono opacity-70 group-hover:opacity-100">
+                Read specification →
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ————————————————————— Problem ————————————————————— */
+
 function ProblemBand() {
   const stages = [
     { k: "I", t: "Production", b: "PDFs, DOCX, Markdown, TXT, notes, drafts, audio transcripts. Years of raw material accumulate." },
