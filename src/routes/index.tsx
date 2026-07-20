@@ -3,17 +3,23 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "LITLE — The Standard for Preserving Knowledge. Verifying Legacy." },
+      {
+        title:
+          "LITLE — The Standard for Preserving Knowledge. Verifying Legacy.",
+      },
       {
         name: "description",
         content:
-          "The open standard for preserving academic knowledge, verifying its lineage, and outliving the platforms that host it.",
+          "The open institutional standard for preserving academic knowledge, verifying its lineage, and outlasting the platforms that host it.",
       },
-      { property: "og:title", content: "LITLE — The Standard for Preserving Knowledge" },
+      {
+        property: "og:title",
+        content: "LITLE — The Standard for Preserving Knowledge",
+      },
       {
         property: "og:description",
         content:
-          "Durable identifiers, evidence chains and independent preservation for academic work.",
+          "Deterministic identifiers, Merkle-verifiable evidence chains and independent preservation for academic work.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
@@ -53,17 +59,30 @@ function TopBar() {
           <div className="leading-tight">
             <div className="font-serif text-lg tracking-wide">LITLE</div>
             <div className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-              Editorial Infrastructure
+              Trust Fabric &amp; Standard
             </div>
           </div>
         </Link>
 
         <div className="hidden md:flex items-center gap-7 text-sm text-muted-foreground">
-          <Link to="/standard" className="hover:text-foreground transition">Standard</Link>
-          <Link to="/standard/rfcs" className="hover:text-foreground transition">RFCs</Link>
-          <Link to="/standard/archive" className="hover:text-foreground transition">Archive</Link>
-          <a href="#how" className="hover:text-foreground transition">How it Works</a>
-          <a href="#library" className="hover:text-foreground transition">Library</a>
+          <Link to="/standard" className="hover:text-foreground transition">
+            Standard
+          </Link>
+          <Link to="/standard/rfcs" className="hover:text-foreground transition">
+            RFCs
+          </Link>
+          <Link
+            to="/standard/archive"
+            className="hover:text-foreground transition"
+          >
+            Archive
+          </Link>
+          <a href="#how" className="hover:text-foreground transition">
+            Engine
+          </a>
+          <a href="#library" className="hover:text-foreground transition">
+            Library
+          </a>
         </div>
 
         <div className="flex items-center gap-2 text-sm">
@@ -97,22 +116,22 @@ function Hero() {
           The LITLE Standard · Edition I
           <span className="h-px w-8 bg-gilt/60" />
         </div>
-        <h1 className="font-serif text-5xl md:text-7xl leading-[1.02] mb-8">
+        <h1 className="font-serif text-5xl md:text-7xl leading-[1.02] mb-8 platinum-text">
           The Standard for
           <br />
           Preserving Knowledge.
           <br />
-          <span className="gilt-text italic">Verifying Legacy.</span>
+          <span className="italic text-foreground">Verifying Legacy.</span>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed">
-          LITLE is the open standard for academic works that must remain
-          citable across decades — with durable identifiers, transparent
+          LITLE is the open institutional standard for works that must remain
+          citable across decades — with deterministic identifiers, transparent
           evidence chains, and preservation that outlives any single platform.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <Link
             to="/standard"
-            className="rounded-sm bg-primary text-primary-foreground px-6 py-3 text-sm font-medium tracking-wide hover:opacity-90 transition"
+            className="btn-institutional text-sm font-medium tracking-wide"
           >
             Read the Standard
           </Link>
@@ -130,14 +149,26 @@ function Hero() {
 }
 
 function BackgroundArchive() {
-  // A quiet abstract library / graph motif, drawn with tight SVG lines.
+  // Abstract library / lineage motif.
   return (
     <div className="pointer-events-none absolute inset-0 opacity-[0.18]">
-      <svg className="w-full h-full" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
+      <svg
+        className="w-full h-full"
+        viewBox="0 0 1200 600"
+        preserveAspectRatio="xMidYMid slice"
+      >
         <defs>
           <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="oklch(0.78 0.14 75)" stopOpacity="0.9" />
-            <stop offset="1" stopColor="oklch(0.78 0.14 75)" stopOpacity="0" />
+            <stop
+              offset="0"
+              stopColor="oklch(0.78 0.14 75)"
+              stopOpacity="0.9"
+            />
+            <stop
+              offset="1"
+              stopColor="oklch(0.78 0.14 75)"
+              stopOpacity="0"
+            />
           </linearGradient>
         </defs>
         {/* stacked shelves */}
@@ -156,7 +187,11 @@ function BackgroundArchive() {
           </g>
         ))}
         {/* subtle DAG overlay */}
-        <g stroke="oklch(0.78 0.14 75)" strokeOpacity="0.35" fill="none">
+        <g
+          stroke="oklch(0.78 0.14 75)"
+          strokeOpacity="0.35"
+          fill="none"
+        >
           {[
             [200, 120, 380, 220],
             [380, 220, 560, 180],
@@ -166,7 +201,14 @@ function BackgroundArchive() {
             [780, 260, 980, 340],
             [800, 400, 980, 340],
           ].map(([x1, y1, x2, y2], i) => (
-            <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="0.6" />
+            <line
+              key={i}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              strokeWidth="0.6"
+            />
           ))}
         </g>
       </svg>
@@ -174,28 +216,28 @@ function BackgroundArchive() {
   );
 }
 
-/* ————————————————————— Problem ————————————————————— */
+/* ————————————————————— Pillars ————————————————————— */
 
 function PillarsSection() {
   const items = [
     {
       id: "RFC-0001",
       title: "LITLE-ID",
-      body: "Durable, self-describing identifiers that survive rotation of the cryptographic anchor.",
+      body: "Durable, self-describing identifiers that survive rotation of the cryptographic profile.",
       to: "/standard/rfcs/$slug" as const,
       params: { slug: "0001-litle-id" },
     },
     {
       id: "RFC-0008",
       title: "Evidence Chain",
-      body: "Standardized provenance: sources, prompts, model seeds, and revisions — publicly verifiable.",
+      body: "Standardized provenance: sources, prompts, model seeds and revisions — Merkle-verifiable.",
       to: "/standard/rfcs/$slug" as const,
       params: { slug: "0008-evidence-chain" },
     },
     {
       id: "RFC-0009",
       title: "Independent Archive",
-      body: "Redundant off-platform preservation with public manifests, so works outlive the hosting.",
+      body: "Redundant off-platform preservation with public manifests, so works outlive the hosting layer.",
       to: "/standard/rfcs/$slug" as const,
       params: { slug: "0009-independent-archive" },
     },
@@ -208,16 +250,19 @@ function PillarsSection() {
           <h2 className="font-serif text-4xl md:text-5xl leading-tight">
             Three specifications.
             <br />
-            <span className="gilt-text">One standard for legacy.</span>
+            <span className="gilt-text">
+              One institutional standard for legacy.
+            </span>
           </h2>
           <p className="text-muted-foreground leading-relaxed">
-            LITLE reframes cryptography as a means, not the product. What the
-            standard delivers is <em>editorial identity, verifiable lineage,
-            and independent preservation</em> — for research that must remain
-            citable long after its authors and platforms are gone.
+            LITLE reframes cryptography as a foundation, not the product. The{" "}
+            <span className="italic">standard</span> delivers editorial
+            identity, verifiable lineage and independent preservation —
+            for research that must remain citable long after platforms and
+            implementations change.
           </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-px bg-border/60 border border-border">
+        <div className="grid md:grid-cols-3 gap-px bg-border/60 border border-border crystal-panel">
           {items.map((p) => (
             <Link
               key={p.id}
@@ -225,9 +270,13 @@ function PillarsSection() {
               params={p.params}
               className="bg-background p-8 group hover:bg-accent/10 transition"
             >
-              <div className="font-mono text-xs text-gilt mb-3">{p.id}</div>
+              <div className="font-mono text-xs text-gilt mb-3">
+                {p.id}
+              </div>
               <h3 className="font-serif text-2xl mb-3">{p.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-6">{p.body}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                {p.body}
+              </p>
               <span className="text-xs gilt-text font-mono opacity-70 group-hover:opacity-100">
                 Read specification →
               </span>
@@ -243,9 +292,21 @@ function PillarsSection() {
 
 function ProblemBand() {
   const stages = [
-    { k: "I", t: "Production", b: "PDFs, DOCX, Markdown, TXT, notes, drafts, audio transcripts. Years of raw material accumulate." },
-    { k: "II", t: "Organization", b: "Where almost everything stops. Folders overlap, versions multiply, coherence dissolves." },
-    { k: "III", t: "Publication", b: "Only a fraction ever reaches this point. Most independent work never becomes literature." },
+    {
+      k: "I",
+      t: "Production",
+      b: "PDFs, DOCX, Markdown, notes, drafts, audio transcripts. Years of raw material accumulate.",
+    },
+    {
+      k: "II",
+      t: "Organization",
+      b: "Where almost everything stops. Folders overlap, versions multiply, coherence dissolves.",
+    },
+    {
+      k: "III",
+      t: "Publication",
+      b: "Only a fraction ever reaches this point. Most independent work never becomes literature.",
+    },
   ];
   return (
     <section id="how" className="max-w-7xl mx-auto px-6 py-28">
@@ -255,15 +316,19 @@ function ProblemBand() {
         <span className="gilt-text"> organization and publication.</span>
       </h2>
       <p className="text-muted-foreground max-w-2xl mb-14">
-        LITLE lives exactly there — between the years of accumulated fragments
-        and the finished, verifiable book.
+        LITLE sits exactly there — between years of accumulated fragments
+        and the finished, verifiable record.
       </p>
-      <div className="grid md:grid-cols-3 gap-px bg-border/60 border border-border">
+      <div className="grid md:grid-cols-3 gap-px bg-border/60 border border-border crystal-panel">
         {stages.map((s) => (
           <div key={s.k} className="bg-background p-8">
-            <div className="font-mono text-xs tracking-widest text-gilt mb-4">STAGE {s.k}</div>
+            <div className="font-mono text-xs tracking-widest text-gilt mb-4">
+              STAGE {s.k}
+            </div>
             <h3 className="font-serif text-2xl mb-3">{s.t}</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">{s.b}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {s.b}
+            </p>
           </div>
         ))}
       </div>
@@ -275,13 +340,34 @@ function ProblemBand() {
 
 function EngineSection() {
   const steps = [
-    { t: "Raw Knowledge", b: "Massive ingestion of heterogeneous files: PDF, DOCX, MD, TXT, transcribed notes." },
-    { t: "Knowledge Reconstruction", b: "Recover the lineage of each idea — its versions, evolutions and merges." },
-    { t: "Semantic Organization", b: "Thematic and chapter structure based on meaning, not dates or filenames." },
-    { t: "Editorial Synthesis", b: "Narrative synthesis: complete, continuous and rigorous chapters." },
-    { t: "Cryptographic Identity", b: "A structural editorial identity — LITLE-512B — assigned to every work." },
-    { t: "Publication", b: "Professional formats (EPUB, PDF, print) released into the LITLE network." },
-    { t: "Long-term Preservation", b: "The content, its lineage and its traceability preserved across decades." },
+    {
+      t: "Raw Knowledge",
+      b: "Massive ingestion of heterogeneous files: PDF, DOCX, MD, TXT, transcribed notes.",
+    },
+    {
+      t: "Knowledge Reconstruction",
+      b: "Recover the lineage of each idea — its versions, evolutions and merges.",
+    },
+    {
+      t: "Semantic Organization",
+      b: "Thematic and chapter structure based on meaning, not dates or filenames.",
+    },
+    {
+      t: "Editorial Synthesis",
+      b: "Narrative synthesis: complete, continuous and rigorous chapters.",
+    },
+    {
+      t: "Cryptographic Identity",
+      b: "A structural editorial identity — Profile L-512 v1 — assigned to every work.",
+    },
+    {
+      t: "Publication",
+      b: "Professional formats (EPUB, PDF, print) released into the LITLE network.",
+    },
+    {
+      t: "Long-term Preservation",
+      b: "The content, its lineage and its traceability preserved across decades.",
+    },
   ];
   return (
     <section className="border-y border-border/60 bg-[color:oklch(0.12_0.015_60)]">
@@ -320,12 +406,30 @@ function EngineSection() {
 
 function CertifiesSection() {
   const items = [
-    { t: "Author identity", b: "The individual or collective responsible for the work." },
-    { t: "Exact content", b: "Text, chapters, glossary, formulas — hashed and versioned." },
-    { t: "Structural lineage", b: "The source files, notes and revisions the work descends from." },
-    { t: "Edition and cover", b: "Version (vX.Y.Z) and a cryptographic hash of the cover art." },
-    { t: "Timestamp and integrity", b: "A verifiable moment of sealing; any later alteration leaves a trace." },
-    { t: "Editorial identity", b: "A LITLE-512B container that anchors the work as citable literature." },
+    {
+      t: "Author identity",
+      b: "The individual or collective responsible for the work.",
+    },
+    {
+      t: "Exact content",
+      b: "Text, chapters, glossary, formulas — hashed and versioned.",
+    },
+    {
+      t: "Structural lineage",
+      b: "The source files, notes and revisions the work descends from.",
+    },
+    {
+      t: "Edition and cover",
+      b: "Version (vX.Y.Z) and a cryptographic hash of the cover art.",
+    },
+    {
+      t: "Timestamp and integrity",
+      b: "A verifiable moment of sealing; any later alteration leaves a trace.",
+    },
+    {
+      t: "Editorial identity",
+      b: "A LITLE-ID linked to a cryptographic profile that anchors the work as citable literature.",
+    },
   ];
   return (
     <section id="standard" className="max-w-7xl mx-auto px-6 py-28">
@@ -338,24 +442,26 @@ function CertifiesSection() {
             An <span className="gilt-text italic">editorial identity.</span>
           </h2>
           <p className="text-muted-foreground mb-8 leading-relaxed">
-            At the core of the system is the LITLE-512B standard — a
-            512-byte cryptographic container that binds a work to its authors,
-            its content and its history. Cryptography is the mechanism;
-            editorial identity is the product.
+            At the core of the system is a profile like L-512 v1 — a 512-byte
+            cryptographic container that binds a work to its authors, its
+            content and its history. Cryptography is the mechanism; editorial
+            identity is the product.
           </p>
-          <div className="font-mono text-xs text-muted-foreground border border-border/70 p-5 leading-relaxed">
-            <div className="gilt-text mb-2">litle1qz9j…gk7pf2s</div>
+          <div className="font-mono text-xs text-muted-foreground border border-border/70 p-5 leading-relaxed crystal-panel">
+            <div className="gilt-text mb-2">litle://2026/tech/IA/8F4A29D…</div>
             back cover · colophon · library record
           </div>
         </div>
-        <ul className="grid sm:grid-cols-2 gap-px bg-border/60 border border-border">
+        <ul className="grid sm:grid-cols-2 gap-px bg-border/60 border border-border crystal-panel">
           {items.map((i) => (
             <li key={i.t} className="bg-background p-6">
               <div className="flex items-start gap-3">
                 <span className="mt-1 text-gilt font-mono">✓</span>
                 <div>
                   <div className="font-serif text-lg mb-1">{i.t}</div>
-                  <div className="text-sm text-muted-foreground">{i.b}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {i.b}
+                  </div>
                 </div>
               </div>
             </li>
@@ -370,24 +476,36 @@ function CertifiesSection() {
 
 function LibrarySection() {
   const disciplines = [
-    "Technology", "Sciences", "Humanities",
-    "Culture", "Politics", "Economics",
-    "Finance", "Education", "Critical Thought",
+    "Technology",
+    "Sciences",
+    "Humanities",
+    "Culture",
+    "Politics",
+    "Economics",
+    "Finance",
+    "Education",
+    "Critical Thought",
   ];
   return (
-    <section id="library" className="border-y border-border/60 bg-[color:oklch(0.12_0.015_60)]">
+    <section
+      id="library"
+      className="border-y border-border/60 bg-[color:oklch(0.12_0.015_60)]"
+    >
       <div className="max-w-7xl mx-auto px-6 py-28">
         <SectionKicker>Independent Academic Library</SectionKicker>
         <div className="grid md:grid-cols-[1.2fr_1fr] gap-14 items-end mb-14">
           <h2 className="font-serif text-4xl md:text-5xl leading-tight">
             A curated space for
-            <span className="gilt-text"> technology, science, humanities</span>{" "}
+            <span className="gilt-text">
+              {" "}
+              technology, science, humanities{" "}
+            </span>
             and critical thought.
           </h2>
           <p className="text-muted-foreground leading-relaxed">
             No commercial fiction. No vanity content. Only rigorous work,
             reconstructed by the LITLE engine and sealed with an editorial
-            identity that will outlive the platform hosting it.
+            identity that is designed to outlive the platform hosting it.
           </p>
         </div>
 
@@ -395,7 +513,7 @@ function LibrarySection() {
           {disciplines.map((d) => (
             <div
               key={d}
-              className="card-editorial p-6 flex items-center justify-between group"
+              className="card-editorial p-6 flex items-center justify-between group crystal-panel"
             >
               <div>
                 <div className="font-serif text-xl">{d}</div>
@@ -424,7 +542,7 @@ function LibrarySection() {
 function ClosingCTA() {
   return (
     <section id="authors" className="max-w-7xl mx-auto px-6 py-28">
-      <div className="grid md:grid-cols-2 gap-px bg-border/60 border border-border">
+      <div className="grid md:grid-cols-2 gap-px bg-border/60 border border-border crystal-panel">
         <div className="bg-background p-10 md:p-14">
           <div className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
             I read
@@ -447,16 +565,19 @@ function ClosingCTA() {
             I publish
           </div>
           <h3 className="font-serif text-3xl mb-4">
-            Turn years of research into <span className="gilt-text italic">enduring literature.</span>
+            Turn years of research into{" "}
+            <span className="gilt-text italic">
+              enduring literature.
+            </span>
           </h3>
           <p className="text-muted-foreground mb-8 leading-relaxed">
-            We don't judge your drafts. We reconstruct your research. Upload
+            We do not judge your drafts. We reconstruct your research. Upload
             your archive and let LITLE compose, seal and publish the work
             that has been waiting inside it.
           </p>
           <Link
             to="/auth"
-            className="inline-flex rounded-sm bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium hover:opacity-90 transition"
+            className="btn-institutional text-sm font-medium"
           >
             Preserve your research →
           </Link>
@@ -475,39 +596,62 @@ function SiteFooter() {
         <div>
           <div className="flex items-center gap-3 mb-4">
             <div className="h-8 w-8 grid place-items-center border border-gilt/60">
-              <span className="gilt-text font-serif text-lg leading-none">L</span>
+              <span className="gilt-text font-serif text-lg leading-none">
+                L
+              </span>
             </div>
-            <span className="font-serif text-lg tracking-wide">LITLE</span>
+            <span className="font-serif text-lg tracking-wide">
+              LITLE
+            </span>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-            Infrastructure for independent academic literature. A long-term
-            commitment to preservation, integrity and attribution.
+            Institutional infrastructure for independent academic literature. A
+            long-term commitment to preservation, integrity and attribution.
           </p>
         </div>
 
-        <FooterCol title="Policies" items={["Ethics", "Integrity", "Preservation"]} />
-        <FooterCol title="Technical Specs" items={["LITLE-512B", "API", "Integrations"]} />
-        <FooterCol title="Community" items={["Governance", "Contact", "Colophon"]} />
+        <FooterCol
+          title="Policies"
+          items={["Ethics", "Integrity", "Preservation"]}
+        />
+        <FooterCol
+          title="Technical Specs"
+          items={["LITLE-ID", "Profile L-512", "Integrations"]}
+        />
+        <FooterCol
+          title="Community"
+          items={["Governance", "Contact", "Colophon"]}
+        />
       </div>
 
       <div className="border-t border-border/60">
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground font-mono uppercase tracking-widest">
-          <span>LITLE · Editorial Infrastructure</span>
-          <span className="gilt-text">Where independent research becomes enduring literature.</span>
+          <span>LITLE · Trust Fabric &amp; Standard</span>
+          <span className="gilt-text">
+            Where independent research becomes enduring literature.
+          </span>
         </div>
       </div>
     </footer>
   );
 }
 
-function FooterCol({ title, items }: { title: string; items: string[] }) {
+function FooterCol({
+  title,
+  items,
+}: {
+  title: string;
+  items: string[];
+}) {
   return (
     <div>
-      <div className="text-xs uppercase tracking-[0.3em] text-gilt/80 mb-4">{title}</div>
+      <div className="section-label mb-4">{title}</div>
       <ul className="space-y-2 text-sm text-muted-foreground">
         {items.map((i) => (
           <li key={i}>
-            <a href="#" className="hover:text-foreground transition">{i}</a>
+            <a href="#" className="hover:text-foreground transition">
+              {i}
+            </a>
           </li>
         ))}
       </ul>
@@ -517,9 +661,13 @@ function FooterCol({ title, items }: { title: string; items: string[] }) {
 
 /* ————————————————————— Utilities ————————————————————— */
 
-function SectionKicker({ children }: { children: React.ReactNode }) {
+function SectionKicker({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.32em] text-muted-foreground mb-6">
+    <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.32em] text-muted-foreground mb-6 section-label">
       <span className="h-px w-8 bg-gilt/60" />
       {children}
     </div>
