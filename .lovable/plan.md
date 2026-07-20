@@ -1,7 +1,3 @@
-Aquí tienes un plan maestro actualizado para `.lovable/plan.md`, alineado con el nuevo posicionamiento de LITLE y con el stack TanStack Start + Supabase en mente. [github](https://github.com/tanstack/router/tree/main/examples/react/start-supabase-basic)
-
-***
-
 # .lovable/plan.md
 
 ## Contexto general
