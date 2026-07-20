@@ -1,50 +1,323 @@
-# LITLE Trust Fabric — Institutional Architecture & Protocol Spec
+LITLE Trust Fabric — Institutional Architecture & Platform Map
+“The Standard for Preserving Knowledge. Verifying Legacy.”
+LITLE es una infraestructura de confianza institucional diseñada para investigación independiente, verificación de identidad y preservación de conocimiento multigeneracional.
 
-> **"The Standard for Preserving Knowledge. Verifying Legacy."**
-> LITLE is an institutional trust infrastructure designed for independent research, identity verification, and multi-generational knowledge preservation. Governed by the **7-federations framework of TAMV**, LITLE decouples the standard from the implementation, providing cryptographic lineage, deterministic identifiers, and Merkle-verifiable evidence chains.
+Bajo el marco de las 7 federaciones de TAMV, LITLE separa explícitamente el estándar de la implementación, ofreciendo linaje criptográfico, identificadores deterministas y cadenas de evidencia Merkle-verificables.
 
----
+I. Evolución estructural: de Librarian a Trust Fabric
+Antes: LITLE Librarian
+“Ingest heterogeneous research fragments, reconcile versions with a semantic lineage DAG, synthesize a lossless manuscript, and seal it with a 512-byte post-quantum-ready signature (LITLE-512B).”
 
-## I. Architectural Pillars
+Enfoque centrado en pipeline técnico (ingesta → DAG → manuscrito → firma).
 
-### 1. LITLE-ID (RFC-0001)
+Narrativa de producto: “módulo L-512B” y verificación de manuscritos.
 
-A durable, self-describing, and namespace-aware identifier standard designed to outlive specific storage backends or binary formats.
+Ahora: LITLE Trust Fabric
+LITLE se redefine como arquitectura institucional, no solo pipeline.
 
-* **Structure:** Supports both URI forms (`litle://2026/tech/IA/8F4A29D...`) and human-readable tokens (`LTL-2026-RQ-8F4A-29D3`).
-* **Work Types:** Categorized cleanly across domains (e.g., `BK` for Books, `RQ` for Research, `DS` for Datasets, `PL` for Pipelines, `AR` for Articles).
-* **Decoupled Cryptography:** Operates independently of underlying signature profiles (`L-512.v1`), allowing long-term asset identity to persist even as cryptographic primitives evolve or migrate.
+El foco se desplaza a:
 
-### 2. Evidence Chain & Lineage DAG (RFC-0008)
+Identidad durable (LITLE-ID).
 
-A tamper-evident, Merkle-verifiable record of the entire research pipeline and provenance lifecycle.
+Evidencia reproducible (Evidence Chain).
 
-* **Node Types:** Captures structured cryptographic and metadata nodes (`Source`, `Version`, `Author`, `Signature`, `PipelineStep`, `ModelUsage`, `Prompt`, `Seed`, `Checksum`, `Config`).
-* **Verifiable Continuity:** Each node stores an immutable SHA-256 hash of its canonical payload, linking parents to children to ensure zero-trust auditability across automated and manual research workflows.
+Gobernanza explícita (RFCs, LIP, 7 federaciones).
 
-### 3. Governance & Standards Layer (RFC-0010)
+El motor L-512 pasa a ser un perfil criptográfico dentro de esta tela de confianza (Trust Fabric), no la identidad en sí.
 
-An explicit standards framework separating protocol definition from application code.
+II. Pilares arquitectónicos (Institucionales)
+1. LITLE-ID (RFC-0001) — Identidad institucional
+Un estándar de identificador durable, autodescriptivo y consciente de namespaces, diseñado para sobrevivir a backends y formatos binarios específicos.
 
-* **7-Federations Model (TAMV):** Decentralized institutional oversight managed across seven autonomous operational and validation federations.
-* **LIP Process:** LITLE Improvement Proposals governing the lifecycle of core specifications from Draft to Stable and Experimental states.
-* **Independent Archive (RFC-0009):** Protocol commitments for multi-repository synchronization and long-term offline reproducibility.
+Estructura dual:
 
----
+URI: litle://2026/tech/IA/8F4A29D...
 
-## II. Cryptographic Engine & Verification
+Token humano: LTL-2026-RQ-8F4A-29D3
 
-* **Profile L-512 v1:** Post-quantum-ready signature and container format providing robust integrity guarantees for preserved manuscripts and artifacts.
-* **Zero-Trust Verification:** Publicly accessible validation channels enabling independent third-party verification of identity, lineage integrity, and institutional seals without requiring credentials.
+Tipos de obra:
 
----
+BK — Book
 
-## III. Platform Surface Map (Routes & Access Directory)
+RQ — Research
 
-* **[Home / Landing Page](https://www.google.com/search?q=/)**: System overview, core pillar navigation, and infrastructure introduction.
-* **[Public Verification (`/verify.$litleId`)](https://www.google.com/search?q=/verify.%24litleId)**: Real-time cryptographic status, metadata, and Evidence Chain summary lookup for any valid LITLE-ID.
-* **[Standards Council & Governance (`/standard`)](https://www.google.com/search?q=/standard)**: Overview of the 7-federations governance model, the LIP lifecycle, and core vs. experimental specifications.
-* **[RFC Index (`/standard/rfcs`)](https://www.google.com/search?q=/standard/rfcs)**: Complete registry of Request For Comments (RFC-0001 through RFC-0010) with active status indicators (Draft, Stable, Experimental).
-* **[Independent Archive (`/standard/archive`)](https://www.google.com/search?q=/standard/archive)**: Replication guarantees, mirrored storage architecture, and decentralization roadmaps.
-* **[Authenticated Archive Workspace (`/_authenticated`)](https://www.google.com/search?q=/dashboard)**: Restricted environment for pipeline ingestion, manuscript synthesis, and evidence node recording.
-* **[Authentication Portal (`/auth`)](https://www.google.com/search?q=/auth)**: Secure identity gate for archive administrators and authorized contributors.
+DS — Dataset
+
+PL — Pipeline
+
+AR — Article
+
+Cripto desacoplada:
+
+LITLE-ID no codifica directamente el perfil (L-512.v1); éste se anota como metadato, lo que permite migrar de L-512 a L-1024 sin cambiar la identidad.
+
+Propósito institucional:
+
+Responder “¿qué investigación y qué linaje representa esto?”, no sólo “¿dónde está el PDF?”.
+
+2. Evidence Chain & Lineage DAG (RFC-0008) — Preservación de evidencia
+Una cadena estructurada, tamper-evident y Merkle-verificable que documenta el pipeline completo de una obra: desde las fuentes hasta los prompts y modelos IA.
+
+Tipos de nodo:
+
+Source — fuentes primarias y secundarias.
+
+Version — versiones de manuscritos y datasets.
+
+Author — identidad y rol de autores/editores.
+
+Signature — firmas L-512/L-1024 y sellos institucionales.
+
+PipelineStep — pasos de OCR, chunking, embeddings, índices, síntesis.
+
+ModelUsage — modelos IA utilizados (nombre, versión, proveedor).
+
+Prompt — prompts, plantillas y scripts.
+
+Seed — semillas de aleatoriedad, reproducibilidad.
+
+Checksum — hashes de artefactos (archivos, datasets).
+
+Config — configuración de pipelines, hiperparámetros.
+
+Verificabilidad:
+
+Cada nodo almacena un hash SHA-256 de su payload canonical (JSON ordenado), de modo que:
+
+La cadena completa puede ser auditada sin confianza ciega.
+
+La manipulación posterior deja rastro criptográfico.
+
+Rol institucional:
+
+Permite que una universidad o archivo reconstruya, décadas después, cómo se generó una obra, no sólo qué contiene el archivo final.
+
+3. Governance & Standards Layer (RFC-0010) — Arquitectura organizacional
+Un marco de estándares que separa la definición del protocolo de cualquier implementación concreta (incluida la app actual basada en TanStack Start).
+
+Modelo de 7 federaciones (TAMV):
+
+Siete federaciones autónomas gestionan:
+
+Emisión de identificadores.
+
+Validación de Evidences.
+
+Custodia de archivos independientes.
+
+Reduce dependencia en una sola entidad y mejora resiliencia institucional.
+
+Proceso LIP (LITLE Improvement Proposals):
+
+Canal formal para proponer cambios al estándar.
+
+Estados: Draft → Review → Stable → Experimental.
+
+Cada LIP puede afectar uno o varios RFCs (p.ej. nuevo perfil criptográfico).
+
+Archivo independiente (RFC-0009):
+
+Define cómo se replican RFCs y perfiles en:
+
+arXiv, Zenodo, Internet Archive, repos institucionales.
+
+Garantiza que el estándar permanezca accesible incluso si la implementación actual desaparece.
+
+III. Motor criptográfico y verificación institucional
+Perfil L-512 v1 — Engine bajo el capó
+Contenedor de 512 bytes con bloques A–D, Merkle AST, PQC seed y firma stand-in, preparado para futuras migraciones a ML-DSA u otros esquemas post-cuánticos.
+
+Documentado en RFCs:
+
+RFC-0003 — Book Container (layout).
+
+RFC-0004 — Merkle AST.
+
+RFC-0005 — Cryptographic Signature.
+
+RFC-0006 — Verification Protocol.
+
+Verificación Zero-Trust + Evidence Preservation
+Zero-Trust Verification:
+
+Cualquier tercero puede verificar la integridad y autoría de una obra:
+
+Sin credenciales.
+
+Sin confiar en un servidor central.
+
+Evidence Preservation:
+
+Complementa Zero-Trust:
+
+No sólo “¿es auténtico?”, sino “¿puedo reproducir la cadena de evidencia que llevó aquí?”.
+
+Relevante para:
+
+Comités de ética.
+
+Archivos nacionales.
+
+Bibliotecas universitarias.
+
+IV. Mapa institucional de superficie (rutas y responsabilidades)
+Pensado para la arquitectura TanStack Start (file-based routing) y un despliegue con Supabase como backend.
+
+1. Home / Landing Page (/)
+Rol institucional: puerta de entrada para investigadores, bibliotecarios y comités.
+
+Presenta:
+
+Slogan: “The Standard for Preserving Knowledge. Verifying Legacy.”
+
+Tres pilares: LITLE-ID, Evidence Chain, Governance.
+
+Resumen del perfil L-512 como engine, no como producto.
+
+Enfatiza:
+
+Que LITLE no es “otro DOI”, sino un estándar para identidad, linaje y verificabilidad.
+
+2. Public Verification (/verify.$litleId)
+Rol institucional: canal de transparencia pública.
+
+Permite:
+
+Resolver un LITLE-ID a:
+
+Perfil criptográfico actual.
+
+Estado de verificación (válido, alterado, desalineado).
+
+Resumen de Evidence Chain (conteo de nodos, tipos clave).
+
+Acceso:
+
+Público (sin autenticación), sujeto a políticas de publicación definidas en Supabase/RLS.
+
+3. Standards Council & Governance (/standard)
+Rol institucional: centro de la arquitectura de estándares.
+
+Describe:
+
+LITLE Standards Council / Independent Literature Standards Committee.
+
+Modelo de 7 federaciones y sus roles.
+
+Proceso LIP: cómo se proponen cambios y se adoptan RFCs.
+
+Enfatiza la separación:
+
+Estándar vs Implementación (la app es solo una referencia).
+
+4. RFC Index (/standard/rfcs)
+Rol institucional: catálogo formal de especificaciones.
+
+Lista:
+
+RFC-0001…RFC-0010, con:
+
+Estado (Draft, Stable, Experimental).
+
+Título, resumen, enlaces a texto completo.
+
+Permite a:
+
+Implementadores y comités entender qué partes son core vs experimentales.
+
+5. RFC Detail (/standard/rfcs.$rfcId)
+Rol institucional: fuente de verdad de cada especificación.
+
+Renderiza:
+
+Contenido Markdown/MDX de src/content/rfcs/RFC-XXXX.md.
+
+Historial de versiones y referencias cruzadas a otros RFCs.
+
+6. Independent Archive (/standard/archive)
+Rol institucional: manifiesto de preservación y replicación.
+
+Documenta:
+
+Dónde se replican los RFCs y perfiles (arXiv, Zenodo, Internet Archive, etc.).
+
+Políticas de reproducibilidad a largo plazo.
+
+Actúa como:
+
+Contrato social con instituciones: el estándar no vive sólo en una app.
+
+7. Authenticated Archive Workspace (/_authenticated)
+Rol institucional: entorno controlado para archivistas y autores.
+
+Función:
+
+Ingesta de fragmentos de investigación.
+
+Gestión de pipelines (OCR, chunking, embeddings, índices).
+
+Registro automático de Evidence Nodes.
+
+Control:
+
+Acceso restringido vía Supabase Auth y RLS, alineado con buenas prácticas de seguridad.
+
+8. Authentication Portal (/auth)
+Rol institucional: puerta de acceso al archivo.
+
+Rol:
+
+Gestionar identidades de:
+
+Autores.
+
+Revisores.
+
+Bibliotecarios y administradores.
+
+Alineado con:
+
+Políticas de RLS y governance, asegurando que sólo perfiles autorizados pueden crear o modificar Evidence Chains asociadas a ciertos LITLE-ID.
+
+V. Organización interna y enfoque institucional
+Capas organizacionales
+Capa de Estándar (RFCs + LITLE-ID)
+
+Define semántica, estructuras, procesos (LIPs, federaciones).
+
+Versionada vía git y replicada en archivos independientes.
+
+Capa de Infraestructura (Supabase + TanStack Start)
+
+Implementa:
+
+Persistencia de Evidence Chain.
+
+Servicios de verificación pública.
+
+Portales de auth y workspace.
+
+Capa de Aplicación (UI / Librarian UI)
+
+Ofrece:
+
+Experiencias de usuario (landing, verify, standard, dashboard).
+
+Tools para investigadores y archivistas.
+
+Enfoque institucional
+LITLE se posiciona como:
+
+Infraestructura (no producto cerrado).
+
+Estándar abierto (no sólo código).
+
+Herramienta de gobernanza del conocimiento (no sólo herramienta de seguridad).
+
+LITLE We are a Trust Fabric institucional, donde:
+
+LITLE-ID proporciona identidad durable.
+
+Evidence Chain ancla reproducibilidad y preservación de evidencia.
+
+La capa de gobernanza y RFCs asegura que el estándar pueda ser adoptado, auditado y extendido por universidades, archivos y consorcios independientes.
