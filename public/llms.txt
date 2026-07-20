@@ -1,9 +1,50 @@
-# LITLE Librarian
+# LITLE Trust Fabric — Institutional Architecture & Protocol Spec
 
-> Ingest heterogeneous research fragments, reconcile versions with a semantic
-> lineage DAG, synthesize a lossless manuscript, and seal it with a 512-byte
-> post-quantum-ready signature (LITLE-512B).
+> **"The Standard for Preserving Knowledge. Verifying Legacy."**
+> LITLE is an institutional trust infrastructure designed for independent research, identity verification, and multi-generational knowledge preservation. Governed by the **7-federations framework of TAMV**, LITLE decouples the standard from the implementation, providing cryptographic lineage, deterministic identifiers, and Merkle-verifiable evidence chains.
 
-## Pages
-- [Home](/): pipeline overview and LITLE-512B module explainer
-- [Sign in](/auth): access the archive
+---
+
+## I. Architectural Pillars
+
+### 1. LITLE-ID (RFC-0001)
+
+A durable, self-describing, and namespace-aware identifier standard designed to outlive specific storage backends or binary formats.
+
+* **Structure:** Supports both URI forms (`litle://2026/tech/IA/8F4A29D...`) and human-readable tokens (`LTL-2026-RQ-8F4A-29D3`).
+* **Work Types:** Categorized cleanly across domains (e.g., `BK` for Books, `RQ` for Research, `DS` for Datasets, `PL` for Pipelines, `AR` for Articles).
+* **Decoupled Cryptography:** Operates independently of underlying signature profiles (`L-512.v1`), allowing long-term asset identity to persist even as cryptographic primitives evolve or migrate.
+
+### 2. Evidence Chain & Lineage DAG (RFC-0008)
+
+A tamper-evident, Merkle-verifiable record of the entire research pipeline and provenance lifecycle.
+
+* **Node Types:** Captures structured cryptographic and metadata nodes (`Source`, `Version`, `Author`, `Signature`, `PipelineStep`, `ModelUsage`, `Prompt`, `Seed`, `Checksum`, `Config`).
+* **Verifiable Continuity:** Each node stores an immutable SHA-256 hash of its canonical payload, linking parents to children to ensure zero-trust auditability across automated and manual research workflows.
+
+### 3. Governance & Standards Layer (RFC-0010)
+
+An explicit standards framework separating protocol definition from application code.
+
+* **7-Federations Model (TAMV):** Decentralized institutional oversight managed across seven autonomous operational and validation federations.
+* **LIP Process:** LITLE Improvement Proposals governing the lifecycle of core specifications from Draft to Stable and Experimental states.
+* **Independent Archive (RFC-0009):** Protocol commitments for multi-repository synchronization and long-term offline reproducibility.
+
+---
+
+## II. Cryptographic Engine & Verification
+
+* **Profile L-512 v1:** Post-quantum-ready signature and container format providing robust integrity guarantees for preserved manuscripts and artifacts.
+* **Zero-Trust Verification:** Publicly accessible validation channels enabling independent third-party verification of identity, lineage integrity, and institutional seals without requiring credentials.
+
+---
+
+## III. Platform Surface Map (Routes & Access Directory)
+
+* **[Home / Landing Page](https://www.google.com/search?q=/)**: System overview, core pillar navigation, and infrastructure introduction.
+* **[Public Verification (`/verify.$litleId`)](https://www.google.com/search?q=/verify.%24litleId)**: Real-time cryptographic status, metadata, and Evidence Chain summary lookup for any valid LITLE-ID.
+* **[Standards Council & Governance (`/standard`)](https://www.google.com/search?q=/standard)**: Overview of the 7-federations governance model, the LIP lifecycle, and core vs. experimental specifications.
+* **[RFC Index (`/standard/rfcs`)](https://www.google.com/search?q=/standard/rfcs)**: Complete registry of Request For Comments (RFC-0001 through RFC-0010) with active status indicators (Draft, Stable, Experimental).
+* **[Independent Archive (`/standard/archive`)](https://www.google.com/search?q=/standard/archive)**: Replication guarantees, mirrored storage architecture, and decentralization roadmaps.
+* **[Authenticated Archive Workspace (`/_authenticated`)](https://www.google.com/search?q=/dashboard)**: Restricted environment for pipeline ingestion, manuscript synthesis, and evidence node recording.
+* **[Authentication Portal (`/auth`)](https://www.google.com/search?q=/auth)**: Secure identity gate for archive administrators and authorized contributors.
