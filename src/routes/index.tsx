@@ -3,17 +3,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "LITLE · Infrastructure for Independent Academic Literature" },
+      { title: "LITLE — The Standard for Preserving Knowledge. Verifying Legacy." },
       {
         name: "description",
         content:
-          "LITLE preserves, organizes, authenticates and publishes independent academic work. Where independent research becomes enduring literature.",
+          "The open standard for preserving academic knowledge, verifying its lineage, and outliving the platforms that host it.",
       },
-      { property: "og:title", content: "LITLE · Independent Academic Literature" },
+      { property: "og:title", content: "LITLE — The Standard for Preserving Knowledge" },
       {
         property: "og:description",
         content:
-          "Infrastructure for preserving, organizing and authenticating independent academic work.",
+          "Durable identifiers, evidence chains and independent preservation for academic work.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
@@ -58,11 +58,11 @@ function TopBar() {
         </Link>
 
         <div className="hidden md:flex items-center gap-7 text-sm text-muted-foreground">
+          <Link to="/standard" className="hover:text-foreground transition">Standard</Link>
+          <Link to="/standard/rfcs" className="hover:text-foreground transition">RFCs</Link>
+          <Link to="/standard/archive" className="hover:text-foreground transition">Archive</Link>
           <a href="#how" className="hover:text-foreground transition">How it Works</a>
           <a href="#library" className="hover:text-foreground transition">Library</a>
-          <a href="#authors" className="hover:text-foreground transition">For Authors</a>
-          <a href="#standard" className="hover:text-foreground transition">LITLE Standard</a>
-          <a href="#about" className="hover:text-foreground transition">About</a>
         </div>
 
         <div className="flex items-center gap-2 text-sm">
@@ -93,32 +93,33 @@ function Hero() {
       <div className="relative max-w-5xl mx-auto px-6 pt-28 pb-32 text-center">
         <div className="inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.32em] text-muted-foreground mb-10">
           <span className="h-px w-8 bg-gilt/60" />
-          Independent Academic Literature · Est. Edition I
+          The LITLE Standard · Edition I
           <span className="h-px w-8 bg-gilt/60" />
         </div>
         <h1 className="font-serif text-5xl md:text-7xl leading-[1.02] mb-8">
-          Where independent research
+          The Standard for
           <br />
-          becomes{" "}
-          <span className="gilt-text italic">enduring literature.</span>
+          Preserving Knowledge.
+          <br />
+          <span className="gilt-text italic">Verifying Legacy.</span>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed">
-          Infrastructure for preserving, organizing and authenticating
-          independent academic work — outside the boundaries of conventional
-          publishing.
+          LITLE is the open standard for academic works that must remain
+          citable across decades — with durable identifiers, transparent
+          evidence chains, and preservation that outlives any single platform.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
-          <a
-            href="#library"
+          <Link
+            to="/standard"
             className="rounded-sm bg-primary text-primary-foreground px-6 py-3 text-sm font-medium tracking-wide hover:opacity-90 transition"
           >
-            Explore the Library
-          </a>
+            Read the Standard
+          </Link>
           <Link
-            to="/auth"
+            to="/standard/rfcs"
             className="rounded-sm border border-gilt/60 px-6 py-3 text-sm gilt-text hover:bg-gilt/10 transition"
           >
-            Preserve Your Research
+            Browse RFCs
           </Link>
         </div>
         <div className="hairline mt-24 max-w-xl mx-auto" />
