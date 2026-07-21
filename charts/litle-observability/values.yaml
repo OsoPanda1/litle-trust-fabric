@@ -1,0 +1,70 @@
+# LITLE Trust Fabric — Observability base values.
+# Per-federation overrides live in values-fedX.yaml. Real secret material is
+# NEVER committed here — this file only references SealedSecret / ExternalSecret
+# names and keys.
+global:
+  namespace: observability
+grafanaOperator:
+  enabled: true
+grafana:
+  rootUrl: "https://grafana.litle.example.com"
+  adminUser: root
+  adminPasswordSecretName: "grafana-admin"
+  adminPasswordSecretKey: "password"
+  oidc:
+    enabled: false
+    clientId: ""
+    clientSecretSecretName: "grafana-oidc"
+    clientSecretSecretKey: "clientSecret"
+    issuerUrl: ""
+    allowedDomains: []
+    roleAttributePath: "contains(groups, 'litle-admin') && 'Admin' || 'Viewer'"
+litle:
+  federationId: "core"
+  workTypesDefault: ["BK", "RQ", "DS", "PL", "AR", "MD", "SW", "EX", "DP"]
+datasources:
+  postgres:
+    enabled: true
+    host: "postgresql.litle-core.svc.cluster.local"
+    port: 5432
+    user: "litle_app"
+    database: "litle"
+    passwordSecretName: "litle-core-db"
+    passwordSecretKey: "password"
+  mysql:
+    enabled: true
+    host: "mysql.legacy.svc.cluster.local"
+    port: 3306
+    user: "metrics_user"
+    database: "legacy"
+    passwordSecretName: "mysql-legacy-db"
+    passwordSecretKey: "password"
+  elasticsearch:
+    enabled: true
+    url: "http://elasticsearch.logging.svc.cluster.local:9200"
+    version: 8
+    timeField: "@timestamp"
+  cloudwatch:
+    enabled: true
+    defaultRegion: "us-east-1"
+    credentialsSecretName: "aws-cloudwatch-creds"
+    accessKeyKey: "accessKey"
+    secretKeyKey: "secretKey"
+  pmm:
+    enabled: true
+    url: "http://pmm-server.monitoring.svc.cluster.local:9090"
+  zabbix:
+    enabled: true
+    url: "http://zabbix-web.monitoring.svc.cluster.local"
+    user: "grafana"
+    passwordSecretName: "zabbix-creds"
+    passwordSecretKey: "password"
+dashboards:
+  litleCore: true
+  kubernetes: true
+  aws: true
+  pmm: true
+  zabbix: true
+alerts:
+  pmm: true
+  zabbix: true

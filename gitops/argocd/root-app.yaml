@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: litle-observability-root
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: dev
+            cluster: https://kubernetes.default.svc
+            values: apps/litle-observability/dev/values-fed1.yaml
+          - name: prod-eu
+            cluster: https://prod-eu.k8s.litle.example.com
+            values: apps/litle-observability/prod-eu/values-fed3.yaml
+          - name: prod-us
+            cluster: https://prod-us.k8s.litle.example.com
+            values: apps/litle-observability/prod-us/values-fed2.yaml
+  template:
+    metadata:
+      name: 'litle-observability-{{name}}'
+    spec:
+      project: default
+      sources:
+        - repoURL: https://git.example.com/litle/gitops.git
+          targetRevision: main
+          ref: values
+        - repoURL: https://git.example.com/litle/platform.git
+          targetRevision: main
+          path: charts/litle-observability
+          helm:
+            valueFiles:
+              - $values/{{values}}
+      destination:
+        server: '{{cluster}}'
+        namespace: observability
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

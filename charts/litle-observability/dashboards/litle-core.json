@@ -1,0 +1,37 @@
+{
+  "title": "LITLE Core — Trust Fabric Overview",
+  "uid": "litle-core",
+  "schemaVersion": 39,
+  "version": 1,
+  "timezone": "browser",
+  "tags": ["litle", "trust-fabric"],
+  "templating": {
+    "list": [
+      { "name": "litle_id", "type": "textbox", "label": "LITLE-ID", "current": { "value": "", "text": "" } },
+      { "name": "federation", "type": "custom", "label": "Federation", "query": "FED1-STANDARDS,FED2-RESEARCH,FED3-INFRA,FED4-CUSTODY,FED5-PEER,FED6-ETHICS,FED7-INDEPENDENT", "current": { "value": "FED3-INFRA", "text": "FED3-INFRA" } }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Trabajos activos ($federation)",
+      "datasource": { "type": "postgres", "uid": "LITLE-Postgres" },
+      "targets": [ { "refId": "A", "format": "table", "rawSql": "SELECT COUNT(*) FROM books WHERE status='ACTIVE' AND federation_id=$federation" } ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Eventos de evidencia por hora",
+      "datasource": { "type": "elasticsearch", "uid": "LITLE-Elasticsearch" },
+      "targets": [ { "refId": "A", "query": "litle_id:\"$litle_id\"" } ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "CPU (PMM) — $federation",
+      "datasource": { "type": "prometheus", "uid": "Percona-PMM" },
+      "targets": [ { "refId": "A", "expr": "instance:node_cpu_seconds_total:rate5m" } ]
+    }
+  ]
+}

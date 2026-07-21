@@ -1,0 +1,12 @@
+litle:
+  federationId: "FED3-INFRA"
+grafana:
+  rootUrl: "https://grafana.eu.litle.example.com"
+  oidc:
+    enabled: true
+    clientId: "litle-portal-eu"
+    issuerUrl: "https://id.litle.example.com"
+    allowedDomains: ["litle.example.com"]
+datasources:
+  cloudwatch:
+    defaultRegion: "eu-west-1"

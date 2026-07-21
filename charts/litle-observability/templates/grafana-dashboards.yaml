@@ -1,0 +1,15 @@
+{{- $ns := .Values.global.namespace -}}
+{{- if .Values.dashboards.litleCore }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: litle-core-dashboard
+  namespace: {{ $ns }}
+  labels:
+    {{- include "litle-observability.labels" . | nindent 4 }}
+spec:
+  instanceSelector: { matchLabels: { dashboards: "grafana" } }
+  json: |
+{{ .Files.Get "dashboards/litle-core.json" | indent 4 }}
+{{- end }}

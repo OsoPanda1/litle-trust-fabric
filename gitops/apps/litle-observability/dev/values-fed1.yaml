@@ -1,0 +1,6 @@
+litle:
+  federationId: "FED1-STANDARDS"
+grafana:
+  rootUrl: "https://grafana.dev.litle.example.com"
+  oidc:
+    enabled: false

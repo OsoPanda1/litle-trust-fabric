@@ -1,0 +1,9 @@
+LITLE Trust Fabric — Observability chart installed.
+
+Federation   : {{ .Values.litle.federationId }}
+Namespace    : {{ .Values.global.namespace }}
+Grafana URL  : {{ .Values.grafana.rootUrl }}
+OIDC enabled : {{ .Values.grafana.oidc.enabled }}
+
+Secrets are referenced by name only — provision them via SealedSecrets or
+ExternalSecrets BEFORE syncing this release. Never commit raw credentials.

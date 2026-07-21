@@ -1,0 +1,10 @@
+# FED1 — Standards & Governance
+litle:
+  federationId: "FED1-STANDARDS"
+datasources:
+  cloudwatch:
+    defaultRegion: "us-east-1"
+dashboards:
+  aws: false
+  pmm: false
+  zabbix: false

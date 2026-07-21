@@ -1,0 +1,8 @@
+# FED2 — Research & Evidence
+litle:
+  federationId: "FED2-RESEARCH"
+datasources:
+  cloudwatch:
+    defaultRegion: "us-east-1"
+  pmm:
+    url: "http://pmm-fed2.monitoring.svc.cluster.local:9090"

@@ -1,0 +1,55 @@
+{{- if or .Values.alerts.pmm .Values.alerts.zabbix }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alerting
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "litle-observability.labels" . | nindent 4 }}
+data:
+  alerting.yaml: |
+    apiVersion: 1
+    groups:
+      - orgId: 1
+        name: "LITLE-Infra-Alerts"
+        folder: "LITLE"
+        interval: "1m"
+        rules:
+          {{- if .Values.alerts.pmm }}
+          - uid: "litle-pmm-high-cpu"
+            title: "PMM: CPU alta en nodo LITLE"
+            condition: "A"
+            for: "5m"
+            data:
+              - refId: "A"
+                datasourceUid: "Percona-PMM"
+                model:
+                  expr: "instance:node_cpu_seconds_total:rate5m > 0.85"
+                  intervalMs: 60000
+                  maxDataPoints: 43200
+            labels:
+              severity: "critical"
+              litle_federation: {{ .Values.litle.federationId | quote }}
+              litle_id: "LTL-{{ .Values.litle.federationId }}-2026-SW-ABCD-1234"
+            annotations:
+              summary: "CPU alta en nodos de infraestructura LITLE"
+          {{- end }}
+          {{- if .Values.alerts.zabbix }}
+          - uid: "litle-zabbix-trigger"
+            title: "Zabbix: trigger crítico en servicio LITLE"
+            condition: "A"
+            for: "2m"
+            data:
+              - refId: "A"
+                datasourceUid: "Zabbix-Monitoring"
+                model:
+                  queryType: "triggers"
+                  group: "LITLE Services"
+            labels:
+              severity: "warning"
+              litle_federation: {{ .Values.litle.federationId | quote }}
+              litle_id: "LTL-{{ .Values.litle.federationId }}-2026-SW-DCBA-5678"
+            annotations:
+              summary: "Eventos críticos reportados por Zabbix en servicios LITLE"
+          {{- end }}
+{{- end }}
