@@ -145,3 +145,33 @@ export function deriveLitleId(input: {
 export function workTypeLabel(t: LitleWorkType | string): string {
   return LITLE_WORK_TYPES[t as LitleWorkType] ?? t;
 }
+
+export class LitleIdEngine {
+  static parse(input: string): LitleId & { federationId?: string } {
+    const id = parseAny(input);
+    const fedMap: Record<string, string> = {
+      "tech": "FED1", "crypto": "FED1",
+      "sci": "FED2", "standards": "FED2",
+      "infra": "FED3", "mesh": "FED3",
+      "evidence": "FED4", "lineage": "FED4",
+      "curation": "FED5", "redemption": "FED5",
+      "kernel": "FED6", "dev": "FED6",
+      "audit": "FED7", "compliance": "FED7",
+    };
+    const ns = id.namespace.split("/")[0].toLowerCase();
+    return { ...id, federationId: fedMap[ns] ?? "FED0" };
+  }
+
+  static format(id: LitleId): { human: string; uri: string; canonical: string } {
+    return { human: toHuman(id), uri: toUri(id), canonical: toCanonical(id) };
+  }
+
+  static verify(input: string): { valid: boolean; error?: string } {
+    try {
+      parseAny(input);
+      return { valid: true };
+    } catch (e) {
+      return { valid: false, error: (e as Error).message };
+    }
+  }
+}

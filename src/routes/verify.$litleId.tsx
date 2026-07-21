@@ -1,175 +1,91 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { getPublicEvidence } from "@/lib/evidence.functions";
-import { parseAny, toHuman, toUri } from "@/lib/litle/id";
-
-const evidenceQuery = (litleId: string) =>
-  queryOptions({
-    queryKey: ["public-evidence", litleId],
-    queryFn: () => getPublicEvidence({ data: { litleId } }),
-  });
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { LitleIdEngine, parseAny, toHuman, LitleId } from "@/lib/litle/id";
 
 export const Route = createFileRoute("/verify/$litleId")({
-  loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(evidenceQuery(params.litleId)),
   head: ({ params }) => ({
     meta: [
-      { title: `Verify ${params.litleId} — LITLE` },
-      {
-        name: "description",
-        content: `Public verification page for LITLE-ID ${params.litleId}. Inspect the evidence chain and cryptographic anchor.`,
-      },
-      { property: "og:title", content: `Verify ${params.litleId} — LITLE` },
-      { property: "og:url", content: `/verify/${params.litleId}` },
-      { property: "og:type", content: "article" },
+      { title: `Verify ${params.litleId} — LITLE Trust Fabric` },
+      { name: "description", content: `Digital Academic Certificate resolution for identifier ${params.litleId}. Curated by LITLE Trust Fabric.` },
     ],
-    links: [{ rel: "canonical", href: `/verify/${params.litleId}` }],
   }),
+  loader: ({ params }) => {
+    const parsed = params.litleId ? LitleIdEngine.parse(params.litleId) : null;
+    const verifyResult = params.litleId ? LitleIdEngine.verify(params.litleId) : null;
+    if (!parsed || !verifyResult?.valid) throw notFound();
+    return { parsed, verifyResult, raw: params.litleId };
+  },
   component: VerifyPage,
-  errorComponent: VerifyError,
-  notFoundComponent: () => <VerifyError error={new Error("Not found")} reset={() => {}} />,
-});
-
-function VerifyError({ error, reset }: { error: Error; reset: () => void }) {
-  const router = useRouter();
-  return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="max-w-2xl mx-auto px-6 py-24 text-center">
-        <div className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
-          Verification
-        </div>
-        <h1 className="font-serif text-3xl mb-3">Could not verify this identifier</h1>
-        <p className="text-sm text-muted-foreground mb-8">{error.message}</p>
-        <div className="flex justify-center gap-3">
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="rounded-sm border border-border px-4 py-2 text-sm hover:bg-accent/30"
-          >
-            Try again
-          </button>
-          <Link to="/" className="rounded-sm bg-primary text-primary-foreground px-4 py-2 text-sm">
-            Home
-          </Link>
-        </div>
+  notFoundComponent: () => (
+    <main className="min-h-screen bg-background text-foreground flex items-center justify-center">
+      <div className="text-center space-y-4 max-w-md px-6">
+        <h1 className="font-serif text-4xl text-platinum">Identifier not recognised</h1>
+        <p className="text-sm text-muted-foreground">The identifier you provided could not be parsed as a valid LITLE-ID. Verify the format and try again.</p>
+        <a href="/" className="inline-block text-xs font-mono uppercase tracking-wider gilt-text hover:underline pt-4">Return to LITLE</a>
       </div>
     </main>
-  );
-}
+  ),
+});
 
 function VerifyPage() {
-  const { litleId } = Route.useParams();
-  const { data } = useSuspenseQuery(evidenceQuery(litleId));
-
-  let human: string | null = null;
-  let uri: string | null = null;
-  try {
-    const parsed = parseAny(litleId);
-    human = toHuman(parsed);
-    uri = toUri(parsed);
-  } catch {
-    /* leave as raw */
-  }
+  const { parsed, raw } = Route.useLoaderData();
 
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border/60">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="font-serif text-lg tracking-wide">
-            LITLE
-          </Link>
-          <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-            Public Verification
-          </div>
+          <a href="/" className="font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">&larr; Back</a>
+          <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Datacite-style Resolver</span>
         </div>
       </header>
 
-      <section className="max-w-5xl mx-auto px-6 py-16">
-        <div className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
-          LITLE-ID · RFC-0001
-        </div>
-        <h1 className="font-serif text-4xl md:text-5xl leading-tight mb-4">
-          {data.found ? "Verified record" : "No public record"}
-        </h1>
-        <p className="text-muted-foreground mb-10 max-w-2xl">
-          {data.found
-            ? "The identifier below is anchored to a preserved work. Its evidence chain — sources, prompts, model seeds and revisions — is published for public inspection."
-            : "This identifier is either private, unknown, or has not yet been published for public verification."}
-        </p>
-
-        <div className="grid md:grid-cols-2 gap-px bg-border/60 border border-border">
-          <Field label="Human form" value={human ?? "—"} mono />
-          <Field label="URI form" value={uri ?? "—"} mono />
-          <Field label="Canonical" value={data.litleId} mono />
-          <Field label="Work type" value={data.workType ?? "—"} />
-          <Field label="Namespace" value={data.namespace ?? "—"} />
-          <Field label="Crypto profile" value={data.cryptoProfile ?? "—"} mono />
-          <Field label="Root hash" value={data.rootHash ?? "—"} mono />
-          <Field
-            label="Sealed at"
-            value={data.createdAt ? new Date(data.createdAt).toISOString() : "—"}
-            mono
-          />
-        </div>
-
-        {data.found && (
-          <div className="mt-14">
-            <div className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
-              Evidence Chain · RFC-0008
-            </div>
-            <h2 className="font-serif text-2xl mb-6">Node summary</h2>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-px bg-border/60 border border-border mb-10">
-              {(
-                Object.entries(data.nodeCounts) as Array<
-                  [keyof typeof data.nodeCounts, number]
-                >
-              ).map(([k, v]) => (
-                <div key={k} className="bg-background p-4 text-center">
-                  <div className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                    {k}
-                  </div>
-                  <div className="font-serif text-2xl mt-1">{v}</div>
-                </div>
-              ))}
-            </div>
-
-            {data.nodes.length > 0 && (
-              <ul className="divide-y divide-border/60 border border-border">
-                {data.nodes.map((n) => (
-                  <li key={n.id} className="p-4 grid grid-cols-[6rem_1fr_10rem] gap-4 text-sm">
-                    <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                      {n.kind}
-                    </span>
-                    <span className="truncate">{n.label || "(unlabeled)"}</span>
-                    <span className="font-mono text-xs text-muted-foreground truncate">
-                      {n.hash.slice(0, 16)}…
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
+      <section className="max-w-5xl mx-auto px-6 py-12">
+        <div className="crystal-panel p-8 md:p-12">
+          <div className="flex items-center gap-3 mb-8">
+            <span className="verified-badge px-3 py-1 text-xs font-mono uppercase tracking-wider">Verified Identifier</span>
           </div>
-        )}
 
-        <div className="mt-14 text-xs text-muted-foreground">
-          <Link to="/standard/rfcs/$slug" params={{ slug: "0008-evidence-chain" }} className="underline">
-            Read RFC-0008 — Evidence Chain
-          </Link>
+          <div className="grid md:grid-cols-[1fr_1.5fr] gap-10">
+            <div className="space-y-6">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-mono mb-2">LITLE-ID</p>
+                <div className="font-mono text-sm break-all bg-background border border-border/40 p-3 rounded-sm">{raw}</div>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-mono mb-2">Canonical</p>
+                <div className="font-mono text-sm break-all bg-background border border-border/40 p-3 rounded-sm">{toHuman(parsed as LitleId)}</div>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-mono mb-2">Federation</p>
+                <div className="font-mono text-sm bg-background border border-border/40 p-3 rounded-sm">{parsed.federationId ?? "FED0"}</div>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-mono mb-2">Identifier details</p>
+                <dl className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="bg-background border border-border/40 p-3"><dt className="text-[10px] text-muted-foreground uppercase tracking-wider">Namespace</dt><dd className="font-mono">{parsed.namespace}</dd></div>
+                  <div className="bg-background border border-border/40 p-3"><dt className="text-[10px] text-muted-foreground uppercase tracking-wider">Timestamp</dt><dd className="font-mono">{parsed.timestamp}</dd></div>
+                  <div className="bg-background border border-border/40 p-3"><dt className="text-[10px] text-muted-foreground uppercase tracking-wider">Random</dt><dd className="font-mono">{parsed.random}</dd></div>
+                  <div className="bg-background border border-border/40 p-3"><dt className="text-[10px] text-muted-foreground uppercase tracking-wider">Checksum</dt><dd className="font-mono">{parsed.checksum}</dd></div>
+                </dl>
+              </div>
+
+              <div className="border-t border-border/40 pt-6">
+                <h2 className="font-serif text-2xl mb-4">Digital Academic Certificate</h2>
+                <div className="grid gap-3">
+                  <a href={`/certificate/${raw}`} className="inline-flex items-center justify-center rounded-sm bg-petroleum px-6 py-3 text-xs font-mono uppercase tracking-[0.18em] text-foreground hover:bg-petroleum/90 transition">
+                    View full DAC &rarr;
+                  </a>
+                  <a href="/library" className="inline-flex items-center justify-center rounded-sm border border-border px-6 py-3 text-xs font-mono uppercase tracking-[0.18em] text-muted-foreground hover:border-platinum hover:text-foreground transition">
+                    Explore more works
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>
-  );
-}
-
-function Field({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
-  return (
-    <div className="bg-background p-5">
-      <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-2">
-        {label}
-      </div>
-      <div className={mono ? "font-mono text-sm break-all" : "text-sm"}>{value}</div>
-    </div>
   );
 }

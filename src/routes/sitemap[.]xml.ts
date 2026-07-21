@@ -27,7 +27,15 @@ export const Route = createFileRoute("/sitemap.xml")({
          { path: "/standard/rfcs/0002-work-types", changefreq: "monthly", priority: "0.6" },
          { path: "/standard/rfcs/0010-federated-governance", changefreq: "monthly", priority: "0.7" },
          { path: "/standard/rfcs/0012-trust-fabric", changefreq: "monthly", priority: "0.7" },
-         { path: "/standard/rfcs/0013-observability-fabric", changefreq: "monthly", priority: "0.6" },
+          { path: "/standard/rfcs/0013-observability-fabric", changefreq: "monthly", priority: "0.6" },
+          { path: "/standard/open-science", changefreq: "weekly", priority: "0.8" },
+          { path: "/standard/rfcs/0014-open-science-curation", changefreq: "monthly", priority: "0.6" },
+          { path: "/standard/certification", changefreq: "weekly", priority: "0.8" },
+          { path: "/standard/rfcs/0015-digital-academic-certification", changefreq: "monthly", priority: "0.6" },
+          { path: "/library", changefreq: "weekly", priority: "0.9" },
+          { path: "/governance", changefreq: "weekly", priority: "0.8" },
+          { path: "/submit", changefreq: "monthly", priority: "0.7" },
+          { path: "/discovery", changefreq: "weekly", priority: "0.9" },
           { path: "/auth", changefreq: "monthly", priority: "0.3" },
         ];
         const urls = entries.map((e) =>

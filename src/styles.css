@@ -1,12 +1,12 @@
-@import "tailwindcss" source(none);
-@source "../src";
-@import "tw-animate-css";
+@import "tailwindcss";
+@source "./src/**/*.{ts,tsx,mdx}";
+@import "tw-animate-css" layer(components);
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --font-serif: "Instrument Serif", "Cormorant Garamond", ui-serif, Georgia, serif;
-  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -34,45 +34,45 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* Variables institucionales extendidas */
   --color-ink: var(--ink);
   --color-petroleum: var(--petroleum);
   --color-platinum: var(--platinum);
   --color-emerald-dark: var(--emerald-dark);
   --color-amber-signal: var(--amber-signal);
+  --color-gilt: var(--gilt);
 }
 
 :root {
   --radius: 0.75rem;
 
-  /* Paleta: Obsidian Library & Crystal Glass */
-  --background: oklch(0.09 0.015 240);         /* Negro Obsidiana Profundo */
-  --foreground: oklch(0.93 0.01 240);         /* Texto Platino Puro */
-  --ink: oklch(0.04 0.01 240);                /* Negro Absoluto (títulos, ejes) */
-  --petroleum: oklch(0.24 0.07 210);          /* Azul Petróleo Institucional */
-  --platinum: oklch(0.82 0.02 240);           /* Platino Metálico */
-  --emerald-dark: oklch(0.18 0.06 155);       /* Verde Oscuro Criptográfico */
-  --amber-signal: oklch(0.80 0.14 80);        /* Ámbar de señal institucional */
+  --background: oklch(0.09 0.015 240);
+  --foreground: oklch(0.93 0.01 240);
+  --ink: oklch(0.04 0.01 240);
+  --petroleum: oklch(0.24 0.07 210);
+  --platinum: oklch(0.82 0.02 240);
+  --emerald-dark: oklch(0.18 0.06 155);
+  --amber-signal: oklch(0.80 0.14 80);
 
-  --card: oklch(0.13 0.02 230 / 0.72);        /* Crystal Glass Base */
+  --card: oklch(0.13 0.02 230 / 0.72);
   --card-foreground: oklch(0.95 0.01 240);
   --popover: oklch(0.12 0.02 230 / 0.88);
   --popover-foreground: oklch(0.95 0.01 240);
 
-  --primary: oklch(0.78 0.04 210);            /* Platino Luminoso */
+  --primary: oklch(0.78 0.04 210);
   --primary-foreground: oklch(0.08 0.01 240);
-  --secondary: oklch(0.20 0.04 210 / 0.85);   /* Azul Petróleo Translúcido */
+  --secondary: oklch(0.20 0.04 210 / 0.85);
   --secondary-foreground: oklch(0.91 0.02 240);
   --muted: oklch(0.16 0.015 230);
   --muted-foreground: oklch(0.67 0.02 240);
-  --accent: oklch(0.22 0.08 190);             /* Cian-Petróleo de Énfasis */
+  --accent: oklch(0.22 0.08 190);
   --accent-foreground: oklch(0.97 0.01 240);
   --destructive: oklch(0.55 0.22 25);
   --destructive-foreground: oklch(0.98 0.01 80);
 
-  --border: oklch(0.28 0.04 210 / 0.38);      /* Borde Crystal Glass sutil */
+  --border: oklch(0.28 0.04 210 / 0.38);
   --input: oklch(0.22 0.03 210 / 0.52);
-  --ring: oklch(0.80 0.04 210);               /* Anillo de foco académico */
+  --ring: oklch(0.80 0.04 210);
+  --gilt: oklch(0.78 0.14 75);
 }
 
 @layer base {
@@ -120,7 +120,7 @@
     line-height: 1.6;
   }
 
-  code, pre, .font-mono {
+  code, pre {
     font-family: var(--font-mono);
     font-size: 0.9rem;
   }
@@ -134,150 +134,137 @@
 
   a:hover {
     color: var(--primary);
-    text-decoration-color: oklch(0.78 0.08 210);
   }
 }
 
-/* Utilidades de jerarquía académica */
-
 @utility platinum-text {
-  background: linear-gradient(
-    180deg,
-    oklch(0.97 0.01 240),
-    oklch(0.74 0.02 240)
-  );
+  background: linear-gradient(180deg, oklch(0.97 0.01 240), oklch(0.74 0.02 240));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 @utility hairline {
-  background-image: linear-gradient(
-    90deg,
-    transparent,
-    var(--color-border) 12%,
-    var(--color-petroleum) 50%,
-    var(--color-border) 88%,
-    transparent
-  );
+  background-image: linear-gradient(90deg, transparent, var(--color-border) 12%, var(--color-petroleum) 50%, var(--color-border) 88%, transparent);
   height: 1px;
 }
-
-/* Variante más sobria para separar secciones en vistas de estándar/RFC */
 
 @utility hairline-subtle {
-  background-image: linear-gradient(
-    90deg,
-    transparent,
-    oklch(0.32 0.03 220 / 0.45) 30%,
-    transparent 70%
-  );
+  background-image: linear-gradient(90deg, transparent, oklch(0.32 0.03 220 / 0.45) 30%, transparent 70%);
   height: 1px;
 }
 
-/* Tarjetas institucionales estilo “crystal glass” */
-
 @utility crystal-glass {
-  background: linear-gradient(
-    135deg,
-    oklch(0.19 0.03 210 / 0.46),
-    oklch(0.12 0.02 230 / 0.64)
-  );
+  background: linear-gradient(135deg, oklch(0.19 0.03 210 / 0.46), oklch(0.12 0.02 230 / 0.64));
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border: 1px solid oklch(0.36 0.05 210 / 0.32);
-  box-shadow:
-    0 18px 42px oklch(0 0 0 / 0.55),
-    inset 0 1px 0 oklch(1 0.01 240 / 0.08);
+  box-shadow: 0 18px 42px oklch(0 0 0 / 0.55), inset 0 1px 0 oklch(1 0.01 240 / 0.08);
   border-radius: var(--radius-lg);
 }
 
-/* Variante académica para cards de estándar/RFC (menos glow, más sobria) */
-
 @utility crystal-panel {
-  background: linear-gradient(
-    135deg,
-    oklch(0.16 0.02 220 / 0.75),
-    oklch(0.12 0.02 230 / 0.9)
-  );
+  background: linear-gradient(135deg, oklch(0.16 0.02 220 / 0.75), oklch(0.12 0.02 230 / 0.9));
   border-radius: var(--radius-md);
   border: 1px solid oklch(0.30 0.03 215 / 0.42);
-  box-shadow:
-    0 10px 30px oklch(0 0 0 / 0.45),
-    inset 0 1px 0 oklch(1 0.01 240 / 0.05);
+  box-shadow: 0 10px 30px oklch(0 0 0 / 0.45), inset 0 1px 0 oklch(1 0.01 240 / 0.05);
 }
 
-/* Botones de acción institucional (ej. “Submit Work”, “Open RFC”) */
-
 @utility btn-institutional {
-  @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
   border-radius: var(--radius-sm);
-  background: radial-gradient(
-    circle at 10% 0%,
-    oklch(0.84 0.03 210),
-    oklch(0.70 0.03 210)
-  );
+  background: radial-gradient(circle at 10% 0%, oklch(0.84 0.03 210), oklch(0.70 0.03 210));
   color: var(--primary-foreground);
-  box-shadow:
-    0 10px 30px oklch(0 0 0 / 0.45),
-    inset 0 1px 0 oklch(1 0.01 240 / 0.08);
-  transition:
-    background 140ms ease,
-    transform 140ms ease,
-    box-shadow 140ms ease;
+  box-shadow: 0 10px 30px oklch(0 0 0 / 0.45), inset 0 1px 0 oklch(1 0.01 240 / 0.08);
+  transition: background 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+  cursor: pointer;
 }
 
 @utility btn-institutional:hover {
-  background: radial-gradient(
-    circle at 10% 0%,
-    oklch(0.88 0.04 210),
-    oklch(0.73 0.03 210)
-  );
+  background: radial-gradient(circle at 10% 0%, oklch(0.88 0.04 210), oklch(0.73 0.03 210));
   transform: translateY(-1px);
-  box-shadow:
-    0 14px 34px oklch(0 0 0 / 0.55),
-    inset 0 1px 0 oklch(1 0.01 240 / 0.1);
+  box-shadow: 0 14px 34px oklch(0 0 0 / 0.55), inset 0 1px 0 oklch(1 0.01 240 / 0.1);
 }
 
 @utility btn-institutional-muted {
-  background: linear-gradient(
-    135deg,
-    oklch(0.21 0.03 210),
-    oklch(0.18 0.03 215)
-  );
+  background: linear-gradient(135deg, oklch(0.21 0.03 210), oklch(0.18 0.03 215));
   color: var(--secondary-foreground);
 }
 
-/* Badges de jerarquía (Zero-Trust, Evidence Preservation, Standard) */
-
 @utility badge-emerald {
-  @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
   background-color: oklch(0.20 0.06 155 / 0.75);
   color: oklch(0.94 0.02 150);
   border: 1px solid oklch(0.36 0.06 155 / 0.7);
 }
 
 @utility badge-amber {
-  @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
   background-color: oklch(0.78 0.12 80 / 0.25);
   color: var(--amber-signal);
   border: 1px solid oklch(0.80 0.15 80 / 0.6);
 }
 
-/* Enfatizar jerarquía visual en páginas de estándar (subtítulos académicos) */
+@utility badge-platinum {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  background-color: oklch(0.70 0.03 210 / 0.2);
+  color: oklch(0.84 0.03 210);
+  border: 1px solid oklch(0.70 0.03 210 / 0.5);
+}
 
 @utility section-label {
-  @apply uppercase tracking-[0.18em] text-[0.68rem];
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.68rem;
   color: var(--muted-foreground);
   font-family: var(--font-mono);
 }
 
-/* Estados de foco accesibles pero sobrios */
+@utility focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--color-input), 0 0 0 3px oklch(0.80 0.04 210 / 0.55);
+}
 
-@layer utilities {
-  .focus-ring {
-    outline: none;
-    box-shadow: 0 0 0 1px var(--color-input),
-                0 0 0 3px oklch(0.80 0.04 210 / 0.55);
-  }
+@utility verified-badge {
+  background: linear-gradient(135deg, oklch(0.18 0.06 155 / 0.6), oklch(0.12 0.04 155 / 0.8));
+  border: 1px solid oklch(0.35 0.08 155 / 0.5);
+  color: oklch(0.88 0.05 155);
+  backdrop-filter: blur(8px);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+@utility card-editorial {
+  background: linear-gradient(135deg, oklch(0.16 0.02 220 / 0.75), oklch(0.12 0.02 230 / 0.9));
+  border-radius: var(--radius-md);
+  border: 1px solid oklch(0.30 0.03 215 / 0.42);
+  box-shadow: 0 10px 30px oklch(0 0 0 / 0.45), inset 0 1px 0 oklch(1 0.01 240 / 0.05);
 }

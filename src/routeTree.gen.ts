@@ -22,6 +22,13 @@ import { Route as StandardArchiveRouteImport } from './routes/standard/archive'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as StandardRfcsIndexRouteImport } from './routes/standard/rfcs.index'
 import { Route as StandardRfcsSlugRouteImport } from './routes/standard/rfcs.$slug'
+import { Route as LibraryRouteImport } from './routes/library'
+import { Route as GovernanceRouteImport } from './routes/governance'
+import { Route as SubmitRouteImport } from './routes/submit'
+import { Route as DiscoveryRouteImport } from './routes/discovery'
+import { Route as StandardOpenScienceRouteImport } from './routes/standard/open-science'
+import { Route as CertificateLitleIdRouteImport } from './routes/certificate.$litleId'
+import { Route as StandardCertificationRouteImport } from './routes/standard/certification'
 import { Route as AuthenticatedBooksBookIdRouteImport } from './routes/_authenticated/books.$bookId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -41,6 +48,41 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LibraryRoute = LibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GovernanceRoute = GovernanceRouteImport.update({
+  id: '/governance',
+  path: '/governance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubmitRoute = SubmitRouteImport.update({
+  id: '/submit',
+  path: '/submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscoveryRoute = DiscoveryRouteImport.update({
+  id: '/discovery',
+  path: '/discovery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandardOpenScienceRoute = StandardOpenScienceRouteImport.update({
+  id: '/standard/open-science',
+  path: '/standard/open-science',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CertificateLitleIdRoute = CertificateLitleIdRouteImport.update({
+  id: '/certificate/$litleId',
+  path: '/certificate/$litleId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandardCertificationRoute = StandardCertificationRouteImport.update({
+  id: '/standard/certification',
+  path: '/standard/certification',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StandardIndexRoute = StandardIndexRouteImport.update({
@@ -99,9 +141,16 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/discovery': typeof DiscoveryRoute
+  '/library': typeof LibraryRoute
+  '/governance': typeof GovernanceRoute
+  '/submit': typeof SubmitRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/standard/archive': typeof StandardArchiveRoute
   '/standard/observability': typeof StandardObservabilityRoute
+  '/standard/open-science': typeof StandardOpenScienceRoute
+  '/standard/certification': typeof StandardCertificationRoute
+  '/certificate/$litleId': typeof CertificateLitleIdRoute
   '/standard/rfcs': typeof StandardRfcsRouteWithChildren
   '/standard/trust-fabric': typeof StandardTrustFabricRoute
   '/verify/$litleId': typeof VerifyLitleIdRoute
@@ -114,9 +163,16 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/discovery': typeof DiscoveryRoute
+  '/library': typeof LibraryRoute
+  '/governance': typeof GovernanceRoute
+  '/submit': typeof SubmitRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/standard/archive': typeof StandardArchiveRoute
   '/standard/observability': typeof StandardObservabilityRoute
+  '/standard/open-science': typeof StandardOpenScienceRoute
+  '/standard/certification': typeof StandardCertificationRoute
+  '/certificate/$litleId': typeof CertificateLitleIdRoute
   '/standard/trust-fabric': typeof StandardTrustFabricRoute
   '/verify/$litleId': typeof VerifyLitleIdRoute
   '/standard': typeof StandardIndexRoute
@@ -130,9 +186,14 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/discovery': typeof DiscoveryRoute
+  '/library': typeof LibraryRoute
+  '/governance': typeof GovernanceRoute
+  '/submit': typeof SubmitRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/standard/archive': typeof StandardArchiveRoute
   '/standard/observability': typeof StandardObservabilityRoute
+  '/standard/open-science': typeof StandardOpenScienceRoute
   '/standard/rfcs': typeof StandardRfcsRouteWithChildren
   '/standard/trust-fabric': typeof StandardTrustFabricRoute
   '/verify/$litleId': typeof VerifyLitleIdRoute
@@ -147,9 +208,16 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/sitemap.xml'
+    | '/discovery'
+    | '/library'
+    | '/governance'
+    | '/submit'
     | '/dashboard'
     | '/standard/archive'
     | '/standard/observability'
+    | '/standard/open-science'
+    | '/standard/certification'
+    | '/certificate/$litleId'
     | '/standard/rfcs'
     | '/standard/trust-fabric'
     | '/verify/$litleId'
@@ -162,9 +230,16 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/sitemap.xml'
+    | '/discovery'
+    | '/library'
+    | '/governance'
+    | '/submit'
     | '/dashboard'
     | '/standard/archive'
     | '/standard/observability'
+    | '/standard/open-science'
+    | '/standard/certification'
+    | '/certificate/$litleId'
     | '/standard/trust-fabric'
     | '/verify/$litleId'
     | '/standard'
@@ -177,9 +252,16 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/sitemap.xml'
+    | '/discovery'
+    | '/library'
+    | '/governance'
+    | '/submit'
     | '/_authenticated/dashboard'
     | '/standard/archive'
     | '/standard/observability'
+    | '/standard/open-science'
+    | '/standard/certification'
+    | '/certificate/$litleId'
     | '/standard/rfcs'
     | '/standard/trust-fabric'
     | '/verify/$litleId'
@@ -194,8 +276,15 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  DiscoveryRoute: typeof DiscoveryRoute
+  LibraryRoute: typeof LibraryRoute
+  GovernanceRoute: typeof GovernanceRoute
+  SubmitRoute: typeof SubmitRoute
   StandardArchiveRoute: typeof StandardArchiveRoute
   StandardObservabilityRoute: typeof StandardObservabilityRoute
+  StandardOpenScienceRoute: typeof StandardOpenScienceRoute
+  StandardCertificationRoute: typeof StandardCertificationRoute
+  CertificateLitleIdRoute: typeof CertificateLitleIdRoute
   StandardRfcsRoute: typeof StandardRfcsRouteWithChildren
   StandardTrustFabricRoute: typeof StandardTrustFabricRoute
   VerifyLitleIdRoute: typeof VerifyLitleIdRoute
@@ -209,6 +298,34 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discovery': {
+      id: '/discovery'
+      path: '/discovery'
+      fullPath: '/discovery'
+      preLoaderRoute: typeof DiscoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/library': {
+      id: '/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/governance': {
+      id: '/governance'
+      path: '/governance'
+      fullPath: '/governance'
+      preLoaderRoute: typeof GovernanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/submit': {
+      id: '/submit'
+      path: '/submit'
+      fullPath: '/submit'
+      preLoaderRoute: typeof SubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -265,6 +382,27 @@ declare module '@tanstack/react-router' {
       path: '/standard/observability'
       fullPath: '/standard/observability'
       preLoaderRoute: typeof StandardObservabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standard/open-science': {
+      id: '/standard/open-science'
+      path: '/standard/open-science'
+      fullPath: '/standard/open-science'
+      preLoaderRoute: typeof StandardOpenScienceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standard/certification': {
+      id: '/standard/certification'
+      path: '/standard/certification'
+      fullPath: '/standard/certification'
+      preLoaderRoute: typeof StandardCertificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/certificate/$litleId': {
+      id: '/certificate/$litleId'
+      path: '/certificate/$litleId'
+      fullPath: '/certificate/$litleId'
+      preLoaderRoute: typeof CertificateLitleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/standard/archive': {
@@ -337,8 +475,15 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  DiscoveryRoute: DiscoveryRoute,
+  LibraryRoute: LibraryRoute,
+  GovernanceRoute: GovernanceRoute,
+  SubmitRoute: SubmitRoute,
   StandardArchiveRoute: StandardArchiveRoute,
   StandardObservabilityRoute: StandardObservabilityRoute,
+  StandardOpenScienceRoute: StandardOpenScienceRoute,
+  StandardCertificationRoute: StandardCertificationRoute,
+  CertificateLitleIdRoute: CertificateLitleIdRoute,
   StandardRfcsRoute: StandardRfcsRouteWithChildren,
   StandardTrustFabricRoute: StandardTrustFabricRoute,
   VerifyLitleIdRoute: VerifyLitleIdRoute,

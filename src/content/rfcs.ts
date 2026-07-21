@@ -253,6 +253,110 @@ This RFC does not mandate a specific Grafana version, cloud provider or
 cluster topology. It mandates the LITLE-ID-first contract.
 `,
   },
+  {
+    id: "RFC-0014",
+    slug: "0014-open-science-curation",
+    title: "Open Science Curation — Epistemic Filtering for Human-Machine Knowledge",
+    status: "Draft",
+    category: "Preservation",
+    updated: "2026-07-21",
+    abstract:
+      "Defines the epistemological filtering engine that scores Open Science works across 9 quality dimensions, enabling both human scholars and AI agents to discover only the most reliable knowledge.",
+    body: `# 1. Motivation
+Open Science publishes without quality filters. While this removes gatekeeping,
+it also removes the signal-to-noise discrimination that traditional peer review
+provided. LITLE RFC-0014 introduces a transparent, multi-dimensional epistemic
+scoring system that any consumer — human or machine — can query and trust.
+
+# 2. The 9 Epistemic Dimensions
+- methodological_rigor    (weight 20%) — soundness of methodology
+- reproducibility         (weight 18%) — availability of data, code, protocols
+- citation_integrity      (weight 15%) — accuracy and relevance of citations
+- peer_review_status      (weight 12%) — review outcome and transparency
+- data_transparency       (weight 12%) — disclosure of raw data and preprocessing
+- ai_provenance           (weight 10%) — recording of AI models, prompts, seeds
+- longevity_potential     (weight  8%) — durability, format, archival status
+- epistemological_novelty (weight  5%) — paradigm shifts, cross-domain synthesis
+- human_machine_readability (weight 0% metadata) — structured for AI agents
+
+# 3. Scoring
+Each dimension is scored 0–5. The composite score is the weighted sum.
+Tiers:
+- Platinum: ≥ 4.0
+- Gold:     ≥ 3.5
+- Silver:   ≥ 2.5
+- Bronze:   ≥ 1.5
+- Unrated:  < 1.5
+
+# 4. AI Agent Integration
+Every LITLE work exposes machine-readable epistemic metadata via its
+Evidence Chain (RFC-0008). AI agents can query the LITLE discovery API
+with minimum quality thresholds, domain filters, and methodology constraints.
+Only works meeting the agent's reliability criteria are returned.
+
+# 5. Curation Governance
+The epistemic dimensions and weights are governed under the 7-federation
+model (RFC-0010). Changes to the scoring methodology require a LIP with
+5-of-7 quorum.
+`,
+  },
+  {
+    id: "RFC-0015",
+    slug: "0015-digital-academic-certification",
+    title: "Digital Academic Certificate — DAC Specification",
+    status: "Draft",
+    category: "Preservation",
+    updated: "2026-07-21",
+    abstract:
+      "Defines the LITLE Digital Academic Certificate (DAC), a cryptographic credential combining CSV secure codes, evidence chain integrity, authorship analysis, source verification and epistemic scoring into a single verifiable artifact.",
+    body: `# 1. Motivation
+Academic credentials must be verifiable decades after issuance. The LITLE DAC
+combines four verification methodologies into a single certificate that can be
+validated by both human scholars and automated systems.
+
+# 2. Certificate Structure
+A DAC contains:
+- CSV (Código Seguro de Verificación): 32-char code: LTL (3) + hash (21) + id (7) + randomness (1)
+- Evidence Chain root hash (Merkle-DAG of sources, prompts, revisions)
+- Authorship verification score (Gaussian likelihood against author writing profile)
+- Source verification report (5-step pipeline: identify, hash, access, cross-ref, provenance)
+- Epistemic score (9 dimensions → composite score 0-5 → tier)
+- Cryptographic signatures (LITLE-CSV.v1, SHA-256)
+
+# 3. Verification Methods
+
+## 3.1 CSV (Código Seguro de Verificación)
+Adapted from Spanish e-Government standard (Ley 11/2007, keensoft/csv-generator):
+- 32 characters: 3 prefix (LTL) + 21 hash (Base36 SHA-256) + 7 ID (Base36) + 1 randomness
+- Positions are shuffled using a seeded permutation of the randomness byte
+- Verification: recompute hash from document content, compare against CSV
+
+## 3.2 Authorship Analysis
+Inspired by speaker verification GMMs (P4, albino-pav/P4):
+- 8-feature writing profile per author: word length (mean, std), sentence length (mean, std),
+  vocabulary richness, function word ratio, paragraph length, passive voice ratio
+- New works scored against profile via Gaussian likelihood
+- Configurable FAR (false alarm rate) for threshold optimization
+
+## 3.3 Source Verification
+Inspired by journalistic data verification (martinszy/verificacion_de_datos):
+- 5-step pipeline: Source Identification → Content Integrity → URL Check →
+  Cross-Reference → Provenance Check
+- Each step produces passed/failed/skipped status
+- Overall score: 0-100 → verified (≥80) / partial (≥50) / unverified (<50)
+
+# 4. Certificate Lifecycle
+- Issue: Generated when work is sealed with LITLE-512B
+- Verify: Public endpoint /certificate/<litleId> validates all signatures
+- Renew: Every 10 years; CSV root hash is immutable
+- Revoke: Disputed content enters 'disputed' status; chain topology preserved
+
+# 5. Governance
+DAC format and verification algorithms are governed under RFC-0010.
+Changes require 5-of-7 quorum. Verification thresholds (FAR, score cutoffs)
+are configurable per federation but MUST be documented in the certificate.
+`,
+  },
 );
 
 export function findRfc(slug: string): Rfc | undefined {
