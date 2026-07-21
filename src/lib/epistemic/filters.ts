@@ -23,7 +23,7 @@ export function applyFilter(profiles: EpistemicProfile[], filter: EpistemicFilte
   let result = [...profiles];
 
   if (filter.minCompositeScore !== undefined) {
-    result = result.filter((p) => p.compositeScore >= filter.minCompositeScore!);
+    result = result.filter((p) => p.compositeScore >= filter.minCompositeScore);
   }
   if (filter.domains && filter.domains.length > 0) {
     result = result.filter((p) => filter.domains!.includes(p.domain));
@@ -44,9 +44,8 @@ export function applyFilter(profiles: EpistemicProfile[], filter: EpistemicFilte
   }
 
   const sortBy = filter.sortBy ?? "compositeScore";
-  const sortOrder = filter.sortOrder ?? "desc";
+  const mul = filter.sortOrder === "desc" ? -1 : 1;
   result.sort((a, b) => {
-    const mul = sortOrder === "desc" ? -1 : 1;
     if (sortBy === "compositeScore") return (a.compositeScore - b.compositeScore) * mul;
     return 0;
   });
@@ -110,14 +109,9 @@ export function getQualityTier(score: number): "platinum" | "gold" | "silver" | 
 
 export function createProfile(partial: Partial<EpistemicProfile> & { litleId: string }): EpistemicProfile {
   const defaultDimensions: Record<EpistemicDimension, QualityScore> = {
-    methodological_rigor: 0,
-    reproducibility: 0,
-    citation_integrity: 0,
-    peer_review_status: 0,
-    data_transparency: 0,
-    ai_provenance: 0,
-    longevity_potential: 0,
-    epistemological_novelty: 0,
+    methodological_rigor: 0, reproducibility: 0, citation_integrity: 0,
+    peer_review_status: 0, data_transparency: 0, ai_provenance: 0,
+    longevity_potential: 0, epistemological_novelty: 0,
   };
 
   const dimensions = { ...defaultDimensions, ...partial.dimensions };
@@ -134,5 +128,5 @@ export function createProfile(partial: Partial<EpistemicProfile> & { litleId: st
     aiAssisted: partial.aiAssisted ?? false,
     hasEvidenceChain: partial.hasEvidenceChain ?? false,
     hasCryptoSignature: partial.hasCryptoSignature ?? false,
-  };
+  } as EpistemicProfile;
 }

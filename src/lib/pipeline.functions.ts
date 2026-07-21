@@ -420,10 +420,10 @@ export const signBook = createServerFn({ method: "POST" })
     }
 
     const { buildLitleSignature } = await import("./litle/sign");
-    // The author secret binds signatures to this workspace deterministically.
-    // In a full deployment this would be per-author from packages/quantum-pqc.
-    const workspaceSecret =
-      process.env.LITLE_AUTHOR_SECRET ?? `workspace:${userId}:${data.bookId}`;
+    const workspaceSecret = process.env.LITLE_AUTHOR_SECRET;
+    if (!workspaceSecret) {
+      throw new Error("LITLE_AUTHOR_SECRET environment variable is required for signing");
+    }
 
     const { canonical } = buildLitleSignature({
       chapterTexts: texts,

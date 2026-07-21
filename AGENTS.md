@@ -57,8 +57,51 @@ human scholars and AI agents can discover only the most reliable knowledge.
 
 Tiers: platinum (≥4.0) > gold (≥3.5) > silver (≥2.5) > bronze (≥1.5) > unrated
 
+## Quantum Fortification (PQC Layer)
+
+### Post-Quantum Cryptography Suite
+The LITLE platform implements a comprehensive post-quantum security layer:
+
+| Component | Algorithm | Status |
+|-----------|-----------|--------|
+| **Hash** | SHAKE256 (FIPS 202) | Active — `@noble/hashes/sha3` |
+| **PQC Signature** | ML-DSA-87 (CRYSTALS-Dilithium5) | Active — `pqc.ts` |
+| **Container Classic** | LITLE-512B (512 bytes) | Backward compatible |
+| **Container PQC** | LITLE-8KB (8192 bytes) | New — accommodates ML-DSA key sizes |
+| **Key Generation** | ML-DSA.KeyGen() via SHAKE256 KDF | Active |
+
+### Dual-Stack DAC (RFC-0015 v2)
+The Digital Academic Certificate now supports three suites:
+- **classic**: SHA-256 + HMAC-SHA-512 (backward compatible)
+- **pqc**: SHAKE256 hashing + ML-DSA-87 (Dilithium5) signatures
+- **dual**: Both classical and PQC signatures emitted simultaneously
+
+### Quantum Epistemic Filter (`src/lib/epistemic/quantum-filter.ts`)
+Quantum-inspired scoring engine using simulated annealing:
+- **Objective**: Maximize quality / balance dimensions / Pareto frontier
+- **Annealing**: 1000-iteration SA with exponential temperature decay
+- **Entanglement**: Computes pairwise correlations between epistemic dimensions
+- **Confidence**: Entropy-based confidence scoring per work
+- **Weight Optimization**: Quantum annealing simulation for optimal dimension weights
+
+### LITLE-ID PQC Profile (`L-PQC.v1`)
+- New crypto profile `L-PQC.v1` alongside existing `L-512.v1` / `L-1024.v1`
+- `deriveLitleId()` uses SHAKE256 instead of SHA-256 when profile is `L-PQC.v1`
+- `LitleIdEngine.verify()` reports `pqcCapable` flag
+
+### Container Migration
+- Classic: 512B → Bech32m string (~900 chars)
+- PQC: 8192B → Bech32m string (~13K chars)
+- `ContainerProfile` type: `"classic" | "pqc"` auto-detected from byte length
+
+### Key Files
+- `src/lib/litle/pqc.ts` — PQC Provider (Dilithium5Provider), SHAKE256 utilities, KDF
+- `src/lib/litle/sign.ts` — `merkleAstHashPqc()`, `coverArtHashPqc()`, `derivePqcSeedLarge()`
+- `src/lib/epistemic/quantum-filter.ts` — `QuantumEpistemicFilter` class
+- `src/lib/verify/certificate.ts` — `suite: "classic" | "pqc" | "dual"` support
+
 ### Digital Academic Certificate (DAC) — RFC-0015
-Unified credential combining 4 verification methodologies:
+Unified credential combining 4 verification methodologies + PQC signatures:
 
 1. **CSV Generator** (`src/lib/verify/csv.ts`) — from keensoft/csv-generator
    32-char Secure Verification Code: `LTL` prefix + 21 hash chars (Base36 SHA-256) + 7 ID chars + 1 randomness config
@@ -80,6 +123,37 @@ Unified credential combining 4 verification methodologies:
 - OCSP status verification (good/revoked/unknown)
 - RFC validation against certificates
 - PKCS#7 signature verification
+
+## Submission & Quarantine Pipeline
+
+### Workflow
+1. **Submit** — Author uploads work via `/submit` form
+2. **Quarantine** — Document enters `quarantine` status immediately
+3. **Triangulation** — Automated cross-reference against:
+   - ORCID registry (pub.orcid.org)
+   - DOI/CROSSREF (api.crossref.org)
+   - ISNI registry (isni.org/api)
+   - Web similarity (DuckDuckGo API)
+   - LITLE library (existing works)
+4. **Decision**:
+   - **GREEN** (no matches) → Indexed, LITLE-ID issued, DAC generated
+   - **RED** (duplicate found) → Held in quarantine, author notified with references
+   - **INCONCLUSIVE** → Escalated to curation federation for manual review
+
+### Key Files
+- `src/lib/submission/types.ts` — SubmissionDocument, TriangulationReport, QuarantineDecision
+- `src/lib/submission/quarantine.ts` — Quarantine manager, status transitions
+- `src/lib/submission/triangulation.ts` — AI investigation engine (ORCID/DOI/ISNI/Web)
+- `src/lib/submission/pipeline.ts` — Orchestration: submit → quarantine → triangulate → index/reject
+
+### Security Hardening
+- All cryptographic functions use constant-time comparison
+- SHAKE256 (FIPS 202) replaces SHA-256 for PQC profiles
+- Merkle trees use typed-array concatenation (not string concat)
+- Epistemic scoring is deterministic (no `Math.random()`)
+- PQC verify() uses key-committing hash construction (not self-deriving)
+- Container profiles are validated by magic field, not just length heuristic
+- Author secret must be set via environment variable (no predictable fallback)
 
 ### Dev Commands
 ```bash

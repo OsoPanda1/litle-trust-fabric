@@ -28,6 +28,10 @@ export interface EpistemicProfile {
   aiAssisted: boolean;
   hasEvidenceChain: boolean;
   hasCryptoSignature: boolean;
+  metadata?: {
+    timestamp?: string;
+    citations?: number;
+  };
 }
 
 export interface EpistemicFilter {

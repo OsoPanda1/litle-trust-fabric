@@ -1,17 +1,26 @@
-// LITLE-512B: fixed-length 512-byte post-quantum-ready book signature container.
-// See project spec §2. All offsets are big-endian.
+export const LITLE_CONTAINER_CLASSIC = 512;
+export const LITLE_CONTAINER_PQC = 8192;
 
-export const LITLE_CONTAINER_SIZE_BYTES = 512;
-
-export const LITLE_OFFSETS = {
+export const LITLE_OFFSETS_CLASSIC = {
   BLOCK_A_START: 0,
-  BLOCK_A_END: 64, //   64B: BLAKE3-512 Merkle DAG hash of chapters
+  BLOCK_A_END: 64,
   BLOCK_B_START: 64,
-  BLOCK_B_END: 128, //  64B: metadata (timestamp, version, flags, cover hash, reserved)
+  BLOCK_B_END: 128,
   BLOCK_C_START: 128,
-  BLOCK_C_END: 256, // 128B: PQC author identity seed / public component
+  BLOCK_C_END: 256,
   BLOCK_D_START: 256,
-  BLOCK_D_END: 512, // 256B: Dilithium5-condensed signature over A||B (HMAC placeholder here)
+  BLOCK_D_END: 512,
+} as const;
+
+export const LITLE_OFFSETS_PQC = {
+  BLOCK_A_START: 0,
+  BLOCK_A_END: 64,
+  BLOCK_B_START: 64,
+  BLOCK_B_END: 128,
+  BLOCK_C_START: 128,
+  BLOCK_C_END: 3200,
+  BLOCK_D_START: 3200,
+  BLOCK_D_END: 8192,
 } as const;
 
 export interface LitleMetadata {
@@ -19,68 +28,86 @@ export interface LitleMetadata {
   versionMajor: number;
   versionMinor: number;
   versionPatch: number;
-  coverArtHash: Uint8Array; // exactly 32 bytes
-  flags: number; // bitmask: 0x01 peer-reviewed, 0x02 commercial, 0x04 draft
+  coverArtHash: Uint8Array;
+  flags: number;
+  pqcProfile?: number;
 }
+
+export type ContainerProfile = "classic" | "pqc";
 
 export interface LitleUnpackedContainer {
-  merkleAstHash: Uint8Array; // 64B
+  merkleAstHash: Uint8Array;
   metadata: LitleMetadata;
-  pqcIdentitySeed: Uint8Array; // 128B
-  dilithiumSignature: Uint8Array; // 256B
+  pqcIdentitySeed: Uint8Array;
+  dilithiumSignature: Uint8Array;
+  containerProfile: ContainerProfile;
 }
 
-export class Litle512Engine {
-  static packContainer(data: LitleUnpackedContainer): Uint8Array {
+function getOffsets(profile: ContainerProfile) {
+  return profile === "pqc" ? LITLE_OFFSETS_PQC : LITLE_OFFSETS_CLASSIC;
+}
+
+function getSize(profile: ContainerProfile) {
+  return profile === "pqc" ? LITLE_CONTAINER_PQC : LITLE_CONTAINER_CLASSIC;
+}
+
+export class LitleContainerEngine {
+  static packContainer(
+    data: LitleUnpackedContainer,
+    profile: ContainerProfile = "classic",
+  ): Uint8Array {
+    const ofs = getOffsets(profile);
+    const size = getSize(profile);
     if (data.merkleAstHash.length !== 64) throw new Error("Block A must be 64 bytes");
     if (data.metadata.coverArtHash.length !== 32) throw new Error("coverArtHash must be 32 bytes");
-    if (data.pqcIdentitySeed.length !== 128) throw new Error("Block C must be 128 bytes");
-    if (data.dilithiumSignature.length !== 256) throw new Error("Block D must be 256 bytes");
+    const cBlock = profile === "pqc" ? 3072 : 128;
+    const dBlock = profile === "pqc" ? 4992 : 256;
+    if (data.pqcIdentitySeed.length !== cBlock) throw new Error(`Block C must be ${cBlock} bytes`);
+    if (data.dilithiumSignature.length !== dBlock) throw new Error(`Block D must be ${dBlock} bytes`);
 
-    const buf = new Uint8Array(LITLE_CONTAINER_SIZE_BYTES);
+    const buf = new Uint8Array(size);
     const view = new DataView(buf.buffer);
 
-    // A
-    buf.set(data.merkleAstHash, LITLE_OFFSETS.BLOCK_A_START);
+    buf.set(data.merkleAstHash, ofs.BLOCK_A_START);
 
-    // B
-    const { timestampUtcMs, versionMajor, versionMinor, versionPatch, flags, coverArtHash } =
-      data.metadata;
-    view.setBigUint64(LITLE_OFFSETS.BLOCK_B_START, timestampUtcMs, false);
-    view.setUint16(LITLE_OFFSETS.BLOCK_B_START + 8, versionMajor, false);
-    view.setUint16(LITLE_OFFSETS.BLOCK_B_START + 10, versionMinor, false);
-    view.setUint16(LITLE_OFFSETS.BLOCK_B_START + 12, versionPatch, false);
-    view.setUint32(LITLE_OFFSETS.BLOCK_B_START + 14, flags, false);
-    buf.set(coverArtHash, LITLE_OFFSETS.BLOCK_B_START + 18);
-    // bytes 50..64 reserved (zero)
+    const { timestampUtcMs, versionMajor, versionMinor, versionPatch, flags, coverArtHash } = data.metadata;
+    view.setBigUint64(ofs.BLOCK_B_START, timestampUtcMs, false);
+    view.setUint16(ofs.BLOCK_B_START + 8, versionMajor, false);
+    view.setUint16(ofs.BLOCK_B_START + 10, versionMinor, false);
+    view.setUint16(ofs.BLOCK_B_START + 12, versionPatch, false);
+    view.setUint32(ofs.BLOCK_B_START + 14, flags, false);
+    if (profile === "pqc") {
+      view.setUint8(ofs.BLOCK_B_START + 18, data.metadata.pqcProfile ?? 1);
+    }
+    buf.set(coverArtHash, ofs.BLOCK_B_START + 19);
 
-    // C, D
-    buf.set(data.pqcIdentitySeed, LITLE_OFFSETS.BLOCK_C_START);
-    buf.set(data.dilithiumSignature, LITLE_OFFSETS.BLOCK_D_START);
+    buf.set(data.pqcIdentitySeed, ofs.BLOCK_C_START);
+    buf.set(data.dilithiumSignature, ofs.BLOCK_D_START);
 
     return buf;
   }
 
-  static unpackContainer(buffer: Uint8Array): LitleUnpackedContainer {
-    if (buffer.length !== LITLE_CONTAINER_SIZE_BYTES) {
-      throw new Error(`LITLE container must be 512 bytes, got ${buffer.length}`);
+  static unpackContainer(
+    buffer: Uint8Array,
+  ): LitleUnpackedContainer {
+    const profile: ContainerProfile = buffer.length === LITLE_CONTAINER_PQC ? "pqc" : "classic";
+    const ofs = getOffsets(profile);
+
+    if (buffer.length !== getSize(profile)) {
+      throw new Error(`LITLE container must be ${getSize(profile)} bytes, got ${buffer.length}`);
     }
     const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
-    const merkleAstHash = buffer.slice(LITLE_OFFSETS.BLOCK_A_START, LITLE_OFFSETS.BLOCK_A_END);
-    const timestampUtcMs = view.getBigUint64(LITLE_OFFSETS.BLOCK_B_START, false);
-    const versionMajor = view.getUint16(LITLE_OFFSETS.BLOCK_B_START + 8, false);
-    const versionMinor = view.getUint16(LITLE_OFFSETS.BLOCK_B_START + 10, false);
-    const versionPatch = view.getUint16(LITLE_OFFSETS.BLOCK_B_START + 12, false);
-    const flags = view.getUint32(LITLE_OFFSETS.BLOCK_B_START + 14, false);
-    const coverArtHash = buffer.slice(
-      LITLE_OFFSETS.BLOCK_B_START + 18,
-      LITLE_OFFSETS.BLOCK_B_START + 50,
-    );
-    const pqcIdentitySeed = buffer.slice(LITLE_OFFSETS.BLOCK_C_START, LITLE_OFFSETS.BLOCK_C_END);
-    const dilithiumSignature = buffer.slice(
-      LITLE_OFFSETS.BLOCK_D_START,
-      LITLE_OFFSETS.BLOCK_D_END,
-    );
+    const merkleAstHash = buffer.slice(ofs.BLOCK_A_START, ofs.BLOCK_A_END);
+    const timestampUtcMs = view.getBigUint64(ofs.BLOCK_B_START, false);
+    const versionMajor = view.getUint16(ofs.BLOCK_B_START + 8, false);
+    const versionMinor = view.getUint16(ofs.BLOCK_B_START + 10, false);
+    const versionPatch = view.getUint16(ofs.BLOCK_B_START + 12, false);
+    const flags = view.getUint32(ofs.BLOCK_B_START + 14, false);
+    const pqcProfile = profile === "pqc" ? view.getUint8(ofs.BLOCK_B_START + 18) : undefined;
+    const coverArtHash = buffer.slice(ofs.BLOCK_B_START + 19, ofs.BLOCK_B_START + 51);
+    const pqcIdentitySeed = buffer.slice(ofs.BLOCK_C_START, ofs.BLOCK_C_END);
+    const dilithiumSignature = buffer.slice(ofs.BLOCK_D_START, ofs.BLOCK_D_END);
+
     return {
       merkleAstHash,
       metadata: {
@@ -90,9 +117,11 @@ export class Litle512Engine {
         versionPatch,
         flags,
         coverArtHash,
+        pqcProfile,
       },
       pqcIdentitySeed,
       dilithiumSignature,
+      containerProfile: profile,
     };
   }
 }

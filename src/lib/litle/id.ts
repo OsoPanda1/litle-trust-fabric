@@ -1,34 +1,15 @@
-// LITLE-ID (RFC-0001): durable, self-describing identifier decoupled from any
-// single crypto profile. The container layout (L-512 today, L-1024 tomorrow)
-// is recorded as `cryptoProfile`; rotating the anchor never invalidates the ID.
-
 import { sha256 } from "@noble/hashes/sha2.js";
+import { shake256 } from "@noble/hashes/sha3";
 import { bytesToHex } from "@noble/hashes/utils";
 
-export type LitleWorkType =
-  | "BK"
-  | "RQ"
-  | "DS"
-  | "PL"
-  | "AR"
-  | "MD"
-  | "SW"
-  | "EX"
-  | "DP";
+export type LitleWorkType = "BK" | "RQ" | "DS" | "PL" | "AR" | "MD" | "SW" | "EX" | "DP";
 
 export const LITLE_WORK_TYPES: Record<LitleWorkType, string> = {
-  BK: "Book",
-  RQ: "Research",
-  DS: "Dataset",
-  PL: "Pipeline",
-  AR: "Article",
-  MD: "AI Model",
-  SW: "Software",
-  EX: "Experiment",
-  DP: "Data Package",
+  BK: "Book", RQ: "Research", DS: "Dataset", PL: "Pipeline",
+  AR: "Article", MD: "AI Model", SW: "Software", EX: "Experiment", DP: "Data Package",
 };
 
-export const LITLE_CRYPTO_PROFILES = ["L-512.v1", "L-1024.v1"] as const;
+export const LITLE_CRYPTO_PROFILES = ["L-512.v1", "L-1024.v1", "L-PQC.v1"] as const;
 export type LitleCryptoProfile = (typeof LITLE_CRYPTO_PROFILES)[number];
 
 export interface LitleId {
@@ -36,10 +17,10 @@ export interface LitleId {
   year: number;
   workType: LitleWorkType;
   cryptoProfile: LitleCryptoProfile;
-  suffix: string; // uppercase hex, 8..64
+  suffix: string;
 }
 
-const SUFFIX_RE = /^[0-9A-F]{8,64}$/;
+const SUFFIX_RE = /^[0-9A-F]{16,64}$/;
 const NS_RE = /^[a-z0-9]+(?:\/[a-z0-9]+)*$/;
 
 function assertValid(id: LitleId): void {
@@ -50,7 +31,7 @@ function assertValid(id: LitleId): void {
     throw new Error(`LITLE-ID: unknown workType ${id.workType}`);
   }
   if (!SUFFIX_RE.test(id.suffix)) {
-    throw new Error(`LITLE-ID: suffix must be 8..64 uppercase hex`);
+    throw new Error(`LITLE-ID: suffix must be 16..64 uppercase hex`);
   }
   if (!NS_RE.test(id.namespace)) {
     throw new Error(`LITLE-ID: namespace must be lowercase slash-separated tokens`);
@@ -64,8 +45,8 @@ export function toUri(id: LitleId): string {
 
 export function toHuman(id: LitleId): string {
   assertValid(id);
-  const s = id.suffix.slice(0, 8).padEnd(8, "0");
-  return `LTL-${id.year}-${id.workType}-${s.slice(0, 4)}-${s.slice(4, 8)}`;
+  const s = id.suffix.slice(0, 8).toUpperCase().padEnd(8, "0");
+  return `LTL-${id.year}-${id.workType}-${s.slice(0, 4)}-${s.slice(4, 8)}-${id.suffix.slice(8, 12)}`;
 }
 
 export function toCanonical(id: LitleId): string {
@@ -107,14 +88,15 @@ export function parseAny(input: string): LitleId {
     assertValid(id);
     return id;
   }
-  const m = /^LTL-(\d{4})-([A-Z]{2})-([0-9A-F]{4})-([0-9A-F]{4})$/.exec(t);
+  const m = /^LTL-(\d{4})-([A-Z]{2})-([0-9A-F]{4})-([0-9A-F]{4})(?:-([0-9A-F]{4}))?$/.exec(t);
   if (m) {
+    const suffix = `${m[3]}${m[4]}${m[5] ?? ""}`.padEnd(16, "0");
     const id: LitleId = {
       year: Number(m[1]),
       workType: m[2] as LitleWorkType,
       cryptoProfile: "L-512.v1",
       namespace: "unknown",
-      suffix: `${m[3]}${m[4]}`,
+      suffix,
     };
     assertValid(id);
     return id;
@@ -129,13 +111,16 @@ export function deriveLitleId(input: {
   workType: LitleWorkType;
   cryptoProfile?: LitleCryptoProfile;
 }): LitleId {
-  const digest = sha256(input.containerBytes);
-  const suffix = bytesToHex(digest.slice(0, 8)).toUpperCase();
+  const profile = input.cryptoProfile ?? "L-512.v1";
+  const digest = profile === "L-PQC.v1"
+    ? shake256(input.containerBytes, { dkLen: 64 })
+    : sha256(input.containerBytes);
+  const suffix = bytesToHex(digest.slice(0, 16)).toUpperCase();
   const id: LitleId = {
     year: input.year,
     namespace: input.namespace.toLowerCase(),
     workType: input.workType,
-    cryptoProfile: input.cryptoProfile ?? "L-512.v1",
+    cryptoProfile: profile,
     suffix,
   };
   assertValid(id);
@@ -147,7 +132,7 @@ export function workTypeLabel(t: LitleWorkType | string): string {
 }
 
 export class LitleIdEngine {
-  static parse(input: string): LitleId & { federationId?: string } {
+  static parse(input: string): LitleId & { federationId?: string; pqcCapable?: boolean } {
     const id = parseAny(input);
     const fedMap: Record<string, string> = {
       "tech": "FED1", "crypto": "FED1",
@@ -159,17 +144,21 @@ export class LitleIdEngine {
       "audit": "FED7", "compliance": "FED7",
     };
     const ns = id.namespace.split("/")[0].toLowerCase();
-    return { ...id, federationId: fedMap[ns] ?? "FED0" };
+    return {
+      ...id,
+      federationId: fedMap[ns] ?? "FED0",
+      pqcCapable: id.cryptoProfile === "L-PQC.v1",
+    };
   }
 
   static format(id: LitleId): { human: string; uri: string; canonical: string } {
     return { human: toHuman(id), uri: toUri(id), canonical: toCanonical(id) };
   }
 
-  static verify(input: string): { valid: boolean; error?: string } {
+  static verify(input: string): { valid: boolean; error?: string; pqcCapable?: boolean } {
     try {
-      parseAny(input);
-      return { valid: true };
+      const id = parseAny(input);
+      return { valid: true, pqcCapable: id.cryptoProfile === "L-PQC.v1" };
     } catch (e) {
       return { valid: false, error: (e as Error).message };
     }

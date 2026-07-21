@@ -1,5 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { LitleIdEngine, parseAny, toHuman, LitleId } from "@/lib/litle/id";
+import { LitleIdEngine, parseAny, toHuman, type LitleId } from "@/lib/litle/id";
 
 export const Route = createFileRoute("/verify/$litleId")({
   head: ({ params }) => ({
@@ -42,6 +42,11 @@ function VerifyPage() {
         <div className="crystal-panel p-8 md:p-12">
           <div className="flex items-center gap-3 mb-8">
             <span className="verified-badge px-3 py-1 text-xs font-mono uppercase tracking-wider">Verified Identifier</span>
+            {parsed.pqcCapable && (
+              <span className="inline-flex items-center px-3 py-1 text-xs font-mono uppercase tracking-wider border border-gilt/30 text-gilt rounded-full bg-gilt/5">
+                PQC Enabled
+              </span>
+            )}
           </div>
 
           <div className="grid md:grid-cols-[1fr_1.5fr] gap-10">
@@ -58,16 +63,32 @@ function VerifyPage() {
                 <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-mono mb-2">Federation</p>
                 <div className="font-mono text-sm bg-background border border-border/40 p-3 rounded-sm">{parsed.federationId ?? "FED0"}</div>
               </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-mono mb-2">Crypto Profile</p>
+                <div className="font-mono text-sm bg-background border border-border/40 p-3 rounded-sm">{parsed.cryptoProfile}</div>
+              </div>
             </div>
 
             <div className="space-y-6">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-mono mb-2">Identifier details</p>
                 <dl className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="bg-background border border-border/40 p-3"><dt className="text-[10px] text-muted-foreground uppercase tracking-wider">Namespace</dt><dd className="font-mono">{parsed.namespace}</dd></div>
-                  <div className="bg-background border border-border/40 p-3"><dt className="text-[10px] text-muted-foreground uppercase tracking-wider">Timestamp</dt><dd className="font-mono">{parsed.timestamp}</dd></div>
-                  <div className="bg-background border border-border/40 p-3"><dt className="text-[10px] text-muted-foreground uppercase tracking-wider">Random</dt><dd className="font-mono">{parsed.random}</dd></div>
-                  <div className="bg-background border border-border/40 p-3"><dt className="text-[10px] text-muted-foreground uppercase tracking-wider">Checksum</dt><dd className="font-mono">{parsed.checksum}</dd></div>
+                  <div className="bg-background border border-border/40 p-3">
+                    <dt className="text-[10px] text-muted-foreground uppercase tracking-wider">Namespace</dt>
+                    <dd className="font-mono">{parsed.namespace}</dd>
+                  </div>
+                  <div className="bg-background border border-border/40 p-3">
+                    <dt className="text-[10px] text-muted-foreground uppercase tracking-wider">Year</dt>
+                    <dd className="font-mono">{parsed.year}</dd>
+                  </div>
+                  <div className="bg-background border border-border/40 p-3">
+                    <dt className="text-[10px] text-muted-foreground uppercase tracking-wider">Work Type</dt>
+                    <dd className="font-mono">{parsed.workType}</dd>
+                  </div>
+                  <div className="bg-background border border-border/40 p-3">
+                    <dt className="text-[10px] text-muted-foreground uppercase tracking-wider">Suffix</dt>
+                    <dd className="font-mono text-[10px] break-all">{parsed.suffix}</dd>
+                  </div>
                 </dl>
               </div>
 

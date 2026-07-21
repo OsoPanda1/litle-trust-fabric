@@ -1,5 +1,9 @@
 import { sha256 } from "@noble/hashes/sha2.js";
+import { shake256 } from "@noble/hashes/sha3";
 import { bytesToHex } from "@noble/hashes/utils";
+import { concat } from "@/lib/litle/pqc";
+
+export type HashProfile = "SHA-256" | "SHAKE256";
 
 export interface VerificationResult {
   status: "verified" | "revoked" | "unknown";
@@ -8,7 +12,8 @@ export interface VerificationResult {
   nodeCount: number;
   evidenceIntegrity: boolean;
   cryptographicAnchor: string;
-  timestamp: string;
+  verifiedAt: string;
+  hashProfile: HashProfile;
 }
 
 export interface OCSPVerification {
@@ -18,41 +23,62 @@ export interface OCSPVerification {
   producedAt?: string;
 }
 
-export function verifyEvidenceIntegrity(nodes: Array<{ hash: string; payload: string; parentHash?: string }>): boolean {
-  for (const node of nodes) {
-    const computed = bytesToHex(sha256(new TextEncoder().encode(node.payload)));
-    if (computed !== node.hash) return false;
-  }
-  return true;
+function hashFn(data: Uint8Array, profile: HashProfile): Uint8Array {
+  return profile === "SHAKE256" ? shake256(data, { dkLen: 32 }) : sha256(data);
 }
 
-export function buildMerkleRoot(hashes: string[]): string {
+export function verifyEvidenceIntegrity(
+  nodes: Array<{ hash: string; payload: string; parentHash?: string }>,
+  profile: HashProfile = "SHA-256",
+): { integrity: boolean; chainValid: boolean } {
+  for (const node of nodes) {
+    const computed = bytesToHex(hashFn(new TextEncoder().encode(node.payload), profile));
+    if (computed !== node.hash) return { integrity: false, chainValid: false };
+  }
+  const chainValid = nodes.every((node, i) => {
+    if (i === 0) return node.parentHash === undefined || node.parentHash === null;
+    return node.parentHash === nodes[i - 1].hash;
+  });
+  return { integrity: true, chainValid };
+}
+
+export function buildMerkleRoot(
+  hashes: string[],
+  profile: HashProfile = "SHA-256",
+): string {
   if (hashes.length === 0) return "";
   if (hashes.length === 1) return hashes[0];
   const next: string[] = [];
+  const encoder = new TextEncoder();
   for (let i = 0; i < hashes.length; i += 2) {
     if (i + 1 < hashes.length) {
-      const combined = bytesToHex(sha256(new TextEncoder().encode(hashes[i] + hashes[i + 1])));
+      const left = encoder.encode(hashes[i]);
+      const right = encoder.encode(hashes[i + 1]);
+      const combined = bytesToHex(hashFn(concat(left, right), profile));
       next.push(combined);
     } else {
       next.push(hashes[i]);
     }
   }
-  return buildMerkleRoot(next);
+  return buildMerkleRoot(next, profile);
 }
 
-export function verifyChain(nodes: Array<{ hash: string; payload: string; parentHash?: string }>): VerificationResult {
-  const integrity = verifyEvidenceIntegrity(nodes);
+export function verifyChain(
+  nodes: Array<{ hash: string; payload: string; parentHash?: string }>,
+  profile: HashProfile = "SHA-256",
+): VerificationResult {
+  const { integrity, chainValid } = verifyEvidenceIntegrity(nodes, profile);
   const hashes = nodes.map((n) => n.hash);
-  const rootHash = buildMerkleRoot(hashes);
+  const rootHash = buildMerkleRoot(hashes, profile);
 
   return {
-    status: integrity ? "verified" : "unknown",
+    status: integrity && chainValid ? "verified" : "unknown",
     rootHash,
     chainLength: nodes.length,
     nodeCount: nodes.length,
     evidenceIntegrity: integrity,
     cryptographicAnchor: rootHash.slice(0, 16),
-    timestamp: new Date().toISOString(),
+    verifiedAt: new Date().toISOString(),
+    hashProfile: profile,
   };
 }
