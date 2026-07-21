@@ -86,6 +86,25 @@ function StandardIndex() {
             body="Redundant off-platform preservation, refreshed on a public cadence."
           />
         </div>
+
+        <div className="mt-10 grid md:grid-cols-2 gap-3">
+          <Link
+            to="/standard/trust-fabric"
+            className="crystal-glass p-6 hover:bg-accent/20 transition block"
+          >
+            <div className="font-mono text-xs text-muted-foreground mb-2">RFC-0012 · Interop</div>
+            <div className="font-serif text-xl mb-1">Trust Fabric →</div>
+            <p className="text-sm text-muted-foreground">Kernel + adapters. One identity, many backends.</p>
+          </Link>
+          <Link
+            to="/standard/observability"
+            className="crystal-glass p-6 hover:bg-accent/20 transition block"
+          >
+            <div className="font-mono text-xs text-muted-foreground mb-2">RFC-0013 · Observability</div>
+            <div className="font-serif text-xl mb-1">Observability Fabric →</div>
+            <p className="text-sm text-muted-foreground">Grafana as the official viewer. LITLE-ID first.</p>
+          </Link>
+        </div>
       </section>
 
       <section className="max-w-6xl mx-auto px-6 pb-28">

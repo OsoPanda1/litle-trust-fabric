@@ -17,6 +17,7 @@ import { Route as StandardIndexRouteImport } from './routes/standard/index'
 import { Route as VerifyLitleIdRouteImport } from './routes/verify.$litleId'
 import { Route as StandardTrustFabricRouteImport } from './routes/standard/trust-fabric'
 import { Route as StandardRfcsRouteImport } from './routes/standard/rfcs'
+import { Route as StandardObservabilityRouteImport } from './routes/standard/observability'
 import { Route as StandardArchiveRouteImport } from './routes/standard/archive'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as StandardRfcsIndexRouteImport } from './routes/standard/rfcs.index'
@@ -62,6 +63,11 @@ const StandardRfcsRoute = StandardRfcsRouteImport.update({
   path: '/standard/rfcs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StandardObservabilityRoute = StandardObservabilityRouteImport.update({
+  id: '/standard/observability',
+  path: '/standard/observability',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StandardArchiveRoute = StandardArchiveRouteImport.update({
   id: '/standard/archive',
   path: '/standard/archive',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/standard/archive': typeof StandardArchiveRoute
+  '/standard/observability': typeof StandardObservabilityRoute
   '/standard/rfcs': typeof StandardRfcsRouteWithChildren
   '/standard/trust-fabric': typeof StandardTrustFabricRoute
   '/verify/$litleId': typeof VerifyLitleIdRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/standard/archive': typeof StandardArchiveRoute
+  '/standard/observability': typeof StandardObservabilityRoute
   '/standard/trust-fabric': typeof StandardTrustFabricRoute
   '/verify/$litleId': typeof VerifyLitleIdRoute
   '/standard': typeof StandardIndexRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/standard/archive': typeof StandardArchiveRoute
+  '/standard/observability': typeof StandardObservabilityRoute
   '/standard/rfcs': typeof StandardRfcsRouteWithChildren
   '/standard/trust-fabric': typeof StandardTrustFabricRoute
   '/verify/$litleId': typeof VerifyLitleIdRoute
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/dashboard'
     | '/standard/archive'
+    | '/standard/observability'
     | '/standard/rfcs'
     | '/standard/trust-fabric'
     | '/verify/$litleId'
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/dashboard'
     | '/standard/archive'
+    | '/standard/observability'
     | '/standard/trust-fabric'
     | '/verify/$litleId'
     | '/standard'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_authenticated/dashboard'
     | '/standard/archive'
+    | '/standard/observability'
     | '/standard/rfcs'
     | '/standard/trust-fabric'
     | '/verify/$litleId'
@@ -183,6 +195,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StandardArchiveRoute: typeof StandardArchiveRoute
+  StandardObservabilityRoute: typeof StandardObservabilityRoute
   StandardRfcsRoute: typeof StandardRfcsRouteWithChildren
   StandardTrustFabricRoute: typeof StandardTrustFabricRoute
   VerifyLitleIdRoute: typeof VerifyLitleIdRoute
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       path: '/standard/rfcs'
       fullPath: '/standard/rfcs'
       preLoaderRoute: typeof StandardRfcsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standard/observability': {
+      id: '/standard/observability'
+      path: '/standard/observability'
+      fullPath: '/standard/observability'
+      preLoaderRoute: typeof StandardObservabilityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/standard/archive': {
@@ -318,6 +338,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StandardArchiveRoute: StandardArchiveRoute,
+  StandardObservabilityRoute: StandardObservabilityRoute,
   StandardRfcsRoute: StandardRfcsRouteWithChildren,
   StandardTrustFabricRoute: StandardTrustFabricRoute,
   VerifyLitleIdRoute: VerifyLitleIdRoute,
