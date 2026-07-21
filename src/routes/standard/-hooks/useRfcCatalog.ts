@@ -1,8 +1,8 @@
 // src/routes/standard/-hooks/useRfcCatalog.ts
 import { useState, useMemo } from "react";
-import type { RFC } from "@/content/rfcs";
+import type { Rfc } from "@/content/rfcs";
 
-export function useRfcCatalog(rfcs: RFC[] = []) {
+export function useRfcCatalog(rfcs: Rfc[] = []) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -15,7 +15,7 @@ export function useRfcCatalog(rfcs: RFC[] = []) {
       const matchesSearch =
         rfc.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         rfc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        rfc.summary?.toLowerCase().includes(searchQuery.toLowerCase());
+        rfc.abstract?.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesCategory = selectedCategory ? rfc.category === selectedCategory : true;
 
