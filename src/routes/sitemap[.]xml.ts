@@ -22,6 +22,12 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/standard/rfcs/0009-independent-archive", changefreq: "monthly", priority: "0.7" },
           { path: "/standard/rfcs/0011-standards-council", changefreq: "monthly", priority: "0.6" },
           { path: "/standard/archive", changefreq: "monthly", priority: "0.7" },
+         { path: "/standard/trust-fabric", changefreq: "monthly", priority: "0.8" },
+         { path: "/standard/observability", changefreq: "monthly", priority: "0.7" },
+         { path: "/standard/rfcs/0002-work-types", changefreq: "monthly", priority: "0.6" },
+         { path: "/standard/rfcs/0010-federated-governance", changefreq: "monthly", priority: "0.7" },
+         { path: "/standard/rfcs/0012-trust-fabric", changefreq: "monthly", priority: "0.7" },
+         { path: "/standard/rfcs/0013-observability-fabric", changefreq: "monthly", priority: "0.6" },
           { path: "/auth", changefreq: "monthly", priority: "0.3" },
         ];
         const urls = entries.map((e) =>
