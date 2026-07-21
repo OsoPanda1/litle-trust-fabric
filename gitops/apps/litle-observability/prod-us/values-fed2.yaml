@@ -1,0 +1,12 @@
+litle:
+  federationId: "FED2-RESEARCH"
+grafana:
+  rootUrl: "https://grafana.us.litle.example.com"
+  oidc:
+    enabled: true
+    clientId: "litle-portal-us"
+    issuerUrl: "https://id.litle.example.com"
+    allowedDomains: ["litle.example.com"]
+datasources:
+  cloudwatch:
+    defaultRegion: "us-east-1"

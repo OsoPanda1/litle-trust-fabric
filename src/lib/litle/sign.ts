@@ -1,6 +1,6 @@
 import { blake3 } from "@noble/hashes/blake3";
 import { hmac } from "@noble/hashes/hmac";
-import { sha512 } from "@noble/hashes/sha2";
+import { sha512 } from "@noble/hashes/sha2.js";
 import {
   Litle512Engine,
   type LitleMetadata,
@@ -183,10 +183,10 @@ export function condensedSignature(
 
   const key = encoder.encode(`litle-dilithium5-key|${authorSecret}`);
 
-  const s1 = hmac(sha512, key, msg); // 64B
-  const s2 = hmac(sha512, key, s1);  // 64B
-  const s3 = hmac(sha512, key, s2);  // 64B
-  const s4 = hmac(sha512, key, s3);  // 64B
+  const s1 = hmac(sha512 as any, key, msg); // 64B
+  const s2 = hmac(sha512 as any, key, s1);  // 64B
+  const s3 = hmac(sha512 as any, key, s2);  // 64B
+  const s4 = hmac(sha512 as any, key, s3);  // 64B
 
   const out = new Uint8Array(DILITHIUM_STANDIN_SIG_BYTES);
   out.set(s1, 0);

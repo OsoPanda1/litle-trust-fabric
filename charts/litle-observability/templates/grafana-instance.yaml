@@ -1,0 +1,48 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    dashboards: "grafana"
+    {{- include "litle-observability.labels" . | nindent 4 }}
+spec:
+  config:
+    server:
+      root_url: {{ .Values.grafana.rootUrl | quote }}
+    security:
+      admin_user: {{ .Values.grafana.adminUser | quote }}
+    auth:
+      disable_login_form: "false"
+      disable_signout_menu: "false"
+    {{- if .Values.grafana.oidc.enabled }}
+    "auth.generic_oauth":
+      enabled: "true"
+      name: "LITLE OIDC"
+      client_id: {{ .Values.grafana.oidc.clientId | quote }}
+      scopes: "openid profile email"
+      auth_url: "{{ .Values.grafana.oidc.issuerUrl }}/authorize"
+      token_url: "{{ .Values.grafana.oidc.issuerUrl }}/token"
+      api_url: "{{ .Values.grafana.oidc.issuerUrl }}/userinfo"
+      allowed_domains: {{ join "," .Values.grafana.oidc.allowedDomains | quote }}
+      role_attribute_path: {{ .Values.grafana.oidc.roleAttributePath | quote }}
+    {{- end }}
+  deployment:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: grafana
+              env:
+                - name: GF_SECURITY_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.grafana.adminPasswordSecretName }}
+                      key: {{ .Values.grafana.adminPasswordSecretKey }}
+                {{- if .Values.grafana.oidc.enabled }}
+                - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.grafana.oidc.clientSecretSecretName }}
+                      key: {{ .Values.grafana.oidc.clientSecretSecretKey }}
+                {{- end }}

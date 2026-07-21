@@ -1,0 +1,119 @@
+{{- $ns := .Values.global.namespace -}}
+{{- if .Values.datasources.postgres.enabled }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: litle-postgres
+  namespace: {{ $ns }}
+spec:
+  instanceSelector: { matchLabels: { dashboards: "grafana" } }
+  datasource:
+    name: LITLE-Postgres
+    type: postgres
+    access: proxy
+    url: "{{ .Values.datasources.postgres.host }}:{{ .Values.datasources.postgres.port }}"
+    user: {{ .Values.datasources.postgres.user | quote }}
+    database: {{ .Values.datasources.postgres.database | quote }}
+  valuesFrom:
+    - targetPath: "secureJsonData.password"
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.datasources.postgres.passwordSecretName }}
+          key: {{ .Values.datasources.postgres.passwordSecretKey }}
+{{- end }}
+{{- if .Values.datasources.mysql.enabled }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata: { name: litle-mysql, namespace: {{ $ns }} }
+spec:
+  instanceSelector: { matchLabels: { dashboards: "grafana" } }
+  datasource:
+    name: LITLE-MySQL
+    type: mysql
+    url: "{{ .Values.datasources.mysql.host }}:{{ .Values.datasources.mysql.port }}"
+    user: {{ .Values.datasources.mysql.user | quote }}
+    database: {{ .Values.datasources.mysql.database | quote }}
+  valuesFrom:
+    - targetPath: "secureJsonData.password"
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.datasources.mysql.passwordSecretName }}
+          key: {{ .Values.datasources.mysql.passwordSecretKey }}
+{{- end }}
+{{- if .Values.datasources.elasticsearch.enabled }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata: { name: litle-elasticsearch, namespace: {{ $ns }} }
+spec:
+  instanceSelector: { matchLabels: { dashboards: "grafana" } }
+  datasource:
+    name: LITLE-Elasticsearch
+    type: elasticsearch
+    url: {{ .Values.datasources.elasticsearch.url | quote }}
+    jsonData:
+      esVersion: {{ .Values.datasources.elasticsearch.version }}
+      timeField: {{ .Values.datasources.elasticsearch.timeField | quote }}
+{{- end }}
+{{- if .Values.datasources.cloudwatch.enabled }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata: { name: litle-cloudwatch, namespace: {{ $ns }} }
+spec:
+  instanceSelector: { matchLabels: { dashboards: "grafana" } }
+  datasource:
+    name: LITLE-CloudWatch
+    type: cloudwatch
+    jsonData:
+      authType: keys
+      defaultRegion: {{ .Values.datasources.cloudwatch.defaultRegion | quote }}
+  valuesFrom:
+    - targetPath: "secureJsonData.accessKey"
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.datasources.cloudwatch.credentialsSecretName }}
+          key: {{ .Values.datasources.cloudwatch.accessKeyKey }}
+    - targetPath: "secureJsonData.secretKey"
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.datasources.cloudwatch.credentialsSecretName }}
+          key: {{ .Values.datasources.cloudwatch.secretKeyKey }}
+{{- end }}
+{{- if .Values.datasources.pmm.enabled }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata: { name: litle-pmm, namespace: {{ $ns }} }
+spec:
+  instanceSelector: { matchLabels: { dashboards: "grafana" } }
+  datasource:
+    uid: "Percona-PMM"
+    name: Percona-PMM
+    type: prometheus
+    url: {{ .Values.datasources.pmm.url | quote }}
+    access: proxy
+{{- end }}
+{{- if .Values.datasources.zabbix.enabled }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata: { name: litle-zabbix, namespace: {{ $ns }} }
+spec:
+  instanceSelector: { matchLabels: { dashboards: "grafana" } }
+  datasource:
+    uid: "Zabbix-Monitoring"
+    name: Zabbix-Monitoring
+    type: alexanderzobnin-zabbix-datasource
+    url: "{{ .Values.datasources.zabbix.url }}/api_jsonrpc.php"
+    jsonData:
+      username: {{ .Values.datasources.zabbix.user | quote }}
+  valuesFrom:
+    - targetPath: "secureJsonData.password"
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.datasources.zabbix.passwordSecretName }}
+          key: {{ .Values.datasources.zabbix.passwordSecretKey }}
+{{- end }}

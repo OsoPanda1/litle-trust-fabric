@@ -1,0 +1,13 @@
+# FED3 — Infrastructure & Archive
+litle:
+  federationId: "FED3-INFRA"
+datasources:
+  cloudwatch:
+    defaultRegion: "us-west-2"
+  pmm:
+    url: "http://pmm-fed3.monitoring.svc.cluster.local:9090"
+dashboards:
+  kubernetes: true
+  aws: true
+  pmm: true
+  zabbix: true

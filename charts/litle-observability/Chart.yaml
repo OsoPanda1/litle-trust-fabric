@@ -1,0 +1,16 @@
+apiVersion: v2
+name: litle-observability
+description: LITLE Trust Fabric Observability Umbrella (Grafana + datasources + dashboards + alerts). One kernel, many adapters (Postgres, MySQL, Elasticsearch, CloudWatch, PMM, Zabbix). Every panel and alert is keyed by LITLE-ID.
+type: application
+version: 0.1.0
+appVersion: "10.4.0"
+keywords:
+  - litle
+  - observability
+  - grafana
+  - trust-fabric
+dependencies:
+  - name: grafana-operator
+    version: 5.24.0
+    repository: "oci://ghcr.io/grafana/helm-charts"
+    condition: grafanaOperator.enabled
