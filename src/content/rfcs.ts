@@ -5,8 +5,14 @@ export interface Rfc {
   id: string; // e.g. "RFC-0001"
   slug: string; // URL slug
   title: string;
-  status: "Draft" | "Proposed" | "Accepted" | "Implemented";
-  category: "Identity" | "Evidence" | "Preservation" | "Governance" | "Interop";
+  status: "Draft" | "Proposed" | "Accepted" | "Implemented" | "Stable";
+  category:
+    | "Identity"
+    | "Evidence"
+    | "Preservation"
+    | "Governance"
+    | "Interop"
+    | "Observability";
   updated: string; // ISO date
   abstract: string;
   body: string; // plain text with `#` headings + `-` lists
