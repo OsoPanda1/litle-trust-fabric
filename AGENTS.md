@@ -141,10 +141,16 @@ Unified credential combining 4 verification methodologies + PQC signatures:
    - **INCONCLUSIVE** → Escalated to curation federation for manual review
 
 ### Key Files
-- `src/lib/submission/types.ts` — SubmissionDocument, TriangulationReport, QuarantineDecision
+- `src/lib/submission/types.ts` — SubmissionDocument, TriangulationReport, QuarantineDecision, PipelineResult
 - `src/lib/submission/quarantine.ts` — Quarantine manager, status transitions
 - `src/lib/submission/triangulation.ts` — AI investigation engine (ORCID/DOI/ISNI/Web)
 - `src/lib/submission/pipeline.ts` — Orchestration: submit → quarantine → triangulate → index/reject
+
+### Routes Added
+- `/submit` — Public submission form with quarantine pipeline integration
+- `/_authenticated/submissions` — User dashboard for tracking submissions
+- `/admin/quarantine` — Curation Federation admin panel (FED-5)
+- `/auth` — Supabase-based email/password auth (signin/signup)
 
 ### Security Hardening
 - All cryptographic functions use constant-time comparison

@@ -1,13 +1,7 @@
-import type { SubmissionDocument, SubmissionStatus, TriangulationResult, DuplicateEvidence, TriangulationReport } from "./types";
+import type { SubmissionDocument, TriangulationReport, PipelineResult } from "./types";
 import { createSubmission, updateSubmissionStatus, getSubmission, getUserSubmissions, processQuarantineDecision, submitForIndexing, rejectSubmission } from "./quarantine";
 import { runTriangulation } from "./triangulation";
-
-export interface PipelineResult {
-  submission: SubmissionDocument;
-  report?: TriangulationReport;
-  decision?: { action: "index" | "reject" | "escalate"; reason: string };
-  litleId?: string;
-}
+export type { PipelineResult } from "./types";
 
 export async function submitAndQuarantine(input: {
   userId: string;
@@ -66,9 +60,3 @@ export async function fastTrackSubmission(input: {
 }
 
 export { getUserSubmissions, getSubmission };
-
-function generateId(): string {
-  const ts = Date.now().toString(36).toUpperCase();
-  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `QRN-${ts}-${rand}`;
-}

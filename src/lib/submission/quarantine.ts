@@ -1,7 +1,5 @@
 import type { SubmissionDocument, SubmissionStatus, TriangulationResult, QuarantineDecision, DuplicateEvidence } from "./types";
 
-const encoder = new TextEncoder();
-
 interface QuarantineStore {
   submissions: Map<string, SubmissionDocument>;
 }
@@ -112,7 +110,7 @@ export async function processQuarantineDecision(
     return {
       action: "reject",
       reason: primaryEvidence
-        ? `Duplicate detected: ${primaryEvidence.type.toUpperCase()} ${primaryEvidence.identifier} references existing work. Author notified with citation details.`
+        ? `Duplicate detected: ${primaryEvidence.type.toUpperCase()} ${primaryEvidence.identifier} references existing work.`
         : "Existing registration detected. Submission rejected pending author clarification.",
       evidence,
       confidence: 0.9,
@@ -142,7 +140,6 @@ export async function rejectSubmission(
   reason: string,
   evidence: DuplicateEvidence[],
 ): Promise<void> {
-  const evidenceSummary = evidence.map((e) => `${e.type.toUpperCase()}: ${e.identifier}`).join("; ");
   await updateSubmissionStatus(submission.id, "duplicate", {
     triangulationResult: "red",
     triangulationCompletedAt: new Date().toISOString(),

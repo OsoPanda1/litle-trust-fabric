@@ -29,6 +29,8 @@ import { Route as DiscoveryRouteImport } from './routes/discovery'
 import { Route as StandardOpenScienceRouteImport } from './routes/standard/open-science'
 import { Route as CertificateLitleIdRouteImport } from './routes/certificate.$litleId'
 import { Route as StandardCertificationRouteImport } from './routes/standard/certification'
+import { Route as AuthenticatedSubmissionsRouteImport } from './routes/_authenticated/submissions'
+import { Route as AdminQuarantineRouteImport } from './routes/admin/quarantine'
 import { Route as AuthenticatedBooksBookIdRouteImport } from './routes/_authenticated/books.$bookId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -119,6 +121,16 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSubmissionsRoute = AuthenticatedSubmissionsRouteImport.update({
+  id: '/submissions',
+  path: '/submissions',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AdminQuarantineRoute = AdminQuarantineRouteImport.update({
+  id: '/admin/quarantine',
+  path: '/admin/quarantine',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const StandardRfcsIndexRoute = StandardRfcsIndexRouteImport.update({
   id: '/',
@@ -280,6 +292,7 @@ export interface RootRouteChildren {
   LibraryRoute: typeof LibraryRoute
   GovernanceRoute: typeof GovernanceRoute
   SubmitRoute: typeof SubmitRoute
+  AdminQuarantineRoute: typeof AdminQuarantineRoute
   StandardArchiveRoute: typeof StandardArchiveRoute
   StandardObservabilityRoute: typeof StandardObservabilityRoute
   StandardOpenScienceRoute: typeof StandardOpenScienceRoute
@@ -433,6 +446,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StandardRfcsSlugRouteImport
       parentRoute: typeof StandardRfcsRoute
     }
+    '/admin/quarantine': {
+      id: '/admin/quarantine'
+      path: '/admin/quarantine'
+      fullPath: '/admin/quarantine'
+      preLoaderRoute: typeof AdminQuarantineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/submissions': {
+      id: '/_authenticated/submissions'
+      path: '/submissions'
+      fullPath: '/submissions'
+      preLoaderRoute: typeof AuthenticatedSubmissionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/books/$bookId': {
       id: '/_authenticated/books/$bookId'
       path: '/books/$bookId'
@@ -445,11 +472,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedSubmissionsRoute: typeof AuthenticatedSubmissionsRoute
   AuthenticatedBooksBookIdRoute: typeof AuthenticatedBooksBookIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedSubmissionsRoute: AuthenticatedSubmissionsRoute,
   AuthenticatedBooksBookIdRoute: AuthenticatedBooksBookIdRoute,
 }
 
@@ -479,6 +508,7 @@ const rootRouteChildren: RootRouteChildren = {
   LibraryRoute: LibraryRoute,
   GovernanceRoute: GovernanceRoute,
   SubmitRoute: SubmitRoute,
+  AdminQuarantineRoute: AdminQuarantineRoute,
   StandardArchiveRoute: StandardArchiveRoute,
   StandardObservabilityRoute: StandardObservabilityRoute,
   StandardOpenScienceRoute: StandardOpenScienceRoute,

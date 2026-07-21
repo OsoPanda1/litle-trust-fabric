@@ -6,8 +6,6 @@ import type {
   SubmissionDocument,
 } from "./types";
 
-const encoder = new TextEncoder();
-
 let webSearchCache = new Map<string, { found: boolean; matches: Array<{ title: string; url: string; score: number }> }>();
 
 export function resetSearchCache(): void {

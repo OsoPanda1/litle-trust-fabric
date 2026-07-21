@@ -65,9 +65,14 @@ function Dashboard() {
   return (
     <main className="min-h-screen">
       <nav className="max-w-6xl mx-auto flex items-center justify-between px-6 py-6">
-        <Link to="/" className="font-serif text-lg gilt-text">
-          LITLE Librarian
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link to="/" className="font-serif text-lg gilt-text">
+            LITLE Librarian
+          </Link>
+          <Link to="/submissions" className="text-xs font-mono uppercase tracking-wider text-muted-foreground hover:text-foreground transition">
+            Submissions
+          </Link>
+        </div>
         <button
           onClick={signOut}
           className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-2"

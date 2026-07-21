@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { submitAndQuarantine, executeTriangulation, getSubmission } from "@/lib/submission/pipeline";
+import { submitAndQuarantine, executeTriangulation } from "@/lib/submission/pipeline";
 import type { SubmissionDocument, TriangulationReport, PipelineResult } from "@/lib/submission/types";
 
 export const Route = createFileRoute("/submit")({

@@ -60,3 +60,10 @@ export interface QuarantineDecision {
   evidence: DuplicateEvidence[];
   confidence: number;
 }
+
+export interface PipelineResult {
+  submission: SubmissionDocument;
+  report?: TriangulationReport;
+  decision?: QuarantineDecision;
+  litleId?: string;
+}
