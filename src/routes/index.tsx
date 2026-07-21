@@ -99,6 +99,7 @@ function HeroSection() {
         </svg>
       </div>
 
+      <div className="hairline-glow mb-0" />
       <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-20">
         <div className="mb-10">
           <span className="inline-flex items-center rounded-full border border-border/60 px-3 py-1 text-xs font-mono uppercase tracking-[0.18em] text-muted-foreground crystal-glass">

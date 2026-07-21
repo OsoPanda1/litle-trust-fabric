@@ -78,6 +78,7 @@ function LibraryPage() {
             Every work is identified by a persistent LITLE-ID, linked to a
             Digital Academic Certificate, and stored with independent preservation.
           </p>
+          <div className="hairline-glow" />
           <div className="flex flex-wrap gap-3 items-center pt-3">
             <input
               type="text"

@@ -28,6 +28,7 @@ function GovernancePage() {
           <a href="/" className="font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">&larr; Back</a>
           <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Governance · TAMV</span>
         </div>
+        <div className="hairline-glow" />
         <div className="max-w-7xl mx-auto px-6 pb-8">
           <h1 className="font-serif text-4xl mb-3">7 Federations</h1>
           <p className="text-muted-foreground text-sm max-w-2xl">

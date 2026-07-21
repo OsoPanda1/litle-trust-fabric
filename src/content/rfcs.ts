@@ -1,9 +1,10 @@
 // LITLE Standards Council — Request for Comments (RFCs).
-// Markdown-flavored plain text; the standards route renders these directly.
+// Formal specifications for the LITLE standard.
+// Status lifecycle: Draft → Proposed → Accepted → Implemented → Stable → Deprecated → Revoked.
 
 export interface Rfc {
-  id: string; // e.g. "RFC-0001"
-  slug: string; // URL slug
+  id: string;
+  slug: string;
   title: string;
   status: "Draft" | "Proposed" | "Accepted" | "Implemented" | "Stable";
   category:
@@ -12,10 +13,12 @@ export interface Rfc {
     | "Preservation"
     | "Governance"
     | "Interop"
-    | "Observability";
-  updated: string; // ISO date
+    | "Observability"
+    | "Cryptography"
+    | "Submission";
+  updated: string;
   abstract: string;
-  body: string; // plain text with `#` headings + `-` lists
+  body: string;
 }
 
 export const RFCS: Rfc[] = [
@@ -25,29 +28,50 @@ export const RFCS: Rfc[] = [
     title: "LITLE-ID — Durable Identifier for Preserved Knowledge",
     status: "Implemented",
     category: "Identity",
-    updated: "2026-07-20",
+    updated: "2026-07-21",
     abstract:
-      "Defines a self-describing identifier for LITLE works that survives rotation of the underlying cryptographic container.",
-    body: `# 1. Motivation
-Cryptographic profiles age. A LITLE work must remain citable across decades,
-even as its anchor is rotated from L-512.v1 to a post-quantum successor.
+      "Defines the LITLE identifier format, encoding rules, and rotation mechanism for cryptographic profile migration.",
+    body: `# 1. Specification
 
-# 2. Canonical form
-- litle:<year>:<workType>:<cryptoProfile>:<namespace>:<suffix>
-- URI form:   litle://<year>/<namespace>/<suffix>
-- Human form: LTL-<year>-<workType>-<suffix4>-<suffix4>
+## 1.1 Identifier Forms
 
-# 3. Fields
-- year         four-digit publication year
-- workType     BK, RQ, DS, PL, AR
-- cryptoProfile records the profile of the current anchor (rotatable)
-- namespace    lowercase slash-separated discipline path (tech/ia)
-- suffix       8..64 uppercase hex characters, derived from the container digest
+- **URI:** litle://<year>/<namespace>/<suffix>
+- **Human:** LTL-<year>-<workType>-<suffix4>-<suffix4>
+- **Canonical (Bech32m):** litle1<hrp><data>
 
-# 4. Rotation
-The suffix and namespace are stable. When the anchor is rotated, only the
-cryptoProfile field changes; the ID remains valid and the previous anchor
-is preserved in the Evidence Chain (RFC-0008).
+## 1.2 Fields
+
+| Field | Length | Format | Description |
+|---|---|---|---|
+| year | 4 | \d{4} | Publication year |
+| workType | 2 | [A-Z]{2} | BK, RQ, DS, PL, AR, MD, SW, EX, DP |
+| namespace | variable | [a-z0-9/.-]+ | Discipline path (e.g., tech/ia) |
+| suffix | 8-64 | [0-9A-F]+ | Derived from container digest |
+
+## 1.3 Crypto Profile
+
+The suffix is derived from the container digest using the active crypto profile:
+- L-512.v1: SHA-256 (classic)
+- L-PQC.v1: SHAKE256 (PQC)
+
+# 2. Rotation
+
+The suffix and namespace are immutable. When the container is rotated to a new
+crypto profile, the profile field updates but the identifier remains valid.
+Previous anchors are preserved in the Evidence Chain (RFC-0008).
+
+# 3. Compliance
+
+Implementations MUST support at minimum:
+- URI form parsing (litle:// scheme)
+- Human form formatting and parsing
+- Canonical Bech32m encoding (RFC-0001 §1.1)
+
+# 4. Security Considerations
+
+- The suffix is truncated to a minimum of 8 hex characters (32 bits).
+  Collision probability must be assessed for large registries.
+- Profile rotation MUST preserve the old anchor hash in the Evidence Chain.
 `,
   },
   {
@@ -56,107 +80,87 @@ is preserved in the Evidence Chain (RFC-0008).
     title: "Evidence Chain — Provenance for AI-Assisted Research",
     status: "Implemented",
     category: "Evidence",
-    updated: "2026-07-20",
+    updated: "2026-07-21",
     abstract:
-      "Standardizes how a LITLE work records the sources, prompts, model seeds and revisions it descends from.",
-    body: `# 1. Purpose
-A LITLE work is only as trustworthy as the trail behind it. The Evidence
-Chain records every input that materially shaped the finished text.
+      "Standardizes the Merkle-DAG provenance graph for recording sources, AI prompts, model parameters, and revisions behind a LITLE work.",
+    body: `# 1. Specification
 
-# 2. Node types
-- SOURCE     an ingested file (PDF, DOCX, MD, TXT, audio transcript)
-- PROMPT     an AI prompt used during synthesis
-- MODEL      a model + seed + parameters used to generate a passage
-- REVISION   a human edit with author, timestamp, diff-hash
-- QUOTE      a verbatim quotation with source-node reference
+## 1.1 Node Types
 
-# 3. Structure
-Nodes form a Merkle-like DAG rooted at the work's LITLE-ID. Each node stores
-a content hash; the root hash is anchored into the L-512 container's Block A.
+| Type | Label | Content |
+|---|---|---|
+| SOURCE | Source file | Hash of ingested file (PDF, DOCX, MD, TXT) |
+| PROMPT | AI prompt | Hash of prompt text + timestamp |
+| MODEL | AI model | Model name, seed, parameters, output hash |
+| REVISION | Human edit | Author ID, timestamp, diff hash |
+| QUOTE | Verbatim quote | Quoted text + reference to source node |
 
-# 4. Public verification
-A public route (/verify/<litleId>) exposes the root hash and node summary
-without disclosing raw source contents; owners may selectively disclose.
+## 1.2 Structure
+
+Nodes form a Merkle-DAG. Each node stores:
+- type (enum above)
+- content_hash (SHAKE256 for L-PQC.v1, SHA-256 otherwise)
+- parents: string[] (referencing parent node hashes)
+
+Root hash = SHAKE256(concat(sorted(nodes[*].content_hash)))
+
+## 1.3 Anchoring
+
+The root hash is written into LITLE container Block A at offset 12-44 (32 bytes).
+
+# 2. Compliance
+
+Implementations MUST:
+- Support all 5 node types
+- Compute root hash deterministically (sorted node order)
+- Expose public verification at /verify/<litleId>
+
+# 3. Security Considerations
+
+- The DAG is append-only. Revisions add nodes; they do not delete.
+- Personal data in node payloads may be tombstoned (RFC-0012 §3).
 `,
   },
   {
     id: "RFC-0009",
     slug: "0009-independent-archive",
     title: "Independent Archive — Preservation Beyond the Platform",
-    status: "Proposed",
+    status: "Accepted",
     category: "Preservation",
-    updated: "2026-07-20",
-    abstract:
-      "Commits LITLE to redundant off-platform preservation so works outlive the hosting infrastructure.",
-    body: `# 1. Guarantees
-- At least three independent copies across two jurisdictions.
-- One copy on write-once media refreshed on a 5-year cadence.
-- Manifest publication: quarterly signed list of preserved LITLE-IDs.
-
-# 2. Format
-Every preserved bundle contains: canonical text, cover art, LITLE-512B
-container, Evidence Chain export, and a plain-text README naming the ID
-and the specifications required to interpret the bundle.
-
-# 3. Exit policy
-If LITLE, the organization, ceases to operate, the preservation manifests
-and bundles remain accessible under a permissive license. No work should
-depend on a single company to remain citable.
-`,
-  },
-  {
-    id: "RFC-0011",
-    slug: "0011-standards-council",
-    title: "Standards Council — Governance of the LITLE Specifications",
-    status: "Draft",
-    category: "Governance",
-    updated: "2026-07-20",
-    abstract:
-      "Establishes a lightweight, public process for evolving LITLE's specifications through numbered RFCs.",
-    body: `# 1. Principle
-Specifications evolve in public. Every material change lands as a numbered
-RFC with an accompanying rationale and a review period.
-
-# 2. Lifecycle
-Draft → Proposed → Accepted → Implemented → (optionally) Superseded.
-
-# 3. Review
-Minimum 30-day public comment window. Objections are addressed in-line in
-the RFC's revision history; nothing is silently overridden.
-`,
-  },
-];
-
-// Appended in v2.0-HARDENED: extended work types, federated governance,
-// and the observability fabric (Grafana / K8s / multi-DB adapters).
-RFCS.push(
-  {
-    id: "RFC-0002",
-    slug: "0002-work-types",
-    title: "Extended WorkTypes — Beyond Books and Papers",
-    status: "Proposed",
-    category: "Identity",
     updated: "2026-07-21",
     abstract:
-      "Extends LITLE-ID work types to cover AI models, software, experiments and versioned data packages.",
-    body: `# 1. Motivation
-Academic and industrial output is no longer just books and papers. Models,
-pipelines, code and datasets must be citable as first-class artifacts.
+      "Defines the off-platform preservation requirements: 3 copies, 2 jurisdictions, write-once media, quarterly manifest publication.",
+    body: `# 1. Specification
 
-# 2. Codes
-- BK  Book / Monograph
-- RQ  Research paper
-- DS  Dataset
-- PL  Pipeline
-- AR  Article
-- MD  AI Model (weights + card + eval)
-- SW  Software / Code release
-- EX  Experiment run
-- DP  Data Package (multi-version bundle)
+## 1.1 Redundancy Requirements
 
-# 3. Compatibility
-Existing LITLE-IDs are unaffected. New codes participate in the same
-URI / Human / Canonical forms defined by RFC-0001.
+- Minimum 3 independent copies
+- Copies must span at least 2 jurisdictions (legal/physical)
+- One copy on write-once media (e.g., Blu-ray M-DISC, S3 Object Lock)
+
+## 1.2 Bundle Format
+
+Each preserved bundle contains:
+1. canonical.txt — normalized plain text of the work
+2. cover.png — cover art (if applicable)
+3. container.bin — LITLE container (512B or 8KB)
+4. evidence-chain.json — full Evidence Chain DAG export
+5. README.txt — LITLE-ID and specification reference
+
+## 1.3 Manifest Publication
+
+A signed manifest of all preserved LITLE-IDs is published quarterly.
+The manifest is signed with the LITLE platform key (ML-DSA-87).
+
+# 2. Compliance
+
+Archival implementations MUST produce bundles conforming to §1.2.
+Manifests MUST be publicly accessible and verifiable.
+
+# 3. Security Considerations
+
+- Bundles do not depend on any single platform for readability.
+- encryption is NOT applied (works are Open Access by design).
 `,
   },
   {
@@ -167,197 +171,441 @@ URI / Human / Canonical forms defined by RFC-0001.
     category: "Governance",
     updated: "2026-07-21",
     abstract:
-      "Formalizes the seven-federation model that governs the LITLE Trust Fabric and defines the 5/7 quorum for stable changes.",
+      "Formalizes the seven-federation governance model with 5/7 quorum for LIPs (LITLE Improvement Proposals) and 6/7 for revocations.",
     body: `# 1. Federations
-- FED-1  Crypto & PKI
-- FED-2  Standards & LIPs
-- FED-3  Infrastructure & Mesh (incl. observability operators)
-- FED-4  Evidence Chain
-- FED-5  Curation
-- FED-6  Kernel & Developer Experience
-- FED-7  Audit & Compliance
 
-# 2. Quorum
-A LIP (LITLE Improvement Proposal) reaches Stable only with 5 of 7
-federations in favor. Revocation requires 6 of 7.
+| ID | Name | Responsibility |
+|---|---|---|
+| FED-1 | Crypto & PKI | Cryptographic standards, key management |
+| FED-2 | Standards & LIPs | RFC lifecycle, LIP review process |
+| FED-3 | Infrastructure & Mesh | Platform infra, observability operators |
+| FED-4 | Evidence Chain | Provenance standards, Evidence DAG |
+| FED-5 | Curation | Epistemic scoring, quarantine decisions |
+| FED-6 | Kernel & DX | Developer experience, SDK, API design |
+| FED-7 | Audit & Compliance | Security audits, regulatory compliance |
 
-# 3. LIP lifecycle
-Draft → Experimental → Candidate → Stable → Deprecated → Revoked.
+# 2. Quorum Rules
+
+- **Stable:** 5/7 federations in favor
+- **Revocation:** 6/7 federations in favor
+- **Draft → Proposed:** 3/7 (simple majority of voting members)
+
+# 3. LIP Lifecycle
+
+Draft → Experimental → Candidate → Stable → Deprecated → Revoked
+
+Each transition requires a formal vote recorded in the RFC revision history.
 
 # 4. Transparency
-Every vote and objection is recorded in the RFC revision history. No
-silent overrides, no unilateral maintainer decisions.
+
+- All votes and objections are recorded in the RFC revision history.
+- No silent overrides.
+- Federation members are public entities with disclosed identity.
+
+# 5. Compliance
+
+Governance implementations MUST:
+- Maintain a public record of all LIPs
+- Enforce quorum rules before status transitions
+- Provide a mechanism for federation membership changes
+`,
+  },
+  {
+    id: "RFC-0011",
+    slug: "0011-standards-council",
+    title: "Standards Council — Governance of the LITLE Specifications",
+    status: "Proposed",
+    category: "Governance",
+    updated: "2026-07-21",
+    abstract:
+      "Establishes the public process for evolving LITLE specifications through numbered RFCs with minimum 30-day review periods.",
+    body: `# 1. Specification
+
+## 1.1 RFC Lifecycle
+
+Draft → Proposed → Accepted → Implemented → Stable → Deprecated → Revoked
+
+## 1.2 Review Period
+
+- Minimum 30-day public comment window for Proposed → Accepted
+- Objections are addressed in-line in the RFC revision history
+- No silent overrides permitted
+
+## 1.3 RFC Requirements
+
+Each RFC MUST include:
+1. Title and identifier
+2. Status and category
+3. Abstract (≤300 characters)
+4. Specification (normative)
+5. Compliance requirements
+6. Security considerations
+
+# 2. Compliance
+
+All LITLE standard changes MUST follow the RFC process defined herein.
+Bypassing the RFC process invalidates any specification change.
+`,
+  },
+  {
+    id: "RFC-0002",
+    slug: "0002-work-types",
+    title: "Extended WorkTypes — Beyond Books and Papers",
+    status: "Accepted",
+    category: "Identity",
+    updated: "2026-07-21",
+    abstract:
+      "Extends LITLE-ID work types to 9 codes: BK, RQ, DS, PL, AR, MD, SW, EX, DP.",
+    body: `# 1. Specification
+
+## 1.1 Work Type Codes
+
+| Code | Meaning | Example |
+|---|---|---|
+| BK | Book / Monograph | LTL-2026-BK-A1B2-C3D4 |
+| RQ | Research paper | LTL-2026-RQ-E5F6-G7H8 |
+| DS | Dataset | LTL-2026-DS-I9J0-K1L2 |
+| PL | Pipeline | LTL-2026-PL-M3N4-O5P6 |
+| AR | Article | LTL-2026-AR-Q7R8-S9T0 |
+| MD | AI Model | LTL-2026-MD-U1V2-W3X4 |
+| SW | Software / Code | LTL-2026-SW-Y5Z6-A7B8 |
+| EX | Experiment run | LTL-2026-EX-C9D0-E1F2 |
+| DP | Data Package | LTL-2026-DP-G3H4-I5J6 |
+
+# 2. Compatibility
+
+Existing LITLE-IDs (BK, RQ, DS, PL, AR) are unaffected.
+New codes use the same URI/Human/Canonical forms (RFC-0001).
 `,
   },
   {
     id: "RFC-0012",
     slug: "0012-trust-fabric",
     title: "Trust Fabric — Decoupling Identity, Evidence and Storage",
-    status: "Proposed",
+    status: "Accepted",
     category: "Interop",
     updated: "2026-07-21",
     abstract:
-      "Defines the LITLE Trust Fabric: a kernel of identity + evidence + governance, connected to arbitrary storage and observability backends via typed adapters.",
-    body: `# 1. Kernel vs. Adapters
-The Fabric separates:
-- Kernel: LITLE-ID (RFC-0001), Evidence DAG (RFC-0008), Governance (RFC-0010).
-- Adapters: PostgreSQL, MySQL, Elasticsearch, S3, MinIO, IPFS, CloudWatch.
+      "Defines the kernel/adapter architecture separating identity, evidence, and governance from pluggable storage backends.",
+    body: `# 1. Specification
 
-No backend is normative. The kernel is the source of truth; adapters are
-swappable and MUST NOT leak vendor semantics into evidence payloads.
+## 1.1 Kernel vs. Adapters
 
-# 2. Canonicalization
-All evidence payloads are canonicalized per RFC 8785 (JCS) before hashing.
-Merkle-DAG nodes may reference multiple parents (multi-parent DAG) to
-model corrections, retractions and merges.
+- **Kernel:** LITLE-ID (RFC-0001), Evidence DAG (RFC-0008), Governance (RFC-0010).
+- **Adapters:** PostgreSQL, MySQL, Elasticsearch, S3, MinIO, IPFS, CloudWatch.
 
-# 3. Cryptographic Erasure
-Personal data may be tombstoned by rotating a per-node key; the DAG
-topology and root hash remain valid, but the payload becomes unreadable.
+## 1.2 Adapter Contract
+
+- No backend is normative
+- The kernel is the source of truth
+- Adapters MUST NOT leak vendor semantics into evidence payloads
+- All evidence payloads MUST be canonicalized per RFC 8785 (JCS) before hashing
+
+## 1.3 Cryptographic Erasure
+
+Personal data may be tombstoned by rotating a per-node key.
+The DAG topology and root hash remain valid.
+The payload becomes unreadable but the chain integrity is preserved.
+
+# 2. Compliance
+
+Adapters MUST implement the full kernel interface.
+Partial implementations are not compliant.
 `,
   },
   {
     id: "RFC-0013",
     slug: "0013-observability-fabric",
-    title: "Observability Fabric — Grafana as the Official Lineage Viewer",
-    status: "Draft",
+    title: "Observability Fabric — LITLE-ID as Primary Axis",
+    status: "Proposed",
     category: "Observability",
     updated: "2026-07-21",
     abstract:
-      "Unifies Grafana, Kubernetes operators, PMM, Zabbix, CloudWatch and multi-DB dashboards under LITLE-ID as the primary axis of every panel.",
-    body: `# 1. Principle
-Observability is not the source of truth — LITLE is. Grafana is the
-official viewer of the Trust Fabric's operational state.
+      "Unifies observability dashboards under LITLE-ID as the primary axis. Reference deployment via Grafana operator on Kubernetes.",
+    body: `# 1. Specification
 
-# 2. Data sources (reference set)
+## 1.1 Dashboard Rule
+
+Every institutional dashboard MUST expose LITLE-ID as its first column or first panel.
+Metrics, logs, or alerts without a LITLE-ID reference are informational only and
+cannot be cited as evidence.
+
+## 1.2 Reference Data Sources
+
 - LITLE-Core Postgres (evidence_records, evidence_nodes)
-- Legacy MySQL
 - Elasticsearch (logs)
 - AWS CloudWatch
 - Percona PMM (Prometheus)
 - Zabbix
 
-# 3. Dashboard rule
-Every institutional dashboard MUST expose LITLE-ID as its first column or
-first panel. Any metric, log or alert without a LITLE-ID reference is
-informational only; it cannot be cited as evidence.
+## 1.3 Reference Deployment
 
-# 4. Deployment (reference)
-- grafana-operator via Helm in namespace 'observability'.
-- Datasources and dashboards declared as CRDs (GrafanaDatasource,
-  GrafanaDashboard) so the fabric is reproducible from Git.
-- Kustomize overlays separate dev / prod without divergence.
+- grafana-operator via Helm in namespace 'observability'
+- Datasources and dashboards as CRDs (GrafanaDatasource, GrafanaDashboard)
+- Kustomize overlays for dev/prod separation
 
-# 5. Non-goals
-This RFC does not mandate a specific Grafana version, cloud provider or
+# 2. Non-goals
+
+This RFC does not mandate a specific Grafana version, cloud provider, or
 cluster topology. It mandates the LITLE-ID-first contract.
+
+# 3. Compliance
+
+Observability implementations MUST use LITLE-ID as the primary query axis.
 `,
   },
   {
     id: "RFC-0014",
     slug: "0014-open-science-curation",
     title: "Open Science Curation — Epistemic Filtering for Human-Machine Knowledge",
-    status: "Draft",
+    status: "Proposed",
     category: "Preservation",
     updated: "2026-07-21",
     abstract:
-      "Defines the epistemological filtering engine that scores Open Science works across 9 quality dimensions, enabling both human scholars and AI agents to discover only the most reliable knowledge.",
-    body: `# 1. Motivation
-Open Science publishes without quality filters. While this removes gatekeeping,
-it also removes the signal-to-noise discrimination that traditional peer review
-provided. LITLE RFC-0014 introduces a transparent, multi-dimensional epistemic
-scoring system that any consumer — human or machine — can query and trust.
+      "Defines the 9-dimension epistemic scoring engine with weighted scoring, simulated annealing optimization, and machine-readable output.",
+    body: `# 1. Specification
 
-# 2. The 9 Epistemic Dimensions
-- methodological_rigor    (weight 20%) — soundness of methodology
-- reproducibility         (weight 18%) — availability of data, code, protocols
-- citation_integrity      (weight 15%) — accuracy and relevance of citations
-- peer_review_status      (weight 12%) — review outcome and transparency
-- data_transparency       (weight 12%) — disclosure of raw data and preprocessing
-- ai_provenance           (weight 10%) — recording of AI models, prompts, seeds
-- longevity_potential     (weight  8%) — durability, format, archival status
-- epistemological_novelty (weight  5%) — paradigm shifts, cross-domain synthesis
-- human_machine_readability (weight 0% metadata) — structured for AI agents
+## 1.1 The 9 Epistemic Dimensions
 
-# 3. Scoring
-Each dimension is scored 0–5. The composite score is the weighted sum.
-Tiers:
+| Dimension | Weight | Scale |
+|---|---|---|
+| methodological_rigor | 20% | 0–5 |
+| reproducibility | 18% | 0–5 |
+| citation_integrity | 15% | 0–5 |
+| peer_review_status | 12% | 0–5 |
+| data_transparency | 12% | 0–5 |
+| ai_provenance | 10% | 0–5 |
+| longevity_potential | 8% | 0–5 |
+| epistemological_novelty | 5% | 0–5 |
+| human_machine_readability | 0% (metadata) | 0–5 |
+
+## 1.2 Composite Score
+
+composite = sum(dimension_score_i * weight_i) / sum(weight_i)
+
+## 1.3 Tier Thresholds
+
 - Platinum: ≥ 4.0
-- Gold:     ≥ 3.5
-- Silver:   ≥ 2.5
-- Bronze:   ≥ 1.5
-- Unrated:  < 1.5
+- Gold: ≥ 3.5
+- Silver: ≥ 2.5
+- Bronze: ≥ 1.5
+- Unrated: < 1.5
 
-# 4. AI Agent Integration
-Every LITLE work exposes machine-readable epistemic metadata via its
-Evidence Chain (RFC-0008). AI agents can query the LITLE discovery API
-with minimum quality thresholds, domain filters, and methodology constraints.
-Only works meeting the agent's reliability criteria are returned.
+## 1.4 Weight Optimization
 
-# 5. Curation Governance
-The epistemic dimensions and weights are governed under the 7-federation
-model (RFC-0010). Changes to the scoring methodology require a LIP with
-5-of-7 quorum.
+Weights are optimized via simulated annealing:
+- 1000 iterations
+- Exponential temperature decay: T_k = T_0 * 0.95^k
+- Objective: maximize Pareto frontier of dimension coverage vs. score separation
+
+## 1.5 Machine-Readable Output
+
+Epistemic metadata MUST be exposed via the Evidence Chain (RFC-0008).
+AI agents can query with minimum thresholds, domain filters, and methodology
+constraints.
+
+# 2. Compliance
+
+Scoring implementations MUST:
+- Support all 9 dimensions
+- Use the specified tier thresholds (may add additional tiers)
+- Expose machine-readable scoring metadata
+
+# 3. Governance
+
+Dimension definitions and weights are governed under RFC-0010.
+Changes require a LIP with 5/7 quorum.
 `,
   },
   {
     id: "RFC-0015",
     slug: "0015-digital-academic-certification",
-    title: "Digital Academic Certificate — DAC Specification",
-    status: "Draft",
+    title: "Digital Academic Certificate — DAC Specification v2",
+    status: "Proposed",
     category: "Preservation",
     updated: "2026-07-21",
     abstract:
-      "Defines the LITLE Digital Academic Certificate (DAC), a cryptographic credential combining CSV secure codes, evidence chain integrity, authorship analysis, source verification and epistemic scoring into a single verifiable artifact.",
-    body: `# 1. Motivation
-Academic credentials must be verifiable decades after issuance. The LITLE DAC
-combines four verification methodologies into a single certificate that can be
-validated by both human scholars and automated systems.
+      "Defines the DAC combining CSV, GMM authorship, source verification, Evidence Chain, epistemic scoring, and dual-stack PQC signatures.",
+    body: `# 1. Specification
 
-# 2. Certificate Structure
-A DAC contains:
-- CSV (Código Seguro de Verificación): 32-char code: LTL (3) + hash (21) + id (7) + randomness (1)
-- Evidence Chain root hash (Merkle-DAG of sources, prompts, revisions)
-- Authorship verification score (Gaussian likelihood against author writing profile)
-- Source verification report (5-step pipeline: identify, hash, access, cross-ref, provenance)
-- Epistemic score (9 dimensions → composite score 0-5 → tier)
-- Cryptographic signatures (LITLE-CSV.v1, SHA-256)
+## 1.1 Certificate Contents
 
-# 3. Verification Methods
+A DAC MUST contain:
+1. CSV (Código Seguro de Verificación) — 32-char code
+2. Evidence Chain root hash
+3. Authorship GMM verification score
+4. Source verification report (5-step pipeline)
+5. Epistemic composite score and tier
+6. Cryptographic signatures (one or more suites)
 
-## 3.1 CSV (Código Seguro de Verificación)
-Adapted from Spanish e-Government standard (Ley 11/2007, keensoft/csv-generator):
-- 32 characters: 3 prefix (LTL) + 21 hash (Base36 SHA-256) + 7 ID (Base36) + 1 randomness
-- Positions are shuffled using a seeded permutation of the randomness byte
-- Verification: recompute hash from document content, compare against CSV
+## 1.2 Signature Suites
 
-## 3.2 Authorship Analysis
-Inspired by speaker verification GMMs (P4, albino-pav/P4):
-- 8-feature writing profile per author: word length (mean, std), sentence length (mean, std),
-  vocabulary richness, function word ratio, paragraph length, passive voice ratio
-- New works scored against profile via Gaussian likelihood
-- Configurable FAR (false alarm rate) for threshold optimization
+| Suite | Hash | Signature | Key Size |
+|---|---|---|---|
+| classic | SHA-256 | HMAC-SHA-512 | 64 bytes |
+| pqc | SHAKE256 | ML-DSA-87 | 2592 bytes |
+| dual | Both | Both | Both |
 
-## 3.3 Source Verification
-Inspired by journalistic data verification (martinszy/verificacion_de_datos):
-- 5-step pipeline: Source Identification → Content Integrity → URL Check →
-  Cross-Reference → Provenance Check
-- Each step produces passed/failed/skipped status
-- Overall score: 0-100 → verified (≥80) / partial (≥50) / unverified (<50)
+## 1.3 CSV Format
 
-# 4. Certificate Lifecycle
-- Issue: Generated when work is sealed with LITLE-512B
-- Verify: Public endpoint /certificate/<litleId> validates all signatures
-- Renew: Every 10 years; CSV root hash is immutable
-- Revoke: Disputed content enters 'disputed' status; chain topology preserved
+LTL (3) + Base36 SHA-256 hash (21) + Base36 ID (7) + randomness byte (1) = 32 chars
+Positions shuffled via Fisher-Yates seeded with the randomness byte.
+Verification recomputes the hash from content and compares against the CSV.
 
-# 5. Governance
-DAC format and verification algorithms are governed under RFC-0010.
-Changes require 5-of-7 quorum. Verification thresholds (FAR, score cutoffs)
-are configurable per federation but MUST be documented in the certificate.
+## 1.4 Authorship GMM
+
+8-feature stylometric profile per author:
+- Word length (mean, std)
+- Sentence length (mean, std)
+- Vocabulary richness (unique/total words)
+- Function word ratio
+- Paragraph length (mean)
+- Passive voice ratio
+
+Scoring: Gaussian likelihood against enrolled profile.
+Threshold: tunable FAR (default 0.02).
+
+## 1.5 Source Verification (5-step)
+
+1. Source Identification
+2. Content Integrity (SHA-256 vs. stored hash)
+3. URL Access Check
+4. Cross-Reference (compare against other sources)
+5. Provenance Check
+
+Overall score: verified (≥80) / partial (≥50) / unverified (<50)
+
+## 1.6 Certificate Lifecycle
+
+- Issue: on LITLE container seal
+- Verify: /certificate/<litleId>
+- Renew: every 10 years (CSV root hash is immutable)
+- Revoke: disputed content → 'disputed' status (chain topology preserved)
+
+# 2. Compliance
+
+DAC implementations MUST:
+- Support at minimum the classic signature suite
+- Implement all 4 verification methodologies
+- Expose verification results publicly
+
+# 3. Security Considerations
+
+- The PQC suite (ML-DSA-87) uses a key-committing verify() construction
+- Dual-suite certificates require BOTH signatures to validate
 `,
   },
-);
+  {
+    id: "RFC-0016",
+    slug: "0016-quarantine-pipeline",
+    title: "Quarantine Pipeline — Submission Triangulation & Indexing Gateway",
+    status: "Proposed",
+    category: "Submission",
+    updated: "2026-07-21",
+    abstract:
+      "Defines the quarantine-based submission pipeline with automated triangulation against ORCID, Crossref, ISNI, web sources, and the existing LITLE library.",
+    body: `# 1. Specification
+
+## 1.1 States
+
+QUARANTINE → TRIANGULATING → INDEXED | REJECTED | FED-5_REVIEW
+
+## 1.2 Triangulation Sources
+
+| Source | API Endpoint | Check |
+|---|---|---|
+| ORCID | pub.orcid.org/v3.0 | Author identity match |
+| Crossref | api.crossref.org/works | DOI/DOI existence |
+| ISNI | isni.org/api | Identifier verification |
+| DuckDuckGo | lite.duckduckgo.com/lite | Web text similarity |
+| LITLE Library | Internal | Internal deduplication |
+
+## 1.3 Decision Rules
+
+- **GREEN** (no match, all sources clear): Indexed immediately
+- **RED** (match found): Held in quarantine, author notified with references
+- **INCONCLUSIVE** (mixed results): Escalated to FED-5 for manual curation review
+
+Each source returns:
+- sourceHash: SHAKE256 of matched content (or null)
+- confidence: 0-1
+- url: reference URL (if applicable)
+
+# 2. Compliance
+
+Submission implementations MUST:
+- Place all submitted works in QUARANTINE initially
+- Execute triangulation against at minimum 3 of the 5 sources
+- Support escalation to FED-5 for inconclusive results
+
+# 3. Security Considerations
+
+- Triangulation is automated and may produce false positives/negatives
+- FED-5 manual review is final but appealable via governance process
+- sourceHash values are non-reversible (SHAKE256 preimage resistance)
+`,
+  },
+  {
+    id: "RFC-0017",
+    slug: "0017-post-quantum-cryptography",
+    title: "Post-Quantum Cryptography — ML-DSA-87 & SHAKE256 Integration",
+    status: "Proposed",
+    category: "Cryptography",
+    updated: "2026-07-21",
+    abstract:
+      "Specifies the integration of NIST-standardized post-quantum algorithms: ML-DSA-87 (FIPS 204) for signatures and SHAKE256 (FIPS 202) for hashing within the LITLE cryptographic layer.",
+    body: `# 1. Specification
+
+## 1.1 Algorithms
+
+| Algorithm | Standard | Usage |
+|---|---|---|
+| SHAKE256 | FIPS 202 | Hash, KDF, HMAC replacement |
+| ML-DSA-87 | FIPS 204 | Digital signatures (Level 5) |
+
+## 1.2 ML-DSA-87 Parameters
+
+- Security Level: NIST Level 5 (≥ AES-256)
+- Public Key: 2,592 bytes
+- Private Key: 4,864 bytes
+- Signature: 4,627 bytes
+- Container Size: 8,192 bytes (LITLE-8KB)
+
+## 1.3 Key Derivation
+
+Signing key is derived from LITLE_AUTHOR_SECRET via SHAKE256 KDF:
+key_material = SHAKE256(LITLE_AUTHOR_SECRET || domain_separator, 4864)
+
+## 1.4 Key-Committing Verify
+
+The verify() implementation uses a key-committing construction:
+- Hash the public key together with the message before signature verification
+- Prevents multi-target attacks across different public keys
+
+## 1.5 Container Profiles
+
+| Profile | Hash | Size | Encoding |
+|---|---|---|---|
+| classic | SHA-256 | 512 B | Bech32m (~900 chars) |
+| pqc | SHAKE256 | 8192 B | Bech32m (~13K chars) |
+
+# 2. Compliance
+
+PQC implementations MUST:
+- Use SHAKE256 (not SHA-3) for all PQC hashing
+- Implement ML-DSA-87 at NIST Level 5
+- Use key-committing verify() for ML-DSA-87
+- Support both classic and PQC container profiles
+
+# 3. Security Considerations
+
+- ML-DSA-87 is selected for NIST Level 5, exceeding AES-256 equivalence
+- Key-committing verify() prevents multi-target attacks
+- SHAKE256 provides 256-bit collision resistance (128-bit quantum)
+- Reference implementation has NOT undergone external audit
+`,
+  },
+];
 
 export function findRfc(slug: string): Rfc | undefined {
   return RFCS.find((r) => r.slug === slug || r.id.toLowerCase() === slug.toLowerCase());

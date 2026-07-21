@@ -215,6 +215,7 @@ function SubmitPage() {
       </header>
 
       <section className="max-w-4xl mx-auto px-6 py-8">
+        <div className="hairline-glow mb-8" />
         {error && (
           <div className="crystal-panel p-4 mb-6 border border-red/40">
             <p className="text-xs font-mono text-red">{error}</p>
