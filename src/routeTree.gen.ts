@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StandardIndexRouteImport } from './routes/standard/index'
 import { Route as VerifyLitleIdRouteImport } from './routes/verify.$litleId'
+import { Route as StandardTrustFabricRouteImport } from './routes/standard/trust-fabric'
 import { Route as StandardRfcsRouteImport } from './routes/standard/rfcs'
 import { Route as StandardArchiveRouteImport } from './routes/standard/archive'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -49,6 +50,11 @@ const StandardIndexRoute = StandardIndexRouteImport.update({
 const VerifyLitleIdRoute = VerifyLitleIdRouteImport.update({
   id: '/verify/$litleId',
   path: '/verify/$litleId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandardTrustFabricRoute = StandardTrustFabricRouteImport.update({
+  id: '/standard/trust-fabric',
+  path: '/standard/trust-fabric',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StandardRfcsRoute = StandardRfcsRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/standard/archive': typeof StandardArchiveRoute
   '/standard/rfcs': typeof StandardRfcsRouteWithChildren
+  '/standard/trust-fabric': typeof StandardTrustFabricRoute
   '/verify/$litleId': typeof VerifyLitleIdRoute
   '/standard/': typeof StandardIndexRoute
   '/books/$bookId': typeof AuthenticatedBooksBookIdRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/standard/archive': typeof StandardArchiveRoute
+  '/standard/trust-fabric': typeof StandardTrustFabricRoute
   '/verify/$litleId': typeof VerifyLitleIdRoute
   '/standard': typeof StandardIndexRoute
   '/books/$bookId': typeof AuthenticatedBooksBookIdRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/standard/archive': typeof StandardArchiveRoute
   '/standard/rfcs': typeof StandardRfcsRouteWithChildren
+  '/standard/trust-fabric': typeof StandardTrustFabricRoute
   '/verify/$litleId': typeof VerifyLitleIdRoute
   '/standard/': typeof StandardIndexRoute
   '/_authenticated/books/$bookId': typeof AuthenticatedBooksBookIdRoute
@@ -132,6 +141,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/standard/archive'
     | '/standard/rfcs'
+    | '/standard/trust-fabric'
     | '/verify/$litleId'
     | '/standard/'
     | '/books/$bookId'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/dashboard'
     | '/standard/archive'
+    | '/standard/trust-fabric'
     | '/verify/$litleId'
     | '/standard'
     | '/books/$bookId'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/standard/archive'
     | '/standard/rfcs'
+    | '/standard/trust-fabric'
     | '/verify/$litleId'
     | '/standard/'
     | '/_authenticated/books/$bookId'
@@ -172,6 +184,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StandardArchiveRoute: typeof StandardArchiveRoute
   StandardRfcsRoute: typeof StandardRfcsRouteWithChildren
+  StandardTrustFabricRoute: typeof StandardTrustFabricRoute
   VerifyLitleIdRoute: typeof VerifyLitleIdRoute
   StandardIndexRoute: typeof StandardIndexRoute
 }
@@ -218,6 +231,13 @@ declare module '@tanstack/react-router' {
       path: '/verify/$litleId'
       fullPath: '/verify/$litleId'
       preLoaderRoute: typeof VerifyLitleIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standard/trust-fabric': {
+      id: '/standard/trust-fabric'
+      path: '/standard/trust-fabric'
+      fullPath: '/standard/trust-fabric'
+      preLoaderRoute: typeof StandardTrustFabricRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/standard/rfcs': {
@@ -299,6 +319,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StandardArchiveRoute: StandardArchiveRoute,
   StandardRfcsRoute: StandardRfcsRouteWithChildren,
+  StandardTrustFabricRoute: StandardTrustFabricRoute,
   VerifyLitleIdRoute: VerifyLitleIdRoute,
   StandardIndexRoute: StandardIndexRoute,
 }
