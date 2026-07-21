@@ -5,7 +5,16 @@
 import { sha256 } from "@noble/hashes/sha2";
 import { bytesToHex } from "@noble/hashes/utils";
 
-export type LitleWorkType = "BK" | "RQ" | "DS" | "PL" | "AR";
+export type LitleWorkType =
+  | "BK"
+  | "RQ"
+  | "DS"
+  | "PL"
+  | "AR"
+  | "MD"
+  | "SW"
+  | "EX"
+  | "DP";
 
 export const LITLE_WORK_TYPES: Record<LitleWorkType, string> = {
   BK: "Book",
@@ -13,6 +22,10 @@ export const LITLE_WORK_TYPES: Record<LitleWorkType, string> = {
   DS: "Dataset",
   PL: "Pipeline",
   AR: "Article",
+  MD: "AI Model",
+  SW: "Software",
+  EX: "Experiment",
+  DP: "Data Package",
 };
 
 export const LITLE_CRYPTO_PROFILES = ["L-512.v1", "L-1024.v1"] as const;
