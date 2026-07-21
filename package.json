@@ -9,7 +9,15 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
+    "check": "bun run lint && bun run typecheck && bun run test",
+    "ci": "bun run check && bun run build",
+    "audit": "bun audit --all",
+    "knip": "knip",
+    "sbom": "bun run --print-bom > bom.json 2>/dev/null || true"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -84,7 +92,9 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
+    "knip": "^5.50.0",
     "nitro": "3.0.260603-beta",
+    "vitest": "^3.1.0",
     "prettier": "^3.7.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",

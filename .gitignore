@@ -40,3 +40,10 @@ docker-compose*.yml
 .env.production
 .env.staging
 .env.development
+
+# Test coverage
+coverage/
+
+# SBOM
+bom.json
+
