@@ -605,6 +605,98 @@ PQC implementations MUST:
 - Reference implementation has NOT undergone external audit
 `,
   },
+  {
+    id: "RFC-0018",
+    slug: "0018-quantum-architecture",
+    title: "Quantum Architecture — 48-Gate Identity, Hybrid Shield & Double Zero Trust",
+    status: "Draft",
+    category: "Cryptography",
+    updated: "2026-07-21",
+    abstract:
+      "Specifies the quantum-inspired identity layer: 48-quantum-gate fingerprinting, layered hybrid encryption shield (L-SHIELD-5), double zero-trust verification (L-ZT-DUAL.v1), and quantum data interconnection for authorship corroboration.",
+    body: `# 1. Specification
+
+## 1.1 48 Quantum Gates
+
+The LITLE quantum layer defines 48 unitary gate operations for identity generation.
+Gates are classically simulated via 2x2 complex matrix operations on a 2-qubit state
+vector. Each gate encodes a specific quantum operation:
+
+| Gate Count | Type | Operations |
+|---|---|---|
+| 7 | Pauli | X, Y, Z, H, S, S†, T, T† |
+| 12 | Rotation | RX(π/4, π/2, π), RY(π/4, π/2, π), RZ(π/4, π/2, π) |
+| 6 | Special | √X, √Y, SWAP, iSWAP, CS, CT |
+| 4 | Universal | U3(θ,φ,λ) with 3 parameter sets |
+| 6 | Echo | ECHO-X, ECHO-Y, ECHO-Z, ENTANGLE, MEASURE |
+| 13 | Composite | CX, CY, CZ, CRX, CRY, CRZ, QFT-2, QFT-4, H(XZ), H(YZ), P(π/8), P(π/16), Toffoli-phase |
+
+Gate sequence (48 operations) is deterministically derived from SHAKE256(seed).
+
+## 1.2 Quantum Fingerprint
+
+A quantum fingerprint is a 4-component complex vector (2-qubit state) produced by
+applying the 48-gate sequence to the |0⟩ state. Represented as:
+- Float64Array[4] for computation
+- Hex string (64 hex chars) for serialization
+- Gate sequence (48 integers) for traceability
+
+## 1.3 Hybrid Shield (L-SHIELD-5)
+
+Layered encryption with 5 independent verification layers:
+
+| Layer | Algorithm | Verification |
+|---|---|---|
+| classical | HMAC-SHA-256 | Keyed hash recomputation |
+| pqc_hash | SHAKE256-512 | Deterministic hash match |
+| pqc_sign | SHAKE256 KDF + key material | Key-committing signature |
+| quantum_state | 48-gate fingerprint | State vector comparison |
+| entanglement | SHAKE256(data + state) | Entanglement hash |
+
+Profiles: L-SHIELD-3 (3 layers), L-SHIELD-4 (4 layers), L-SHIELD-5 (5 layers).
+
+## 1.4 Double Zero Trust (L-ZT-DUAL.v1)
+
+Two independent verification paths that must BOTH pass:
+
+- **Path A (Classical):** content_integrity, crypto_signature, merkle_root, timeline_consistency, federation_endorsement
+- **Path B (Quantum):** quantum_fingerprint, gate_sequence, entanglement_energy, shield_integrity, state_coherence
+
+Trust decision requires ≥ 85% confidence on both paths. Escalation to FED-7 at 60%.
+
+## 1.5 Quantum Interconnection
+
+Data sources (ORCID, DOI, Crossref, ISNI, web, LITLE library) are linked via
+quantum gate sequence similarity. Each source produces a 48-gate fingerprint.
+Links are established when fingerprint similarity > 0.7 AND gate sequence
+similarity > 0.65.
+
+## 1.6 Crypto Profile
+
+New LITLE-ID crypto profile: L-48G.v1
+- Digest: SHAKE256 (same as L-PQC.v1)
+- Fingerprint: 48-gate quantum state vector
+- Shield: L-SHIELD-5
+- Zero Trust: L-ZT-DUAL.v1
+
+# 2. Compliance
+
+Implementations MUST:
+- Support all 48 gate operations (may optimize matrix math)
+- Derive gate sequences deterministically from SHAKE256
+- Support L-SHIELD-3 at minimum
+- Implement double zero-trust with both paths active
+
+# 3. Security Considerations
+
+- Gates are classical simulations — no quantum hardware required
+- The 48-gate sequence provides 48! / k! permutation entropy
+- Hybrid shield layers are independently verifiable — any layer can be
+  validated without decrypting the others
+- Double zero-trust prevents single-path compromise
+- Quantum interconnection requires ≥ 2 independent sources for authorship verification
+`,
+  },
 ];
 
 export function findRfc(slug: string): Rfc | undefined {

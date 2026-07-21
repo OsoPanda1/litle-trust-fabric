@@ -1,6 +1,9 @@
 import { sha256 } from "@noble/hashes/sha2.js";
 import { shake256 } from "@noble/hashes/sha3";
 import { bytesToHex } from "@noble/hashes/utils";
+import { quantumFingerprint, stateToHex, fingerprintSimilarity } from "@/lib/quantum/gates";
+import { evaluateZeroTrust } from "@/lib/quantum/zero-trust";
+import { sealHybridShield } from "@/lib/quantum/hybrid-shield";
 
 export type LitleWorkType = "BK" | "RQ" | "DS" | "PL" | "AR" | "MD" | "SW" | "EX" | "DP";
 
@@ -9,7 +12,7 @@ export const LITLE_WORK_TYPES: Record<LitleWorkType, string> = {
   AR: "Article", MD: "AI Model", SW: "Software", EX: "Experiment", DP: "Data Package",
 };
 
-export const LITLE_CRYPTO_PROFILES = ["L-512.v1", "L-1024.v1", "L-PQC.v1"] as const;
+export const LITLE_CRYPTO_PROFILES = ["L-512.v1", "L-1024.v1", "L-PQC.v1", "L-48G.v1"] as const;
 export type LitleCryptoProfile = (typeof LITLE_CRYPTO_PROFILES)[number];
 
 export interface LitleId {
@@ -18,6 +21,9 @@ export interface LitleId {
   workType: LitleWorkType;
   cryptoProfile: LitleCryptoProfile;
   suffix: string;
+  quantumState?: string;
+  shieldId?: string;
+  trustDecision?: string;
 }
 
 const SUFFIX_RE = /^[0-9A-F]{16,64}$/;
@@ -112,9 +118,27 @@ export function deriveLitleId(input: {
   cryptoProfile?: LitleCryptoProfile;
 }): LitleId {
   const profile = input.cryptoProfile ?? "L-512.v1";
-  const digest = profile === "L-PQC.v1"
-    ? shake256(input.containerBytes, { dkLen: 64 })
-    : sha256(input.containerBytes);
+  let digest: Uint8Array;
+  let quantumState: string | undefined;
+  let shieldId: string | undefined;
+  let trustDecision: string | undefined;
+
+  if (profile === "L-48G.v1") {
+    const fgp = quantumFingerprint(input.containerBytes, "L-48G.v1");
+    digest = shake256(input.containerBytes, { dkLen: 64 });
+    quantumState = stateToHex(fgp.state);
+    const shield = sealHybridShield(input.containerBytes, "L-SHIELD-5");
+    const trust = evaluateZeroTrust(input.containerBytes, shield);
+    shieldId = shield.id;
+    trustDecision = trust.decision;
+  } else if (profile === "L-PQC.v1") {
+    digest = shake256(input.containerBytes, { dkLen: 64 });
+    const fgp = quantumFingerprint(input.containerBytes);
+    quantumState = stateToHex(fgp.state);
+  } else {
+    digest = sha256(input.containerBytes);
+  }
+
   const suffix = bytesToHex(digest.slice(0, 16)).toUpperCase();
   const id: LitleId = {
     year: input.year,
@@ -122,6 +146,9 @@ export function deriveLitleId(input: {
     workType: input.workType,
     cryptoProfile: profile,
     suffix,
+    ...(quantumState ? { quantumState } : {}),
+    ...(shieldId ? { shieldId } : {}),
+    ...(trustDecision ? { trustDecision } : {}),
   };
   assertValid(id);
   return id;
@@ -147,7 +174,8 @@ export class LitleIdEngine {
     return {
       ...id,
       federationId: fedMap[ns] ?? "FED0",
-      pqcCapable: id.cryptoProfile === "L-PQC.v1",
+      pqcCapable: id.cryptoProfile === "L-PQC.v1" || id.cryptoProfile === "L-48G.v1",
+      quantumCapable: id.cryptoProfile === "L-48G.v1",
     };
   }
 
@@ -155,10 +183,14 @@ export class LitleIdEngine {
     return { human: toHuman(id), uri: toUri(id), canonical: toCanonical(id) };
   }
 
-  static verify(input: string): { valid: boolean; error?: string; pqcCapable?: boolean } {
+  static verify(input: string): { valid: boolean; error?: string; pqcCapable?: boolean; quantumCapable?: boolean } {
     try {
       const id = parseAny(input);
-      return { valid: true, pqcCapable: id.cryptoProfile === "L-PQC.v1" };
+      return {
+        valid: true,
+        pqcCapable: id.cryptoProfile === "L-PQC.v1" || id.cryptoProfile === "L-48G.v1",
+        quantumCapable: id.cryptoProfile === "L-48G.v1",
+      };
     } catch (e) {
       return { valid: false, error: (e as Error).message };
     }

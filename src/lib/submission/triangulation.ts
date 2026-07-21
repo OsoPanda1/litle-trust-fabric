@@ -5,6 +5,7 @@ import type {
   TriangulationResult,
   SubmissionDocument,
 } from "./types";
+import { quantumFingerprint, gateSequenceSimilarity, stateToHex } from "@/lib/quantum/gates";
 
 let webSearchCache = new Map<string, { found: boolean; matches: Array<{ title: string; url: string; score: number }> }>();
 
@@ -184,6 +185,29 @@ export async function checkExistingLitleId(title: string, abstract: string): Pro
   }
 }
 
+export async function checkQuantumFingerprint(abstract: string, orcid: string): Promise<TriangulationCheck> {
+  try {
+    const encoder = new TextEncoder();
+    const contentData = encoder.encode(abstract);
+    const orcidData = encoder.encode(orcid);
+    const fgp = quantumFingerprint(contentData);
+    const fgpOrcid = quantumFingerprint(orcidData);
+    const gsSim = gateSequenceSimilarity(fgp.gateSequence, fgpOrcid.gateSequence);
+
+    return {
+      source: "QUANTUM-STATE",
+      found: gsSim > 0.3,
+      match: stateToHex(fgp.state).slice(0, 32),
+      confidence: gsSim,
+      detail: gsSim > 0.7
+        ? `Quantum fingerprint correlated (${(gsSim * 100).toFixed(0)}% gate sequence match)`
+        : `Quantum fingerprint weak (${(gsSim * 100).toFixed(0)}% gate sequence match)`,
+    };
+  } catch (err) {
+    return { source: "QUANTUM-STATE", found: false, match: null, confidence: 0, detail: `Quantum check failed: ${(err as Error).message}` };
+  }
+}
+
 function computeOverallResult(checks: TriangulationCheck[]): { result: TriangulationResult; summary: string } {
   const foundCount = checks.filter((c) => c.found).length;
   const highConfFound = checks.filter((c) => c.found && c.confidence > 0.6).length;
@@ -225,15 +249,16 @@ function computeOverallResult(checks: TriangulationCheck[]): { result: Triangula
 export async function runTriangulation(
   submission: SubmissionDocument,
 ): Promise<{ report: TriangulationReport; evidence: DuplicateEvidence[] }> {
-  const [orcidCheck, doiCheck, isniCheck, webCheck, litleCheck] = await Promise.all([
+  const [orcidCheck, doiCheck, isniCheck, webCheck, litleCheck, quantumCheck] = await Promise.all([
     checkOrcid(submission.orcid),
     checkDoi(submission.title, submission.abstract),
     checkIsni(submission.orcid),
     checkWebSimilarity(submission.title, submission.abstract),
     checkExistingLitleId(submission.title, submission.abstract),
+    checkQuantumFingerprint(submission.abstract, submission.orcid),
   ]);
 
-  const checks = [orcidCheck, doiCheck, isniCheck, webCheck, litleCheck];
+  const checks = [orcidCheck, doiCheck, isniCheck, webCheck, litleCheck, quantumCheck];
   const { result, summary } = computeOverallResult(checks);
 
   const evidence: DuplicateEvidence[] = checks

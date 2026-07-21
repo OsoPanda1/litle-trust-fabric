@@ -122,7 +122,29 @@ This document describes the security threat model for the LITLE platform and sta
 
 ---
 
-## 8. Open Issues
+## 9. Quantum-Specific Threats
+
+### T8. Quantum Gate Sequence Collision
+- **Scenario:** Two different inputs produce the same 48-gate sequence and state vector
+- **Impact:** False authorship correlation
+- **Mitigation:** Gate sequence is 48 operations from 48 gates = 48⁴⁸ possible sequences. SHAKE256 seed preimage resistance provides additional entropy.
+
+### T9. Hybrid Shield Layer Bypass
+- **Scenario:** Attacker compromises one shield layer (e.g., classical HMAC) and attempts to forge the shield
+- **Impact:** Partial shield validation
+- **Mitigation:** All 5 layers must independently verify. Path A (classical) and Path B (quantum) in double zero-trust are independently computed.
+
+### T10. Quantum Fingerprint Spoofing
+- **Scenario:** Attacker crafts content that produces a specific target quantum state
+- **Impact:** Authorship forgery
+- **Mitigation:** Gate sequence derived from SHAKE256 of content — preimage resistance prevents targeted state generation.
+
+### T11. Double Zero Trust Single-Path Compromise
+- **Scenario:** Attacker compromises either Path A or Path B verification
+- **Impact:** Single-path verification bypassed
+- **Mitigation:** Both paths are required. They use independent algorithms (classical HMAC vs. quantum gate simulation) and independent data sources.
+
+## 10. Open Issues
 
 - No external cryptographic audit has been performed
 - ML-DSA-87 implementation is not formally verified

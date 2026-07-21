@@ -90,7 +90,29 @@ These are preliminary measurements on development hardware (local machine, no pr
 
 ---
 
-## 6. Open Questions for Benchmark Validation
+## 7. Quantum Architecture Benchmarks (Preliminary)
+
+| Operation | Latency | Notes |
+|---|---|---|
+| 48-gate sequence derivation | ~0.5ms | SHAKE256 + index mapping |
+| Quantum fingerprint computation | ~0.8ms | 48 matrix multiplications on 2x2 complex |
+| Fingerprint similarity (dot product) | ~0.01ms | Float64Array dot + norm |
+| Hybrid shield seal (L-SHIELD-5) | ~3ms | 5 sequential layer operations |
+| Hybrid shield verify (L-SHIELD-5) | ~2.5ms | Independent layer re-computation |
+| Double zero trust (both paths) | ~1.5ms | 10 checks across 2 paths |
+| Quantum interconnect (3 sources) | ~2ms | 3 fingerprint comparisons |
+| Full quantum verification cycle | ~10ms | Shield + zero trust + interconnect |
+
+## 8. Comparison: Quantum Layer vs. Existing Systems
+
+| Feature | Zenodo | Figshare | Dataverse | Crossref | LITLE (proposed) |
+|---|---|---|---|---|---|
+| Quantum identity | No | No | No | No | Yes (48 gates) |
+| Multi-layer hybrid shield | No | No | No | No | Yes (L-SHIELD-5) |
+| Double zero trust | No | No | No | No | Yes (dual path) |
+| Quantum authorship correlation | No | No | No | No | Yes (gate sequence) |
+
+## 9. Open Questions for Benchmark Validation
 
 1. How does LITLE epistemic scoring correlate with human expert judgment? (Needs IRB study)
 2. What is the deduplication accuracy of the quarantine pipeline? (Needs labeled dataset)
@@ -111,7 +133,7 @@ These are preliminary measurements on development hardware (local machine, no pr
 
 ---
 
-## 8. Revision History
+## 10. Revision History
 
 | Date | Version | Changes |
 |---|---|---|

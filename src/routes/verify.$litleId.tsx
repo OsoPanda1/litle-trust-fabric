@@ -47,6 +47,11 @@ function VerifyPage() {
                 PQC Enabled
               </span>
             )}
+            {(parsed as any).quantumCapable && (
+              <span className="inline-flex items-center px-3 py-1 text-xs font-mono uppercase tracking-wider border border-emerald-dark/30 text-emerald-dark rounded-full bg-emerald-dark/5">
+                48-Gate Quantum
+              </span>
+            )}
           </div>
 
           <div className="grid md:grid-cols-[1fr_1.5fr] gap-10">
