@@ -1,0 +1,10 @@
+{
+  "name": "litle-trust-fabric",
+  "framework": "vite",
+  "buildCommand": "bun run build",
+  "outputDirectory": ".output/public",
+  "installCommand": "bun install",
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

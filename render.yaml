@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: litle-trust-fabric
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: starter
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: LITLE_AUTHOR_SECRET
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
