@@ -5,7 +5,7 @@
 
 ## ¿Qué es LITLE?
 
-LITLE es la primera **plataforma epistemológica de literatura para el conocimiento Humano-Máquina** de Open Science. Un sistema de preservación, verificación y certificación digital académica que filtra lo mejor del conocimiento publicado en acceso abierto — aplicando 9 dimensiones epistémicas de calidad, anclaje criptográfico inmutable y un sistema de certificación digital (DAC) que cualquier agente — humano o IA — puede validar.
+LITLE es la primera **plataforma epistemológica de literatura para el conocimiento Humano-Máquina** de Open Science. Un sistema de preservación, verificación y certificación digital académica que filtra lo mejor del conocimiento publicado en acceso abierto — aplicando 9 dimensiones epistémicas de calidad, anclaje criptográfico post-cuántico (ML-DSA/SHAKE256) y un sistema de certificación digital (DAC) que cualquier agente — humano o IA — puede validar.
 
 No es una revista. No es un repositorio. Es **un estándar** para que el conocimiento abierto sea confiable, verificable y perdure más allá de cualquier plataforma que lo aloje.
 
@@ -17,37 +17,43 @@ No es una revista. No es un repositorio. Es **un estándar** para que el conocim
 |---|---|
 | **Preserva** | Conocimiento académico independiente con identidad criptográfica durable (LITLE-ID) |
 | **Verifica** | Integridad de contenido, autoría, fuentes y cadena de evidencia (Evidence Chain) |
-| **Certifica** | Emite DAC (Digital Academic Certificate) con CSV, authorship GMM y scoring epistémico |
-| **Filtra** | 9 dimensiones epistémicas: rigor metodológico, reproducibilidad, integridad de citas, etc. |
+| **Certifica** | Emite DAC (Digital Academic Certificate) con firma clásica + PQC (dual-stack) |
+| **Filtra** | 9 dimensiones epistémicas con scoring cuántico (simulated annealing) |
+| **Cuarentena** | Triangulación contra ORCID, DOI, ISNI, web antes de indexar |
 | **Expone** | Metadata machine-readable para que agentes IA consuman solo conocimiento confiable |
 | **Gobierna** | 7 federaciones con quorum 5/7 para cambios al estándar (RFC-0010) |
 
 ---
 
-## ¿Cómo lo hace?
-
-### Arquitectura del Sistema de Verificación-Certificación
+## Arquitectura del Sistema de Verificación-Certificación
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                    LITLE DAC                                  │
-│           Digital Academic Certificate                        │
-├──────────────────────────────────────────────────────────────┤
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────┐ │
-│  │   CSV     │  │Authorship│  │  Source  │  │  Evidence    │ │
-│  │ Generator │  │   GMM    │  │Verific.  │  │   Chain     │ │
-│  │ (32 char) │  │(8 feats) │  │(5 steps) │  │(Merkle DAG) │ │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────────┘ │
-├──────────────────────────────────────────────────────────────┤
-│  ┌──────────────────────────────────────────────────────────┐│
-│  │              Epistemic Scoring Engine                     ││
-│  │  9 dimensiones · Ponderación 0-5 · Tier: Pt/Au/Ag/Br   ││
-│  └──────────────────────────────────────────────────────────┘│
-├──────────────────────────────────────────────────────────────┤
-│  ┌──────────────────────────────────────────────────────────┐│
-│  │  LITLE-ID · L-512 Container · Merkle Root · SHA-256     ││
-│  └──────────────────────────────────────────────────────────┘│
-└──────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                         LITLE PLATFORM                            │
+├──────────────────────────────────────────────────────────────────┤
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐ │
+│  │   CSV     │  │Authorship│  │  Source  │  │   Evidence       │ │
+│  │ Generator │  │   GMM    │  │Verific.  │  │   Chain          │ │
+│  │ (32 char) │  │(8 feats) │  │(5 steps) │  │(Merkle DAG)      │ │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────────────┘ │
+├──────────────────────────────────────────────────────────────────┤
+│  ┌──────────────────────────────────────────────────────────────┐│
+│  │              Epistemic Scoring Engine                         ││
+│  │  9 dimensiones · Simulated Annealing · Quantum Correlation   ││
+│  │  Tier: Pt/Au/Ag/Br · Entanglement Energy · Confidence       ││
+│  └──────────────────────────────────────────────────────────────┘│
+├──────────────────────────────────────────────────────────────────┤
+│  ┌──────────────────────────────────────────────────────────────┐│
+│  │  PQC Suite (ML-DSA-87 / Dilithium5 + SHAKE256)              ││
+│  │  Dual-Stack DAC: classical (HMAC-SHA-512) + PQC (ML-DSA)    ││
+│  │  Container: 512B classic / 8KB PQC · Bech32m canonical     ││
+│  └──────────────────────────────────────────────────────────────┘│
+├──────────────────────────────────────────────────────────────────┤
+│  ┌──────────────────────────────────────────────────────────────┐│
+│  │  Quarantine & Triangulation Pipeline                          ││
+│  │  Submit → Quarantine → ORCID/DOI/ISNI/Web → Index/Reject    ││
+│  └──────────────────────────────────────────────────────────────┘│
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 ### Stack Tecnológico
@@ -58,131 +64,111 @@ No es una revista. No es un repositorio. Es **un estándar** para que el conocim
 | **Estilos** | Tailwind CSS v4 (`@theme inline`, `@utility`) |
 | **Auth/DB** | Supabase (PostgreSQL + RLS + Auth) |
 | **Build** | Vite 8 |
-| **Cripto** | @noble/hashes (SHA-256), PKCS#7-style |
+| **Cripto Clásica** | @noble/hashes (SHA-256, SHA-512, BLAKE3, HMAC) |
+| **Cripto PQC** | SHAKE256 (FIPS 202), ML-DSA-87 (Dilithium5) |
 | **ID** | LITLE-ID (RFC-0001): URI + Human + Canonical |
+| **Contenedor** | LITLE-512B classic / LITLE-8KB PQC (Bech32m) |
 
 ### Las 4 Metodologías de Verificación
 
 #### 1. CSV — Código Seguro de Verificación (keensoft/csv-generator)
 ```
 Formato: LTL (3) + hash Base36 SHA-256 (21) + ID LITLE (7) + R (1) = 32 chars
-Origen: Administración Electrónica Española (Ley 11/2007)
 ```
-- Los 21 chars de hash se mezclan con los 7 chars del ID mediante permutación seedeada
-- El carácter de aleatoriedad (R) determina la permutación
-- Verificación: se recomputa el hash del contenido y se compara contra el CSV
+- Permutación seedeada Fisher-Yates
+- Verificación por recomputación de hash
 
 #### 2. Authorship GMM (albino-pav/P4 — verificación de locutor)
 ```
-8 features estilísticas → likelihood Gaussian → threshold con FAR optimizado
+8 features estilísticas → likelihood Gaussian → threshold FAR 0.02
 ```
 - Longitud media/desviación de palabras y oraciones
-- Riqueza de vocabulario (unique words / total words)
-- Ratio de function words (the, and, of, etc.)
-- Longitud promedio de párrafos
-- Ratio de voz pasiva
-- Perfil fusionable desde múltiples textos del mismo autor
+- Riqueza de vocabulario, function word ratio, voz pasiva
 
 #### 3. Source Verification (martinszy/verificacion_de_datos)
 ```
 Pipeline 5 pasos: Identificar → Hashear → URL → Cross-Reference → Proveniencia
 Score: 0-100 → verified (≥80) / partial (≥50) / unverified (<50)
 ```
-- Cada paso produce status `passed/failed/skipped` con timestamp
-- Cross-reference: compara contenido contra otras fuentes
-- Integridad: SHA-256 del contenido vs hash almacenado
 
 #### 4. Evidence Chain (RFC-0008)
 ```
-Merkle-DAG de nodos: SOURCE, PROMPT, MODEL, REVISION, QUOTE
-Root hash anclado en el contenedor L-512 Block A
+SHAKE256 Merkle-DAG de nodos: SOURCE, PROMPT, MODEL, REVISION, QUOTE
+Root hash anclado en el contenedor LITLE Block A
 ```
-- Cada nodo almacena un content hash
-- El root hash se construye combinando hashes en pares (Merkle tree)
-- Verificación pública en `/verify/<litleId>`
 
 ---
 
-## ¿Por qué?
+## Quantum Fortification (PQC)
 
-Open Science publica sin filtros de calidad. Mientras esto elimina barreras de acceso, también elimina la discriminación señal/ruido que la revisión por pares tradicional proveía.
+### Post-Quantum Cryptography Suite
 
-**LITLE resuelve:**
-- **Falta de señales de calidad:** 9 dimensiones epistémicas con scoring transparente
-- **Inexistencia de certificación:** DAC combina 4 metodologías en un solo artifacto verificable
-- **Dependencia de plataformas:** Archivo independiente con copias redundantes en 2 jurisdicciones
-- **Opacidad de IA:** AI Provenance registra modelos, prompts, semillas en la Evidence Chain
-- **No reproducibilidad:** Pipeline puntuado por reproducibilidad (18% del score epistémico)
+| Componente | Algoritmo | Estado |
+|---|---|---|
+| **Hash** | SHAKE256 (FIPS 202) | Activo |
+| **Firma PQC** | ML-DSA-87 (CRYSTALS-Dilithium5) | Activo |
+| **Contenedor Classic** | LITLE-512B (512 bytes) | Compatible |
+| **Contenedor PQC** | LITLE-8KB (8192 bytes) | Nuevo |
+| **KeyGen** | ML-DSA.KeyGen() via SHAKE256 KDF | Activo |
 
----
+### Dual-Stack DAC
+- **classic**: SHA-256 + HMAC-SHA-512 (backward compatible)
+- **pqc**: SHAKE256 + ML-DSA-87 (Dilithium5)
+- **dual**: Ambas firmas simultáneamente
 
-## Conceptualidad
-
-LITLE se basa en tres principios epistemológicos:
-
-### 1. Conocimiento como estándar, no como producto
-El valor del conocimiento académico no está en el formato de publicación sino en su **verificabilidad** a través del tiempo. LITLE separa el contenido de su continente: el estándar vive en las RFCs, la implementación es intercambiable.
-
-### 2. La confianza se construye, no se declara
-Cada obra LITLE pasa por 4 verificaciones independientes que generan un DAC. No hay "confianza implícita" — hay **evidencia criptográfica, estadística y metodológica** que cualquier tercero puede validar.
-
-### 3. Conocimiento Humano-Máquina
-El metadata epistémico está estructurado para que tanto humanos como agentes IA puedan consultarlo programáticamente. Una IA puede filtrar obras por umbral mínimo de calidad sin intervención humana.
+### Quantum Epistemic Filter
+- **Simulated Annealing**: 1000 iteraciones con decaimiento exponencial
+- **Entanglement Energy**: Correlaciones entre pares de dimensiones epistémicas
+- **Confidence**: Scoring basado en entropía por obra
 
 ---
 
-## Filosofía
+## Submission & Quarantine Pipeline
 
-> Open Science publica todo. LITLE encuentra lo mejor.
-
-El conocimiento abierto sin filtros es ruido. El conocimiento cerrado es privilegio. LITLE propone una tercera vía: **curación epistemológica transparente** — donde los criterios de calidad son públicos, gobernados por federaciones, y cualquier persona o máquina puede verificarlos.
-
-Las 7 federaciones (RFC-0010) garantizan que ningún grupo unilateral controle el estándar. Se requiere 5/7 quorum para cambios estables y 6/7 para revocaciones.
-
----
-
-## Blueprint del Sistema
-
+### Workflow
 ```
-┌────────────────────────────────────────────────────────────────────┐
-│                        LITLE PLATFORM                              │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│  [Landing] → [Standard] → [RFCs] → [Discovery] → [Verification]   │
-│                  ↓            ↓           ↓              ↓         │
-│            [Open Science] [RFC-0014] [Curated Lib] [Evidence Chain]│
-│                  ↓                                       ↓         │
-│          [Certification] ←────────────────────── [DAC Certificate] │
-│               ↓                                       ↑           │
-│         [RFC-0015]                              [CSV + GMM +      │
-│                                                   Source + Chain]  │
-│                                                                    │
-├────────────────────────────────────────────────────────────────────┤
-│  LAYER 1: Identity              LITLE-ID · L-512 · Canonical      │
-│  LAYER 2: Evidence              Evidence Chain · Merkle DAG       │
-│  LAYER 3: Verification          CSV · Authorship · Source · Chain │
-│  LAYER 4: Certification         DAC · Signatures · Epistemic      │
-│  LAYER 5: Curation             9-dim filter · Tiers · Discovery   │
-│  LAYER 6: Governance           7 Federations · 5/7 Quorum · LIPs  │
-├────────────────────────────────────────────────────────────────────┤
-│  RUTAS CLAVE:                                                      │
-│  /                             Landing page                       │
-│  /standard                     Standards Council                  │
-│  /standard/rfcs                RFCs catalog                       │
-│  /standard/open-science        Open Science Curation (RFC-0014)   │
-│  /standard/certification       Digital Academic Cert (RFC-0015)   │
-│  /standard/archive             Independent Archive (RFC-0009)     │
-│  /discovery                    Curated epistemic library          │
-│  /verify/<litleId>             Evidence Chain verification        │
-│  /certificate/<litleId>        DAC certificate view               │
-└────────────────────────────────────────────────────────────────────┘
+Author Submit → QUARANTINE → Triangulación → GREEN  → Index + LITLE-ID
+                                        → RED    → Reject + Referencias
+                                        → ?      → Escalar a FED-5
 ```
+
+### Triangulación
+| Fuente | Propósito |
+|---|---|
+| ORCID (pub.orcid.org) | Verificar identidad del autor |
+| Crossref (api.crossref.org) | Buscar DOI existente |
+| ISNI (isni.org/api) | Verificar identificador ISNI |
+| Web (DuckDuckGo) | Similitud con publicaciones web |
+| LITLE Library | Deduplicación interna |
+
+---
+
+## Rutas del Sistema
+
+| Ruta | Descripción |
+|---|---|
+| `/` | Landing page LATAM (Real del Monte, Hidalgo) |
+| `/auth` | Sign in / Sign up (Supabase) |
+| `/dashboard` | Librarian dashboard (auth-protected) |
+| `/submissions` | Tracking de submissions en cuarentena (auth-protected) |
+| `/library` | Catálogo académico con búsqueda LITLE-ID |
+| `/verify/$litleId` | Resolver Datacite-style |
+| `/certificate/$litleId` | DAC certificate view |
+| `/submit` | Formulario público con pipeline cuarentena |
+| `/governance` | 7 Federaciones TAMV |
+| `/standard` | Standards Council |
+| `/standard/rfcs` | RFCs catalog |
+| `/standard/open-science` | RFC-0014: Open Science Curation |
+| `/standard/certification` | RFC-0015: DAC Specification |
+| `/standard/archive` | RFC-0009: Independent Archive |
+| `/admin/quarantine` | Panel FED-5 (auth-protected) |
+| `/discovery` | Curated epistemic library |
 
 ---
 
 ## Roadmap / Checklist
 
-### Fase 1 — Fundación (80% completo)
+### Fase 1 — Fundación (95% completo)
 - [x] Tailwind CSS v4 — paleta Obsidian & Crystal Glass
 - [x] LITLE-ID: parser, formatter, canonical (RFC-0001)
 - [x] Evidence Chain: modelo, funciones servidor, RLS (RFC-0008)
@@ -191,7 +177,7 @@ Las 7 federaciones (RFC-0010) garantizan que ningún grupo unilateral controle e
 - [x] Dashboard de autor + vista de libro/manuscrito
 - [x] RFCs: contenido, índice, vista de detalle
 
-### Fase 2 — Estándar (90% completo)
+### Fase 2 — Estándar (95% completo)
 - [x] Standards Council: página principal (RFC-0011)
 - [x] Trust Fabric: kernel + adapters (RFC-0012)
 - [x] Observability Fabric: Grafana + multi-DB (RFC-0013)
@@ -199,23 +185,33 @@ Las 7 federaciones (RFC-0010) garantizan que ningún grupo unilateral controle e
 - [x] Federated Governance: 7 federaciones (RFC-0010)
 - [x] Extended WorkTypes: BK, RQ, DS, PL, AR, MD, SW, EX, DP (RFC-0002)
 
-### Fase 3 — Epistémico (85% completo)
+### Fase 3 — Epistémico Cuántico (90% completo)
 - [x] 9 dimensiones epistémicas con ponderación
 - [x] Motor de filtrado: composite score, tiers, agregación
+- [x] Quantum Epistemic Filter (simulated annealing + entanglement)
 - [x] Open Science Curation page (RFC-0014)
 - [x] Curated library / discovery page
-- [ ] Integración con datos reales desde Supabase
 
-### Fase 4 — Certificación (75% completo)
+### Fase 4 — Certificación PQC (85% completo)
 - [x] CSV Generator: 32-char verification code
 - [x] Authorship GMM: perfil estilístico + likelihood
 - [x] Source Verification: pipeline 5 pasos + scoring
-- [x] DAC: certificado unificado + verifyCertificate()
+- [x] DAC: dual-stack clásico + PQC (ML-DSA-87)
 - [x] Certificación UI: vista pública /certificate/<id>
-- [ ] Integración con pipeline de firma L-512 real
+- [x] Container PQC: LITLE-8KB con firma Dilithium5
+- [x] SHAKE256 (FIPS 202) como hash resistente a cuántica
 - [ ] Generación de PDF de certificado descargable
 
-### Fase 5 — Producción (0% completo)
+### Fase 5 — Cuarentena & Publicación (80% completo)
+- [x] Submission pipeline con estado quarantine
+- [x] Triangulación ORCID/DOI/ISNI/Web
+- [x] UI de submission con feedback en tiempo real
+- [x] Panel de cuarentena para FED-5
+- [x] Dashboard de submissions para autores
+- [ ] Integración con datos reales desde Supabase
+- [ ] Notificaciones por email
+
+### Fase 6 — Producción (10% completo)
 - [ ] Tests unitarios (Vitest)
 - [ ] Type checking estricto
 - [ ] Auditoría de seguridad
@@ -234,17 +230,71 @@ Las 7 federaciones (RFC-0010) garantizan que ningún grupo unilateral controle e
 | LITLE-ID system | 100% | ✅ |
 | Evidence Chain | 90% | ✅ |
 | Pipeline LITLE | 85% | ✅ |
-| Auth + Dashboard | 90% | ✅ |
+| Auth + Dashboard | 95% | ✅ |
 | RFCs + Standards | 95% | ✅ |
-| Epistemic Engine | 85% | ✅ |
+| Epistemic Engine | 90% | ✅ |
+| PQC Cryptography (SHAKE256 + ML-DSA) | 85% | ✅ |
 | CSV Verification | 90% | ✅ |
 | Authorship GMM | 85% | ✅ |
 | Source Verification | 85% | ✅ |
-| DAC Certification | 80% | ✅ |
+| DAC Certification (dual-stack) | 85% | ✅ |
+| Quarantine Pipeline | 80% | ✅ |
+| Triangulation Engine | 80% | ✅ |
 | Discovery UI | 85% | ✅ |
 | Tests | 0% | ❌ |
 | Despliegue | 0% | ❌ |
-| **Global** | **~78%** | **Pre-producción** |
+| **Global** | **~82%** | **Pre-producción** |
+
+---
+
+## Estructura del Proyecto
+
+```
+src/
+├── content/rfcs.ts              # RFC specifications
+├── lib/
+│   ├── epistemic/               # Epistemic filtering engine
+│   │   ├── types.ts             # 9 dimensions, profiles, filters
+│   │   ├── filters.ts           # Composite scoring, aggregation, tiers
+│   │   └── quantum-filter.ts    # Simulated annealing + entanglement
+│   ├── verify/                  # Verification & certification
+│   │   ├── csv.ts               # CSV generator (32-char secure code)
+│   │   ├── authorship.ts        # Authorship GMM (8-feature profile)
+│   │   ├── source-verification.ts    # 5-step pipeline
+│   │   ├── engine.ts            # SHAKE256 Merkle root, evidence integrity
+│   │   └── certificate.ts       # DAC dual-stack (classic + PQC)
+│   ├── litle/                   # LITLE-ID core
+│   │   ├── id.ts                # Parser, formatter, canonical (PQC-aware)
+│   │   ├── sign.ts              # LITLE signature (classic + PQC)
+│   │   ├── pqc.ts               # PQC provider (ML-DSA-87, SHAKE256)
+│   │   ├── litle.ts             # Container (512B classic / 8KB PQC)
+│   │   └── canonical.ts         # Bech32m serialization (dual-size)
+│   ├── submission/              # Quarantine & triagulation
+│   │   ├── types.ts             # SubmissionDocument, TriangulationReport
+│   │   ├── quarantine.ts        # Quarantine manager, status transitions
+│   │   ├── triangulation.ts     # ORCID/DOI/ISNI/Web investigation
+│   │   └── pipeline.ts          # Orchestration: submit → index/reject
+│   ├── evidence.functions.ts    # Server-side evidence chain
+│   └── pipeline.functions.ts    # Knowledge reconstruction
+├── routes/
+│   ├── index.tsx                # Landing page LATAM
+│   ├── submit.tsx               # Public submission with quarantine
+│   ├── library.tsx              # Academic library table
+│   ├── verify.$litleId.tsx      # Datacite-style resolver
+│   ├── certificate.$litleId.tsx # DAC certificate view
+│   ├── governance.tsx           # 7 Federations TAMV
+│   ├── auth.tsx                 # Sign in / Sign up
+│   ├── discovery.tsx            # Curated epistemic library
+│   ├── standard/                # Standards Council
+│   ├── admin/quarantine.tsx     # FED-5 Curation panel
+│   └── _authenticated/          # Auth-protected routes
+│       ├── route.tsx            # Auth guard layout
+│       ├── dashboard.tsx        # Librarian dashboard
+│       ├── submissions.tsx      # User submission tracking
+│       └── books.$bookId.tsx    # Book/manuscript view
+├── styles.css                   # Tailwind v4 + utilities
+└── routeTree.gen.ts             # Auto-generated router
+```
 
 ---
 
@@ -257,6 +307,7 @@ bun install
 # 2. Set up environment (.env)
 SUPABASE_URL=...
 SUPABASE_PUBLISHABLE_KEY=...
+LITLE_AUTHOR_SECRET=...
 
 # 3. Development
 bun dev
@@ -276,50 +327,6 @@ bun preview
 | **GitHub Actions** | CI/CD |
 | **Grafana + PMM** | Observabilidad (RFC-0013) |
 | **S3 / IPFS** | Archivo independiente (RFC-0009) |
-
----
-
-## Estructura del Proyecto
-
-```
-src/
-├── content/rfcs.ts           # RFC specifications
-├── lib/
-│   ├── epistemic/            # Epistemic filtering engine
-│   │   ├── types.ts          # 9 dimensions, profiles, filters
-│   │   └── filters.ts        # Composite scoring, aggregation, tiers
-│   ├── verify/               # Verification & certification
-│   │   ├── csv.ts            # CSV generator (32-char secure code)
-│   │   ├── authorship.ts     # Authorship GMM (8-feature profile)
-│   │   ├── source-verification.ts  # 5-step pipeline
-│   │   ├── engine.ts         # Merkle root, evidence integrity
-│   │   └── certificate.ts    # DAC generator & verifier
-│   ├── litle/                # LITLE-ID core
-│   │   ├── id.ts             # Parser, formatter, canonical
-│   │   ├── sign.ts           # L-512 signature
-│   │   └── canonical.ts      # Canonical serialization
-│   ├── evidence.functions.ts # Server-side evidence chain
-│   └── pipeline.functions.ts # Knowledge reconstruction
-├── routes/
-│   ├── index.tsx             # Landing page
-│   ├── auth.tsx              # Sign in / Sign up
-│   ├── discovery.tsx         # Curated epistemic library
-│   ├── verify.$litleId.tsx    # Evidence Chain verification
-│   ├── certificate.$litleId.tsx  # DAC certificate view
-│   ├── standard/             # Standards Council
-│   │   ├── index.tsx         # Standard overview
-│   │   ├── rfcs.tsx          # RFCs layout
-│   │   ├── rfcs.index.tsx    # RFCs catalog
-│   │   ├── rfcs.$slug.tsx    # RFC detail
-│   │   ├── open-science.tsx  # RFC-0014: Open Science Curation
-│   │   ├── certification.tsx # RFC-0015: DAC Specification
-│   │   ├── trust-fabric.tsx  # RFC-0012
-│   │   ├── observability.tsx # RFC-0013
-│   │   └── archive.tsx       # RFC-0009
-│   └── _authenticated/       # Auth-protected routes
-├── styles.css                # Tailwind v4 + utilities
-└── routeTree.gen.ts          # Auto-generated router
-```
 
 ---
 
