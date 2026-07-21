@@ -2,7 +2,7 @@
 // single crypto profile. The container layout (L-512 today, L-1024 tomorrow)
 // is recorded as `cryptoProfile`; rotating the anchor never invalidates the ID.
 
-import { sha256 } from "@noble/hashes/sha2";
+import { sha256 } from "@noble/hashes/sha2.js";
 import { bytesToHex } from "@noble/hashes/utils";
 
 export type LitleWorkType =

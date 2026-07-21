@@ -1,6 +1,6 @@
 import { blake3 } from "@noble/hashes/blake3";
 import { hmac } from "@noble/hashes/hmac";
-import { sha512 } from "@noble/hashes/sha2";
+import { sha512 } from "@noble/hashes/sha2.js";
 import {
   Litle512Engine,
   type LitleMetadata,
