@@ -5,6 +5,8 @@ import { parseAny, toHuman, toUri } from "@/lib/litle/id";
 import { verifyChain } from "@/lib/verify/engine";
 import { generateCertificate, verifyCertificate } from "@/lib/verify/certificate";
 import type { DigitalAcademicCertificate } from "@/lib/verify/certificate";
+import { sha256 } from "@noble/hashes/sha2.js";
+import { bytesToHex } from "@noble/hashes/utils";
 
 const evidenceQuery = (litleId: string) =>
   queryOptions({
@@ -219,17 +221,8 @@ function StatusCheck({ label, passed }: { label: string; passed: boolean }) {
 
 function generateMockCsv(id: string): string {
   const prefix = "LTL";
-  const hashPart = sha256(id).slice(0, 21).split("").map((c) => (c.charCodeAt(0) % 36).toString(36).toUpperCase()).join("");
+  const hashBytes = sha256(new TextEncoder().encode(id));
+  const hashPart = bytesToHex(hashBytes).slice(0, 21).split("").map((c) => (c.charCodeAt(0) % 36).toString(36).toUpperCase()).join("");
   const idPart = id.slice(0, 7).toUpperCase().padEnd(7, "0");
   return `${prefix}${hashPart}${idPart}0`;
-}
-
-function sha256(input: string): string {
-  let hash = 0;
-  for (let i = 0; i < input.length; i++) {
-    const char = input.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
-  }
-  return Math.abs(hash).toString(36).toUpperCase();
 }

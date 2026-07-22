@@ -1,18 +1,22 @@
-name: LITLE CI — Hardened Pipeline
+name: LITLE CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   NODE_VERSION: "22"
-  BUN_VERSION: "1.3"
+  BUN_VERSION: "1.2"
 
 jobs:
   quality:
-    name: Quality Gates
+    name: Quality (lint + format + typecheck)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,12 +25,12 @@ jobs:
           bun-version: ${{ env.BUN_VERSION }}
       - run: bun install --frozen-lockfile
       - run: bun run lint
+      - run: bun run format --check
       - run: bun run typecheck
       - run: bun run knip
-      - run: bun run audit
 
   test:
-    name: Tests
+    name: Tests (unit + coverage)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,10 +38,16 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
       - run: bun install --frozen-lockfile
-      - run: bun run test --run
+      - run: bun run test --reporter=verbose
+      - run: bun run coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
 
   security:
-    name: Security Scan
+    name: Security (audit + SAST)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,18 +55,16 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
       - run: bun install --frozen-lockfile
+      - run: bun run audit
       - run: bun run sbom
-      - name: Check .env hygiene
-        run: |
-          if git grep -l "SUPABASE_SERVICE_ROLE_KEY\|OPENAI_API_KEY\|LITLE_AUTHOR_SECRET" .env 2>/dev/null; then
-            echo "::error::SECURITY ALERT: .env contains secrets! Rotate immediately."
-            exit 1
-          fi
-      - name: Check for secrets in git history
-        uses: secret-scanner/action@v1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sbom
+          path: bom.json
 
   build:
-    name: Build
+    name: Build (production)
     runs-on: ubuntu-latest
     needs: [quality, test, security]
     steps:

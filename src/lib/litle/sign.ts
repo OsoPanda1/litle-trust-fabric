@@ -13,7 +13,7 @@ import {
   decodeCanonicalStringToLitle,
 } from "./canonical";
 import {
-  Dilithium5Provider,
+  SimulatedPqcProvider,
   pqcHash,
   concat,
   getPqcProvider,
@@ -171,7 +171,7 @@ export function buildLitleSignature(input: SignInput): SignOutput {
   let sig: Uint8Array;
 
   if (usePqc) {
-    const provider = new Dilithium5Provider();
+    const provider = new SimulatedPqcProvider();
     const seedMaterial = derivePqcSeedLarge(input.authorSecret, 64);
     const keyPair = provider.generateKey(seedMaterial);
     pqcSeed = concat(keyPair.secretKey, keyPair.publicKey);

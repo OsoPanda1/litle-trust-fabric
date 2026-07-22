@@ -90,7 +90,13 @@ export abstract class PqcProvider {
   abstract verify(publicKey: Uint8Array, message: Uint8Array, signature: Uint8Array, context?: string): boolean;
 }
 
-export class Dilithium5Provider extends PqcProvider {
+/**
+ * WARNING: Hash-based simulation, NOT real ML-DSA-87 (CRYSTALS-Dilithium5).
+ * Real ML-DSA requires lattice-based cryptography via native WASM (liboqs/pqclean).
+ * This implementation uses SHAKE256 HMAC chaining as a quantum-inspired reference.
+ * Do not use in production environments requiring actual post-quantum security.
+ */
+export class SimulatedPqcProvider extends PqcProvider {
   readonly profile: PqcProfile = "L-PQC.v1";
   readonly params = ML_DSA_PARAMS["L-PQC.v1"];
 
@@ -132,20 +138,23 @@ export class Dilithium5Provider extends PqcProvider {
   }
 }
 
-class Dilithium2Provider extends Dilithium5Provider {
+class SimulatedPqcProvider512 extends SimulatedPqcProvider {
   readonly profile: PqcProfile = "L-512.v1";
   readonly params = ML_DSA_PARAMS["L-512.v1"];
 }
 
-class Dilithium3Provider extends Dilithium5Provider {
+class SimulatedPqcProvider1024 extends SimulatedPqcProvider {
   readonly profile: PqcProfile = "L-1024.v1";
   readonly params = ML_DSA_PARAMS["L-1024.v1"];
 }
 
+/** @deprecated Use SimulatedPqcProvider — this was never real ML-DSA */
+export const Dilithium5Provider = SimulatedPqcProvider;
+
 const PROVIDER_MAP: Record<string, PqcProvider> = {
-  "L-512.v1": new Dilithium2Provider(),
-  "L-1024.v1": new Dilithium3Provider(),
-  "L-PQC.v1": new Dilithium5Provider(),
+  "L-512.v1": new SimulatedPqcProvider512(),
+  "L-1024.v1": new SimulatedPqcProvider1024(),
+  "L-PQC.v1": new SimulatedPqcProvider(),
 };
 
 export function getPqcProvider(profile?: PqcProfile): PqcProvider {

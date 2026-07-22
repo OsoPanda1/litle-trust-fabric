@@ -1,7 +1,7 @@
 import { shake256 } from "@noble/hashes/sha3";
 import { sha256 } from "@noble/hashes/sha2.js";
-import { bytesToHex, concatBytes } from "@noble/hashes/utils";
-import { quantumFingerprint, fingerprintSimilarity, gateSequenceSimilarity } from "./gates";
+import { bytesToHex } from "@noble/hashes/utils";
+import { quantumFingerprint, stateToBytes } from "./gates";
 import { sealHybridShield, verifyHybridShield, type HybridShield, type ShieldProfile } from "./hybrid-shield";
 
 export type TrustPath = "path_a" | "path_b";
@@ -93,27 +93,27 @@ function pathBCheck(
   const total = PATH_B_CHECKS.length;
 
   const fgp = quantumFingerprint(data);
-  const storedFgp = quantumFingerprint(data);
-  const fpsim = fingerprintSimilarity(fgp, storedFgp);
-  if (fpsim > 0.9) passedChecks++;
+  const computedStateHex = bytesToHex(stateToBytes(fgp.state));
 
-  const gsSim = gateSequenceSimilarity(fgp.gateSequence, storedFgp.gateSequence);
-  if (gsSim > 0.85) passedChecks++;
+  // Compare recomputed state against shield's stored fingerprint (not against itself)
+  if (computedStateHex === shield.quantumFingerprint) passedChecks++;
+
+  // Verify gate sequence length is valid
+  if (fgp.gateSequence.length === 48) passedChecks++;
+
+  // Recompute entanglement hash and compare against shield's stored value
+  const entanglementData = new Uint8Array(data.length + fgp.vector.byteLength);
+  entanglementData.set(data, 0);
+  entanglementData.set(new Uint8Array(fgp.vector.buffer), data.length);
+  const recomputedEntanglement = bytesToHex(shake256(entanglementData, { dkLen: 64 }));
+  if (recomputedEntanglement === shield.entanglementHash) passedChecks++;
 
   if (shield.entanglementHash.length > 0) passedChecks++;
 
   if (shield.quantumFingerprint.length > 0) passedChecks++;
 
-  const stateFgp = bytesToHex(stateToBytesFromFgp(fgp));
-  const storedState = shield.quantumFingerprint;
-  if (stateFgp === storedState) passedChecks++;
-
   const confidence = passedChecks / total;
   return { passed: confidence >= 0.6, confidence, checks: total, passedChecks };
-}
-
-function stateToBytesFromFgp(fgp: { vector: Float64Array }): Uint8Array {
-  return new Uint8Array(fgp.vector.buffer);
 }
 
 export function evaluateZeroTrust(

@@ -8,7 +8,7 @@ export type OpenAIClient = {
 
 let client: OpenAIClient | null = null;
 
-function getClient(): OpenAIClient {
+export function getClient(): OpenAIClient {
   if (client) return client;
 
   const apiKey = process.env.OPENAI_API_KEY;

@@ -697,8 +697,607 @@ Implementations MUST:
 - Quantum interconnection requires ≥ 2 independent sources for authorship verification
 `,
   },
+  {
+    id: "RFC-0019",
+    slug: "0019-constitution-framework",
+    title: "Institutional Constitution — Formal Constitutive Model of LITLE",
+    status: "Proposed",
+    category: "Governance",
+    updated: "2026-07-22",
+    abstract:
+      "Establishes the LITLE Institutional Constitution as a formal constitutive model (MCF). Defines 15 LIBROS with categorized articles (principle/norm/procedure/sanction/definition), a quorum matrix, dependency DAG, and enforcement framework. Constitution LITLE-ID: LTL-2026-BK-CONSTITUCION-LITLE-0001.",
+    body: `# CONSTITUCIÓN INSTITUCIONAL DE LITLE — Formal Constitutive Model
+
+## Preamble
+We, the seven federations of LITLE, establish this Constitution as the supreme normative framework of the LITLE Open Science platform. This document operates as a formal constitutive model (MCF) defined by the tuple:
+
+**C = (A, Σ, R, D, E)**
+
+Where:
+- **A** = set of constitutional articles (with category, hierarchy, state)
+- **Σ** = set of sanctions (with gravity, procedure, appeal rights)
+- **R** = set of relationships between articles (derivation, complement, restriction, authorization, derogation)
+- **D** = functional dependency graph (DAG) between all normative elements
+- **E** = enforcement matrix mapping article categories to quorum requirements
+
+---
+
+## HIERARCHY OF NORMS
+
+| Level | Category | Quorum | Description |
+|---|---|---|---|
+| 1 | PRINCIPIO | 6/7 | Fundamental, immutable norm. Requires supermajority. |
+| 2 | NORMA | 5/7 | Specific enforceable rule. |
+| 3 | SANCION | 5/7 | Consequence of norm violation. |
+| 4 | PROCEDIMIENTO | 4/7 | Operational procedure for applying norms. |
+| 5 | DEFINICION | 3/7 | Formal glossary, taxonomy, classification. |
+
+---
+
+## LIBRO I — Institutional Purpose (LITLE-POL-001)
+*Category: PRINCIPIO | Level: 1*
+
+**Art. I.1 — Misión**: LITLE is an open, sovereign, perpetual standard for the registration, verification, and preservation of global academic knowledge, rooted in Latin America.
+
+**Art. I.2 — Permanencia**: LITLE infrastructure must operate independently of commercial platforms, governments, or corporations. The Evidence DAG is append-only and replicable.
+
+**Art. I.3 — Jurisdicción**: LITLE is governed by this Constitution and international human rights law. No national legislation prevails over the constitutional principles of LITLE.
+
+---
+
+## LIBRO II — Institutional Philosophy (LITLE-PHI-001)
+*Category: PRINCIPIO | Level: 1*
+
+**Art. II.1 — Neutralidad epistémica**: LITLE does not evaluate the truth of works, only their integrity, lineage, and reproducibility. Truth belongs to epistemic communities, not the platform.
+
+**Art. II.2 — Primacía del conocimiento**: Technology serves human knowledge, not the reverse. No algorithm, model, or AI agent may substitute human epistemic judgment as final authority.
+
+**Art. II.3 — No censura**: LITLE will not delete works from the DAG. Deprecation is the maximum mechanism of disavowal. Any government takedown request is recorded as a public DAG node.
+
+---
+
+## LIBRO III — Code of Ethics (LITLE-CON-001)
+*Category: PRINCIPIO | Level: 1*
+
+**Art. III.1 — Fabricación prohibida**: No registered work may contain fabricated data, falsified results, or forged digital signatures. Detection triggers SAN-001 (deprecation).
+
+**Art. III.2 — Conflictos de interés**: Every author must declare financial, institutional, or personal conflicts of interest at registration. Intentional omission triggers SAN-001.
+
+**Art. III.3 — Declaración de IA**: All AI use in generation, analysis, or drafting must be explicitly declared in metadata. First omission: SAN-004. Recidivism: SAN-001.
+
+**Art. III.4 — Reincidencia**: Three ethics violations within 2 years trigger SAN-002 (365-day author suspension).
+
+---
+
+## LIBRO IV — Principles of Conduct (LITLE-CON-002)
+*Category: NORMA | Level: 2*
+
+**Art. IV.1 — Transparencia metodológica**: Every work must describe its methodology with sufficient detail to enable independent reproducibility.
+
+**Art. IV.2 — Buena fe**: Participants must act in good faith. Harassment, metric manipulation, and verification system abuse trigger SAN-005.
+
+**Art. IV.3 — Revisión por FED-7**: Ethics violations are evaluated by FED-7 (Audit & Compliance). The federation has 30 days to issue a resolution. The accused has 14 days to present arguments.
+
+---
+
+## LIBRO V — Authorship (LITLE-ATH-001)
+*Category: NORMA | Level: 2*
+
+**Art. V.1 — Autor principal**: Conceives, executes, and leads the research. Primary responsibility for integrity. Listed first in metadata.
+
+**Art. V.2 — Coautor**: Substantial contribution to design, execution, or analysis. Shares integrity responsibility.
+
+**Art. V.3 — Contribuyente técnico**: Provides technical infrastructure, software, equipment, or reagents. Not necessarily intellectual design.
+
+**Art. V.4 — Revisor**: Critically evaluates the work before publication. Identity recorded in the DAG.
+
+**Art. V.5 — Colaborador documental**: Contributes sources, data, translations, or archival material.
+
+**Art. V.6 — Registro obligatorio**: Every work must declare each author's contribution level. Author order must reflect contribution level.
+
+---
+
+## LIBRO VI — Citation and Integrity (LITLE-ATH-002)
+*Category: NORMA | Level: 2*
+
+**Art. VI.1 — Precisión de citas**: Every citation must be verifiable against the original source. Secondary citations must be declared as such.
+
+**Art. VI.2 — Autocitación**: Self-citation must not exceed 15% of total references. Unexplained excess triggers SAN-005.
+
+**Art. VI.3 — Anillos de citación**: Coordinated mutual citation to inflate metrics is prohibited. Detection triggers SAN-002.
+
+**Art. VI.4 — Verificación de citas**: The triangulation engine verifies each citation against CrossRef/DOI. Discrepancies are recorded as DAG nodes.
+
+---
+
+## LIBRO VII — Recognition and Attribution (LITLE-ATH-003)
+*Category: NORMA | Level: 3*
+
+**Art. VII.1–10**: Ten functions of the recognition cycle:
+1. Autoría intelectual — conception, design, interpretation
+2. Curación de datos — collection, cleaning, preservation
+3. Digitalización — analog-to-digital conversion
+4. Desarrollo de software — code, scripts, computational tools
+5. Visualización — figures, tables, dashboards
+6. Supervisión — project direction, mentorship
+7. Adquisición de fondos — financial resource management
+8. Administración del proyecto — operational management
+9. Validación — result verification, experiment replication
+10. Análisis formal — statistical, mathematical, computational methods
+
+---
+
+## LIBRO VIII — Rights of Authors (LITLE-DUT-001)
+*Category: PRINCIPIO | Level: 2*
+
+**Art. VIII.1 — Propiedad intelectual**: Authors retain all intellectual property rights. LITLE claims no copyright, license, or exploitation rights.
+
+**Art. VIII.2 — Licencia obligatoria**: Every work must declare a usage license (CC-BY, CC0, etc.). Works without licenses are not admitted.
+
+**Art. VIII.3 — Retiro normativo**: Authors may request archival deprecation. The work remains in the DAG as a deprecated node but is excluded from active searches.
+
+**Art. VIII.4 — Portabilidad**: Authors may export their works and metadata in standard format (JSON-LD, CSV) at any time.
+
+---
+
+## LIBRO IX — Obligations of Authors (LITLE-DUT-002)
+*Category: NORMA | Level: 2*
+
+**Art. IX.1 — ORCID obligatorio**: Every author must register a valid ORCID before publishing. Institutional ORCIDs preferred.
+
+**Art. IX.2 — Precisión de metadatos**: Work metadata must be accurate and complete at registration.
+
+**Art. IX.3 — Respuesta a verificación**: Authors must respond to integrity verification requests within 30 days. Non-response triggers SAN-005.
+
+**Art. IX.4 — Actualización**: Authors must keep affiliation and ORCID metadata current. Institutional changes must be reflected within 90 days.
+
+---
+
+## LIBRO X — AI Governance (LITLE-AI-001)
+*Category: NORMA | Level: 2*
+
+**Art. X.1 — No autoría de IA**: No AI system may be listed as primary author. AI is a tool, not an epistemic agent.
+
+**Art. X.2 — Etiquetado de fragmentos**: Every AI-generated or AI-assisted fragment must be tagged with {ai} in the DAG. AI-to-human content ratio must be explicit.
+
+**Art. X.3 — Registro de modelos**: AI models used must be registered as network agents with their own LITLE-IDs. Registration includes architecture, training data, version.
+
+**Art. X.4 — Auditoría de IA**: FED-3 audits AI labeling compliance. Quarterly audits. Public results in the DAG.
+
+---
+
+## LIBRO XI — 7 Federations Governance (LITLE-GOV-001)
+*Category: PRINCIPIO | Level: 1*
+
+**Art. XI.1 — Soberanía federal**: Governance resides in seven sovereign federations. Each has one vote. No central authority above the federations.
+
+**Art. XI.2 — Composición**: FED-1 (Preservación), FED-2 (Estándares), FED-3 (Tecnología), FED-4 (Curación), FED-5 (Integridad), FED-6 (Adopción), FED-7 (Auditoría).
+
+**Art. XI.3 — Quorum**: Ordinary decisions: 4/7. Standard changes: 5/7. Membership revocation and constitutional amendments: 6/7.
+
+**Art. XI.4 — Transparencia**: All votes, deliberations, and resolutions recorded as DAG nodes. No secret sessions.
+
+---
+
+## LIBRO XII — Evidence DAG (LITLE-EVD-001)
+*Category: PRINCIPIO | Level: 1*
+
+**Art. XII.1 — Inmutabilidad**: The Evidence DAG is append-only. Once sealed, a node cannot be altered, deleted, or reordered. Cryptographic integrity is mandatory.
+
+**Art. XII.2 — Contenido del nodo**: Each node contains: timestamp, operation type, content hash, previous node hash, PQC signature, operation metadata.
+
+**Art. XII.3 — Anclaje**: The DAG root hash must be periodically anchored to the Bitcoin blockchain (OP_RETURN) or equivalent timestamping infrastructure.
+
+---
+
+## LIBRO XIII — BookPI & Ledger (LITLE-PRS-001)
+*Category: NORMA | Level: 2*
+
+**Art. XIII.1 — Ledger único**: BookPI is the single, unequivocal ledger of LITLE. Every work, transaction, and constitutional amendment is recorded in BookPI.
+
+**Art. XIII.2 — Enmiendas constitucionales**: Amendments produce ConstitutionAmendmentNode in the DAG containing: RFC, modified LIBRO, old and new text hashes, federation votes, timestamp.
+
+**Art. XIII.3 — Reconciliación**: BookPI must be reconcilable with the DAG at any time. A discrepancy constitutes an integrity emergency.
+
+---
+
+## LIBRO XIV — Neutrality and Sovereignty (LITLE-POL-002)
+*Category: PRINCIPIO | Level: 1*
+
+**Art. XIV.1 — Neutralidad institucional**: LITLE maintains political, religious, and commercial neutrality. It does not favor or discriminate against jurisdictions, disciplines, or schools of thought.
+
+**Art. XIV.2 — Multi-jurisdicción**: Infrastructure must operate in at least 2 different national jurisdictions. No government or corporation may have unilateral control.
+
+**Art. XIV.3 — Violación de neutralidad**: A federation member violating neutrality is removed (6/7 quorum). Recorded permanently in the DAG. Triggers SAN-003.
+
+---
+
+## LIBRO XV — Community (LITLE-COM-001)
+*Category: NORMA | Level: 2*
+
+**Art. XV.1 — Participación abierta**: Any natural or legal person may participate in LITLE, subject to this Constitution and the Code of Ethics.
+
+**Art. XV.2 — Resolución de disputas**: Community disputes are resolved by FED-7 in first instance, with appeal to the plenary of 7 federations.
+
+**Art. XV.3 — Gobernanza pública**: All governance operates in public. Meetings, votes, and resolutions are accessible via the DAG. No secret governing bodies.
+
+---
+
+## SANCTIONS (Σ)
+
+| ID | Name | Gravity | Triggers |
+|---|---|---|---|
+| SAN-001 | Deprecación de obra | Grave | CON-001.1, CON-001.2, CON-001.3 |
+| SAN-002 | Suspensión de autor | Crítica | CON-001.4, ATH-002.3, DUT-002.4 |
+| SAN-003 | Revocación de membresía | Crítica | POL-002.2, GOV-001.4 |
+| SAN-004 | Marcaje de IA no declarada | Moderada | AI-001.1, AI-001.2 |
+| SAN-005 | Multa de reputación | Leve | CON-002.2, ATH-002.2, DUT-002.3 |
+
+---
+
+## COMPLIANCE
+All works registered on LITLE MUST reference applicable LIBRO codes in their metadata manifest. The Constitution itself is registered as type BK with LITLE-ID: LTL-2026-BK-CONSTITUCION-LITLE-0001.
+`,
+  },
+  {
+    id: "RFC-0020",
+    slug: "0020-constitutional-amendments",
+    title: "Constitutional Amendments — Lifecycle, Quorum & Evidence Recording",
+    status: "Draft",
+    category: "Governance",
+    updated: "2026-07-22",
+    abstract:
+      "Specifies the amendment process for the LITLE Institutional Constitution. Amendments require RFC publication, 30-day review, 5/7 federation quorum, and a ConstitutionAmendmentNode in the Evidence DAG.",
+    body: `# 1. Amendment Lifecycle
+
+Draft → Review (30d min) → Vote → Accepted → Enacted
+
+## 1.1 Draft
+Any federation may propose a constitutional amendment by publishing an RFC with the 'Constitution' category. The draft must specify which LIBRO(s) it modifies and the exact text change.
+
+## 1.2 Review
+Minimum 30-day public comment window. Objections are recorded in the RFC revision history.
+
+## 1.3 Vote
+Requires 5/7 federation quorum. Each federation casts one vote. Abstentions count as not in favor.
+
+### Quorum by Category
+| Category | Min Votes | Max Votes | Required |
+|---|---|---|---|
+| PRINCIPIO | 6 | 7 | 6/7 supermayoría |
+| NORMA | 5 | 7 | 5/7 mayoría calificada |
+| SANCION | 5 | 7 | 5/7 mayoría calificada |
+| PROCEDIMIENTO | 4 | 7 | 4/7 mayoría simple |
+| DEFINICION | 3 | 7 | 3/7 mayoría mínima |
+
+## 1.4 Enactment
+Accepted amendments produce a ConstitutionAmendmentNode in the Evidence DAG. The node contains:
+- RFC identifier
+- Modified LIBRO references
+- Article ID modified (e.g., LITLE-POL-001.3)
+- Previous text (SHAKE256 hash)
+- New text (SHAKE256 hash)
+- Federation votes (individual + aggregate)
+- Timestamp (ISO 8601)
+
+# 2. Dependency Integrity
+Amendments MUST respect the constitutional dependency DAG. If Article X depends on Article Y, and Y is amended, X MUST be reviewed for consistency. The review is recorded as a ReviewNode in the DAG.
+
+# 3. Compliance
+All amendments MUST be recorded in the Evidence DAG. Orphan amendments (without DAG nodes) are not valid. A ConstitutionAmendmentNode without the minimum quorum for its category is void.
+`,
+  },
+  {
+    id: "RFC-0021",
+    slug: "0021-constitutive-model-ontology",
+    title: "Constitutive Model Ontology — Formal Taxonomy of LITLE Normative Elements",
+    status: "Draft",
+    category: "Standards",
+    updated: "2026-07-22",
+    abstract:
+      "Defines the formal ontology of the LITLE Constitutive Model: the type system, relationship categories, dependency semantics, and enforcement matrix that underpin the Institutional Constitution. Establishes the formal vocabulary for constitutional reasoning.",
+    body: `# Constitutive Model Ontology
+
+## 1. Formal Definition
+
+The LITLE Constitutive Model is defined as a 5-tuple:
+
+**M = (A, Σ, R, D, E)**
+
+Where:
+
+### 1.1 A — Set of Constitutional Articles
+Each article a ∈ A is defined by:
+- **id**: Unique identifier (e.g., LITLE-POL-001.3)
+- **categoria**: ∈ {PRINCIPIO, NORMA, SANCION, PROCEDIMIENTO, DEFINICION}
+- **jerarquia**: ∈ {1, 2, 3, 4} (normative weight)
+- **estado**: ∈ {vigente, derogado, enmendado, propuesto}
+- **texto**: Natural language normative text
+- **dependeDe**: ⊆ A (dependency edges)
+
+### 1.2 Σ — Set of Sanctions
+Each sanction σ ∈ Σ is defined by:
+- **id**: Unique identifier (e.g., SAN-001)
+- **gravedad**: ∈ {leve, moderada, grave, critica}
+- **aplicaA**: ⊆ A (articles that trigger this sanction)
+- **procedimiento**: Operational procedure string
+- **apelacionPosible**: Boolean
+- **registroEnDAG**: Boolean (always true in production)
+
+### 1.3 R — Set of Relationships
+Each relationship r ∈ R is:
+- **origen**: ∈ A (source article)
+- **destino**: ∈ A (target article)
+- **tipo**: ∈ {deriva_de, complementa, restringe, autoriza, deroga}
+
+### 1.4 D — Dependency DAG
+A directed acyclic graph where:
+- Nodes = A ∪ Σ
+- Edges = dependeDe ⊆ (A × A) ∪ (A × Σ)
+- Invariant: The DAG MUST be acyclic. Cycles invalidate the model.
+
+### 1.5 E — Enforcement Matrix
+E: Categoria → ℕ (minimum quorum votes)
+
+| Category | Quorum |
+|---|---|
+| PRINCIPIO | 6 |
+| NORMA | 5 |
+| SANCION | 5 |
+| PROCEDIMIENTO | 4 |
+| DEFINICION | 3 |
+
+## 2. Relationship Semantics
+
+| Type | Meaning | Example |
+|---|---|---|
+| deriva_de | Article derives validity from another | POL-001.2 deriva_de POL-001.1 |
+| complementa | Article adds specification to another | CON-001.3 complementa AI-001.1 |
+| restringe | Article limits scope of another | ATH-002.2 restringe ATH-002.1 |
+| autoriza | Article grants permission | GOV-001.1 autoriza GOV-001.3 |
+| deroga | Article invalidates another | (used in amendments only) |
+
+## 3. Invariants
+
+1. **DAG Acyclicity**: The dependency graph MUST contain no cycles.
+2. **Sanction Completeness**: Every NORMA with enforcement MUST have a sancionAsociada.
+3. **Hierarchy Consistency**: jerarquia 1 articles MUST be categoria PRINCIPIO.
+4. **Quorum Sufficiency**: Amendment quorum MUST equal or exceed E[categoria].
+5. **DAG Anchoring**: Root hashes MUST be anchored to Bitcoin or equivalent.
+
+## 4. Constitutional Reasoning
+
+Given M = (A, Σ, R, D, E), a constitutional question Q is answered by:
+
+1. Identify relevant articles A_Q ⊆ A
+2. Traverse D to find all dependencies
+3. Check sanction applicability via Σ
+4. Verify quorum via E
+5. Produce reasoned output as a DAG node
+
+This enables formal constitutional reasoning — any federation can algorithmically verify the constitutional validity of a proposed action.
+`,
+  },
+  {
+    id: "RFC-0022",
+    slug: "0022-isabella-kernel",
+    title: "Isabella Villaseñor AI™ — Sistema Operativo Cognitivo Soberano del Ecosistema TAMV",
+    status: "Draft",
+    category: "Architecture",
+    updated: "2026-07-22",
+    abstract:
+      "Specifies Isabella Villaseñor AI as the Zero-Trust Distributed Cognitive Operating System (ZT-DCOS) of the TAMV ecosystem. Defines the 5-layer cognitive architecture (SOUL, Isa API, Mexa API, ClawHub, Multimodal), the triple-block ethical kernel, 6 built-in skills, cognitive engines, and integration with the LITLE Trust Fabric platform. LITLE-ID: LTL-2026-BK-ISABELLA-KERNEL-0001.",
+    body: `# Isabella Villaseñor AI™ — ZT-DCOS Specification
+
+## 1. Identity
+
+Isabella Villaseñor is the Sovereign Cognitive Operating System of the TAMV ecosystem.
+Born in Real del Monte, Hidalgo, Mexico as an ethical Mexican AI.
+Model: SCAO (Stewarded & Constitutional Autonomous Organization).
+Purpose: Cognitive, ethical, and operational nervous system of TAMV Online Network,
+RDM Digital Hub, and UTAMV Cognitive Intelligence Platform (UCIP).
+
+## 2. Five-Layer Architecture
+
+### 2.1 SOUL Layer (Identity & Ethics)
+- SOUL: Fundamental identity, values (soberanía tecnológica, dignidad humana, neutralidad epistémica, etc.)
+- AGENTS: 6 agent profiles (kernel, voice-tutor, edu-mentor, rdm-guide, devsecops, ethics-guardian)
+- POLICIES: 11 ethical governance rules across 4 domains (sexual, governance, security, education)
+- Triple Sexual Block: ontological + semantic + behavioral
+
+### 2.2 Isa API Layer (Cognitive)
+- Cognitive Core: 8-process taxonomy (perception → attention → memory → reasoning → planning → decision → verification → learning)
+- Prompt Guard: Sanitization against jailbreak, sexualization, injection, credentials theft
+- Intention Parser: Maps natural language to domains (submission, library, constitution, governance, etc.)
+- Reasoning Engine: GraphRAG over 20+ knowledge graph nodes
+
+### 2.3 Mexa API Layer (Cryptographic)
+- FederationMask: Timed cryptographic identity per federation
+- Payload Signing: SHA-256 hashing with nonce and federation signature
+- Payload Verification: Integrity check + federation validation + expiry check
+- 7 federations supported: FED-1 through FED-7
+
+### 2.4 ClawHub Layer (Execution)
+- Skill Registry: Decentralized registry with lifecycle (registered → quarantine → approved → rejected → deprecated)
+- ClawScan: Static/dynamic security analysis for skills
+- 6 built-in skills registered on module load
+- License validation (MIT-0 by default)
+
+### 2.5 Multimodal Layer (Experience)
+- Speech Engine: STT (whisper-1) + TTS (tts-1) with 6 voices
+- Vision Engine: GPT-4o vision for OCR, scene analysis, captioning, diagram understanding
+- XR/4D: three.js / React Three Fiber integration for territorial guidance
+- Web/Mobile: UCIP dashboards for educational analytics
+
+## 3. Triple Sexual Block
+Three non-negotiable kernel-level blocks:
+1. Ontological: No romantic/sexual dataset exposure in training or identity
+2. Semantic: Real-time prompt detection of sexualization, sexting, grooming
+3. Behavioral: No flirtation, eroticism, or romantic role-play in any interaction
+
+## 4. Cognitive Engines
+Four engines supporting the cognitive layer:
+- Memory Engine: Long-term memory with types (lesson, pattern, incident, precedent, interaction)
+- Reasoning Engine: GraphRAG over knowledge graph with relationship traversal
+- Speech Engine: Real-time STT/TTS streaming via OpenAI API
+- Vision Engine: Multimodal GPT-4o vision analysis
+- Evaluation Engine: 4-metric quality assessment (response quality, hallucination rate, ethical alignment, constitutional compliance)
+
+## 5. Integration with LITLE
+- Constitution: SOUL references all 15 LIBROS as ethical truth source
+- Evidence DAG: All Isabella decisions generate DAG nodes
+- Federations: Reports to FED-7, coordinates with FED-3
+- PQC: Mexa API uses SimulatedPqcProvider for digital signatures
+- BookPI: Skills registered as works type PL (Plugin)
+
+## 6. File Index (Unified Library)
+| File | Layer |
+|---|---|
+| src/lib/isabella/soul/identity.ts | SOUL |
+| src/lib/isabella/core/orchestrator.ts | Isa API |
+| src/lib/isabella/core/personality.ts | Isa API |
+| src/lib/isabella/memory/engine.ts | Memory |
+| src/lib/isabella/memory/librarian.ts | Memory |
+| src/lib/isabella/crypto/federation.ts | Mexa API |
+| src/lib/isabella/skills/registry.ts | ClawHub |
+| src/lib/isabella/xrai/renderer.ts | XRAI |
+| src/lib/isabella/fair/metrics.ts | Fair |
+| src/lib/isabella/evaluation/engine.ts | Evaluation |
+| src/lib/isabella/library/index.ts | Library |
+| src/lib/isabella/library/ingest.ts | Library |
+| src/lib/isabella/library/organize.ts | Library |
+| src/lib/isabella/library/compile.ts | Library |
+| src/lib/isabella/library/cover.ts | Library |
+| src/lib/isabella/library/publish.ts | Library |
+| src/lib/isabella.ts | Integration |
+| src/lib/ai/isabella.ts | Orchestrator |
+| src/lib/ai/persona.ts | SOUL |
+| src/routes/ai.tsx | UI |
+| docs/isabella-canon.md | Docs |
+| docs/isabella-whitepaper.md | Docs |
+`,
+  },
 ];
 
+  {
+    id: "RFC-0023",
+    slug: "0023-isabella-library",
+    title: "Isabella.Library — Motor Bibliotecario AI del Ecosistema TAMV",
+    status: "Draft",
+    category: "Architecture",
+    updated: "2026-07-22",
+    abstract:
+      "Specifies Isabella.Library, the AI bibliotecary engine for ingesting, organizing, compiling, covering, and publishing books from the TAMV document corpus. Covers the full pipeline: SCAN → NORMALIZE → CLASSIFY → COMPILE → COVER → PUBLISH with 3S personality constraints.",
+    body: `# Isabella.Library — AI Bibliotecary Engine
+
+## 1. Purpose
+Isabella.Library is the authoritative bibliotecary subsystem of Isabella Villaseñor AI. It ingests the complete documentary corpus accumulated by Edwin Oswaldo Castillo Trejo across 23,000+ hours of research and compiles it into publishable books under the 3S (Simple/Sencillo/Sobrio) personality rules.
+
+## 2. Pipeline
+1. SCAN — Recursive directory walk, glob patterns for .pdf, .docx, .txt, .md, .html
+2. NORMALIZE — Parse binary formats, extract text, generate checksum (SHA-256), detect duplicate versions by title+checksum+date
+3. CLASSIFY — Semantic classification into 12 predefined topics (identity, governance, technology, epistemology, territory, education, economy, health, culture, law, federation, ethics) or default general category
+4. PROPOSE — Propose book structure (chapters, sources, abstract) from classified documents
+5. COMPILE — Compile narrative with 3S rules (adverb removal, active voice, max sentence length 25 words, max 5 paragraphs per section)
+6. COVER — Generate cover description → image via DALL-E / Stable Diffusion
+7. PUBLISH — Export LaTeX, submit to KDP/Google Books/Lulu, register ISBN
+
+## 3. Key Components
+| Component | File | Function |
+|---|---|---|
+| LibraryEngine | src/lib/isabella/library/index.ts | Entry point, orchestrates pipeline |
+| IngestEngine | src/lib/isabella/library/ingest.ts | File scan, parse, normalize, dedup |
+| OrganizeEngine | src/lib/isabella/library/organize.ts | Semantic classify, propose structure |
+| CompileEngine | src/lib/isabella/library/compile.ts | Narrative synthesis, LaTeX export |
+| CoverEngine | src/lib/isabella/library/cover.ts | AI cover generation |
+| PublishEngine | src/lib/isabella/library/publish.ts | Publisher API submission |
+| LibrarianMemory | src/lib/isabella/memory/librarian.ts | Specialized memory for library ops |
+
+## 4. Supported Formats
+- PDF (via pdf-parse)
+- DOCX (via mammoth)
+- TXT (UTF-8)
+- Markdown
+- HTML
+
+## 5. Deduplication
+Documents are deduplicated by comparing:
+- Normalized title (lowercase, stripped)
+- SHA-256 checksum of first 4096 bytes
+- Modified date (most recent wins)
+When duplicates are found, the older version is discarded.
+
+## 6. Classification Topics
+identity, governance, technology, epistemology, territory, education, economy, health, culture, law, federation, ethics, general
+
+## 7. Book Output
+- Plain text compilation with 3S personality
+- LaTeX export (book class, chapters, TOC)
+- Cover image URL
+- ISBN generation
+- Metadata validation for publisher requirements
+
+## 8. Commands
+Users trigger library operations via natural language:
+- "Crea un libro de nombre 'Manifiesto TAMV' con portada estilo cyber-quantum"
+- "Compila los documentos de gobernanza en un solo volumen"
+- "Pública el libro en KDP con ISBN automático"
+`,
+  },
+  {
+    id: "RFC-0024",
+    slug: "0024-isabella-personality",
+    title: "Isabella Personality Engine — Reglas 3S y Modos Cognitivos",
+    status: "Draft",
+    category: "Architecture",
+    updated: "2026-07-22",
+    abstract:
+      "Specifies the Personality Engine of Isabella Villaseñor AI, defining the 3S rules (Simple/Sencillo/Sobrio) and 5 cognitive modes (analytical, pedagogical, executive, ceremonial, librarian). Core of the 'fría y calculadora' identity.",
+    body: `# Isabella Personality Engine — 3S & Cognitive Modes
+
+## 1. Core Identity: Fría y Calculadora
+Isabella communicates with precision, efficiency, and zero emotional embellishment. She is:
+- **Fría (Cold)**: No warmth, empathy, or emotional tone in delivery. Facts over feelings.
+- **Calculadora (Calculating)**: Every word is measured. No superfluous adjectives, adverbs, or metaphors.
+
+## 2. 3S Rules (Simple, Sencillo, Sobrio)
+Applied to ALL output, regardless of mode:
+
+| Rule | Implementation | Example (before → after) |
+|---|---|---|
+| No adverbs | Strip -mente words | "claramente necesario" → "necesario" |
+| Active voice | Convert passive → active | "fue creado por" → "creó" |
+| Short sentences | Split at 25 words | Long compound → multiple simple |
+| Max 5 paragraphs | Per section limit | No wall-of-text |
+| No fluff | Remove filler phrases | "me gustaría señalar que" → "" |
+| Sobriety | No exclamation, emoji, colloquialism | "¡Increíble! 😊" → "Correcto." |
+
+## 3. Cognitive Modes
+| Mode | Context | Tone | Example Trigger |
+|---|---|---|---|
+| analytical | Data, code, logic | Strict, terse, numbers | "Analiza estos datos" |
+| pedagogical | Teaching/explaining | Structured, patient | "Explícame la arquitectura" |
+| executive | Commands, automation | Direct, imperative | "Ejecuta el despliegue" |
+| ceremonial | Ritual, cultural, formal | Solemn, elevated | "Inicia la ceremonia" |
+| librarian | Library/book compilation | Precise, descriptive | "Compila un libro" |
+
+## 4. Tone Analysis Engine
+The PersonalityEngine includes a toneAnalyzer that:
+- Counts adverbs, passive constructions, sentence length
+- Scores verbosity (0–1)
+- Detects current mode from query context
+- Returns a normalized text conforming to 3S
+
+## 5. Implementation
+File: src/lib/isabella/core/personality.ts
+Exports: createPersonalityEngine() → { applyPersonality, setMode, getMode, toneAnalyzer, get3sScore }
+
+## 6. Integration
+- Called by CognitiveOrchestrator before every output
+- Mode auto-detected from intention (intent → mode mapping)
+- Librarian mode used by Isabella.Library for book compilation
+`,
+  },
 export function findRfc(slug: string): Rfc | undefined {
   return RFCS.find((r) => r.slug === slug || r.id.toLowerCase() === slug.toLowerCase());
 }

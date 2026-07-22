@@ -137,15 +137,15 @@ function qft4Mat(): GateMatrix {
 }
 function crxMat(theta: number): GateMatrix {
   const c = Math.cos(theta/2), s = Math.sin(theta/2);
-  return [[[1,0],[0,0]],[[0,0],[c,-s]],[[0,0],[-0,-s],[c,0]]] as unknown as GateMatrix;
+  return [[[c,0],[0,-s]],[[0,-s],[c,0]]];
 }
 function cryMat(theta: number): GateMatrix {
   const c = Math.cos(theta/2), s = Math.sin(theta/2);
-  return [[[1,0],[0,0]],[[0,0],[c,-s]],[[0,0],[s,0],[c,0]]] as unknown as GateMatrix;
+  return [[[c,0],[-s,0]],[[s,0],[c,0]]];
 }
 function crzMat(theta: number): GateMatrix {
   const e = Math.cos(theta/2), f = Math.sin(theta/2);
-  return [[[1,0],[0,0]],[[0,0],[e,-f]],[[0,0],[0,0],[e,f]]] as unknown as GateMatrix;
+  return [[[e,-f],[0,0]],[[0,0],[e,f]]];
 }
 function u3Mat(theta: number, phi: number, lam: number): GateMatrix {
   const ct = Math.cos(theta/2), st = Math.sin(theta/2);
@@ -175,7 +175,7 @@ function measureMat(): GateMatrix {
 function composeGates(a: GateMatrix, b: GateMatrix): GateMatrix {
   return [
     [cadd(cmul(a[0][0],b[0][0]), cmul(a[0][1],b[1][0])), cadd(cmul(a[0][0],b[0][1]), cmul(a[0][1],b[1][1]))],
-    [cadd(cmul(a[1][0],b[0][0]), cmul(a[1][0],b[1][0])), cadd(cmul(a[1][0],b[0][1]), cmul(a[1][1],b[1][1]))],
+    [cadd(cmul(a[1][0],b[0][0]), cmul(a[1][1],b[1][0])), cadd(cmul(a[1][0],b[0][1]), cmul(a[1][1],b[1][1]))],
   ];
 }
 

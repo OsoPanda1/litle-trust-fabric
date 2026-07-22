@@ -141,7 +141,7 @@ export function generateCertificate(
     const sig = provider.sign(keyPair.secretKey, msgToSign);
 
     signatures.push({
-      algorithm: "ML-DSA-87 (Dilithium5)",
+      algorithm: "SIM-ML-DSA (hash-based reference)",
       value: bytesToHex(sig.value),
       timestamp: now.toISOString(),
       signedBy: "LITLE PQC Authority",
@@ -210,7 +210,7 @@ export function verifyCertificate(
   let pqcVerified: boolean | undefined;
 
   if (cert.suite === "pqc" || cert.suite === "dual") {
-    const pqcSig = cert.signatures.find((s) => s.algorithm === "ML-DSA-87 (Dilithium5)");
+    const pqcSig = cert.signatures.find((s) => s.algorithm === "SIM-ML-DSA (hash-based reference)");
     if (pqcSig && cert.pqcPublicKey) {
       try {
         const provider = getPqcProvider("L-PQC.v1");

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/start.ts", "src/server.ts", "src/router.tsx"],
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": ["src/routeTree.gen.ts", "src/components/ui/**", "src/types/shims.d.ts"],
+  "ignoreDependencies": [
+    "@types/node",
+    "@types/react",
+    "@types/react-dom",
+    "vitest",
+    "eslint-config-prettier",
+    "eslint-plugin-prettier",
+    "prettier"
+  ],
+  "rules": {
+    "exports": "warn",
+    "types": "warn",
+    "nsTypes": "warn",
+    "enumMembers": "off",
+    "classMembers": "off",
+    "duplicates": "error"
+  }
+}

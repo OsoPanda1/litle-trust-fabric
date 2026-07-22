@@ -1,0 +1,217 @@
+# LITLE Institutional Constitution — Formal Constitutive Model (MCF)
+# Paradigm: Modelo Constitutivo Formal
+# RFC-0019 | RFC-0021 (Ontology)
+# LITLE-ID: LTL-2026-BK-CONSTITUCION-LITLE-0001
+# Enacted: 2026-07-22
+
+title: CONSTITUCIÓN INSTITUCIONAL DE LITLE
+litle_id: LTL-2026-BK-CONSTITUCION-LITLE-0001
+type: BK
+enacted: 2026-07-22
+paradigm: Modelo Constitutivo Formal (MCF)
+
+model:
+  tuple: "(A, Σ, R, D, E)"
+  articles_total: 42
+  sanctions_total: 5
+  relationships_total: 0
+  quorum_matrix:
+    PRINCIPIO: 6
+    NORMA: 5
+    SANCION: 5
+    PROCEDIMIENTO: 4
+    DEFINICION: 3
+
+amendments:
+  - rfc: RFC-0020
+    status: Draft
+  - rfc: RFC-0021
+    status: Draft
+
+libri:
+  - id: LIBRO-I
+    code: LITLE-POL-001
+    title: Institutional Purpose
+    category: PRINCIPIO
+    hierarchy: 1
+    rfc: RFC-0019
+    articles:
+      - LITLE-POL-001.1
+      - LITLE-POL-001.2
+      - LITLE-POL-001.3
+
+  - id: LIBRO-II
+    code: LITLE-PHI-001
+    title: Institutional Philosophy
+    category: PRINCIPIO
+    hierarchy: 1
+    rfc: RFC-0019
+    articles:
+      - LITLE-PHI-001.1
+      - LITLE-PHI-001.2
+      - LITLE-PHI-001.3
+
+  - id: LIBRO-III
+    code: LITLE-CON-001
+    title: Code of Ethics
+    category: PRINCIPIO
+    hierarchy: 1
+    rfc: RFC-0019
+    sanctions: [SAN-001, SAN-002, SAN-004]
+    articles:
+      - LITLE-CON-001.1
+      - LITLE-CON-001.2
+      - LITLE-CON-001.3
+      - LITLE-CON-001.4
+
+  - id: LIBRO-IV
+    code: LITLE-CON-002
+    title: Principles of Conduct
+    category: NORMA
+    hierarchy: 2
+    rfc: RFC-0019
+    sanctions: [SAN-005]
+    articles:
+      - LITLE-CON-002.1
+      - LITLE-CON-002.2
+      - LITLE-CON-002.3
+
+  - id: LIBRO-V
+    code: LITLE-ATH-001
+    title: Authorship
+    category: NORMA
+    hierarchy: 2
+    rfc: RFC-0019
+    articles:
+      - LITLE-ATH-001.1
+      - LITLE-ATH-001.2
+      - LITLE-ATH-001.3
+      - LITLE-ATH-001.4
+      - LITLE-ATH-001.5
+      - LITLE-ATH-001.6
+
+  - id: LIBRO-VI
+    code: LITLE-ATH-002
+    title: Citation and Integrity
+    category: NORMA
+    hierarchy: 2
+    rfc: RFC-0019
+    sanctions: [SAN-002, SAN-005]
+    articles:
+      - LITLE-ATH-002.1
+      - LITLE-ATH-002.2
+      - LITLE-ATH-002.3
+      - LITLE-ATH-002.4
+
+  - id: LIBRO-VII
+    code: LITLE-ATH-003
+    title: Recognition and Attribution
+    category: NORMA
+    hierarchy: 3
+    rfc: RFC-0019
+    articles:
+      - LITLE-ATH-003.1
+      - LITLE-ATH-003.2
+      - LITLE-ATH-003.3
+      - LITLE-ATH-003.4
+      - LITLE-ATH-003.5
+      - LITLE-ATH-003.6
+      - LITLE-ATH-003.7
+      - LITLE-ATH-003.8
+      - LITLE-ATH-003.9
+      - LITLE-ATH-003.10
+
+  - id: LIBRO-VIII
+    code: LITLE-DUT-001
+    title: Rights of Authors
+    category: PRINCIPIO
+    hierarchy: 2
+    rfc: RFC-0019
+    articles:
+      - LITLE-DUT-001.1
+      - LITLE-DUT-001.2
+      - LITLE-DUT-001.3
+      - LITLE-DUT-001.4
+
+  - id: LIBRO-IX
+    code: LITLE-DUT-002
+    title: Obligations of Authors
+    category: NORMA
+    hierarchy: 2
+    rfc: RFC-0019
+    sanctions: [SAN-005]
+    articles:
+      - LITLE-DUT-002.1
+      - LITLE-DUT-002.2
+      - LITLE-DUT-002.3
+      - LITLE-DUT-002.4
+
+  - id: LIBRO-X
+    code: LITLE-AI-001
+    title: AI Governance
+    category: NORMA
+    hierarchy: 2
+    rfc: RFC-0019
+    sanctions: [SAN-004]
+    articles:
+      - LITLE-AI-001.1
+      - LITLE-AI-001.2
+      - LITLE-AI-001.3
+      - LITLE-AI-001.4
+
+  - id: LIBRO-XI
+    code: LITLE-GOV-001
+    title: 7 Federations Governance
+    category: PRINCIPIO
+    hierarchy: 1
+    rfc: RFC-0019
+    articles:
+      - LITLE-GOV-001.1
+      - LITLE-GOV-001.2
+      - LITLE-GOV-001.3
+      - LITLE-GOV-001.4
+
+  - id: LIBRO-XII
+    code: LITLE-EVD-001
+    title: Evidence DAG
+    category: PRINCIPIO
+    hierarchy: 1
+    rfc: RFC-0019
+    articles:
+      - LITLE-EVD-001.1
+      - LITLE-EVD-001.2
+      - LITLE-EVD-001.3
+
+  - id: LIBRO-XIII
+    code: LITLE-PRS-001
+    title: BookPI & Ledger
+    category: NORMA
+    hierarchy: 2
+    rfc: RFC-0019
+    articles:
+      - LITLE-PRS-001.1
+      - LITLE-PRS-001.2
+      - LITLE-PRS-001.3
+
+  - id: LIBRO-XIV
+    code: LITLE-POL-002
+    title: Neutrality and Sovereignty
+    category: PRINCIPIO
+    hierarchy: 1
+    rfc: RFC-0019
+    sanctions: [SAN-003]
+    articles:
+      - LITLE-POL-002.1
+      - LITLE-POL-002.2
+      - LITLE-POL-002.3
+
+  - id: LIBRO-XV
+    code: LITLE-COM-001
+    title: Community
+    category: NORMA
+    hierarchy: 2
+    rfc: RFC-0019
+    articles:
+      - LITLE-COM-001.1
+      - LITLE-COM-001.2
+      - LITLE-COM-001.3

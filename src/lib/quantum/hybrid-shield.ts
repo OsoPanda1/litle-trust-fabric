@@ -2,7 +2,7 @@ import { shake256 } from "@noble/hashes/sha3";
 import { sha256 } from "@noble/hashes/sha2.js";
 import { hmac } from "@noble/hashes/hmac";
 import { bytesToHex } from "@noble/hashes/utils";
-import { quantumFingerprint, fingerprintSimilarity, stateToBytes } from "./gates";
+import { quantumFingerprint, stateToBytes } from "./gates";
 
 function concatBytes(a: Uint8Array, b: Uint8Array): Uint8Array {
   const out = new Uint8Array(a.length + b.length);
@@ -172,9 +172,6 @@ export function verifyHybridShield(
         }
         case "quantum_state": {
           const r = quantumStateLayer(originalData);
-          const fgpOrig = quantumFingerprint(originalData);
-          const storedFgp = quantumFingerprint(originalData);
-          const sim = fingerprintSimilarity(fgpOrig, storedFgp);
           const ok = r.fingerprint === original.hash;
           layerResults.push({ layer, successful: ok, hash: r.fingerprint, duration: performance.now() - start });
           break;
@@ -192,9 +189,10 @@ export function verifyHybridShield(
     }
   }
 
-  const fgpOrig = quantumFingerprint(originalData);
-  const storedFgp = quantumFingerprint(originalData);
-  const similarity = fingerprintSimilarity(fgpOrig, storedFgp);
+  const computedFgp = quantumFingerprint(originalData);
+  const storedStateHex = shield.quantumFingerprint;
+  const computedStateHex = bytesToHex(stateToBytes(computedFgp.state));
+  const similarity = storedStateHex && computedStateHex === storedStateHex ? 1 : 0;
 
   return {
     valid: layerResults.every(l => l.successful),

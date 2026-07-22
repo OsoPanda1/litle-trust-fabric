@@ -1,3 +1,5 @@
+import { sha256 } from "@noble/hashes/sha2.js";
+import { bytesToHex } from "@noble/hashes/utils";
 import type { SubmissionDocument, SubmissionStatus, TriangulationResult, QuarantineDecision, DuplicateEvidence } from "./types";
 
 interface QuarantineStore {
@@ -9,14 +11,7 @@ const store: QuarantineStore = {
 };
 
 function sha256Hex(input: string): string {
-  let hash = 0;
-  for (let i = 0; i < input.length; i++) {
-    const char = input.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
-  }
-  const abs = Math.abs(hash);
-  return abs.toString(16).padStart(8, "0") + (abs * 7).toString(16).slice(0, 8);
+  return bytesToHex(sha256(new TextEncoder().encode(input)));
 }
 
 function generateId(): string {
